@@ -1,0 +1,69 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1753","Proforma Invoices")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiSales.Selections.Proforma>().ID("grd-Quotations")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Sales")
+                .Key("Key")
+                .LoadAction("SelectProforma"))
+                .ColumnAutoWidth(true)
+                .Columns(columns =>
+                {
+                    columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4SelectProforma"));
+                    columns.AddFor(m => m.Invoiced).Caption(iT.T(xLan, "1356", "Retrned")).Width(70).Lookup(L => L.DataSource(iReplacer.invReturnedInvoice(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Invoiced"));
+                    columns.AddFor(m => m.InvoiceDate).Caption(iT.T(xLan, "1210", "Date")).Width(80).Format("dd.MM.yyyy");
+                    columns.AddFor(m => m.InvoiceNo).Caption(iT.T(xLan, "1265", "No")).Width(70);
+                    columns.AddFor(m => m.Client).Caption(iT.T(xLan, "1355", "Client")).Lookup(L => L.DataSource(CLiFinancial.Selections.Dynamic.UnionSelection(DB, xLan, new PLenums.TransactionAccount[] { PLenums.TransactionAccount.CurrentAccount })).ValueExpr("Key").DisplayExpr("Display"));
+                    columns.AddFor(m => m.Subtotal).Caption(iT.T(xLan, "1347", "Subtotal")).Width(85).Format("0,###.##");
+                    columns.AddFor(m => m.Discount).Caption(iT.T(xLan, "1097", "Discount")).Width(85).Format("0,###.##");
+                    columns.AddFor(m => m.vatAmount).Caption(iT.T(xLan, "1991", "vatAmount")).Width(85).Format("0,###.##");
+                    columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(85).Format("0,###.##");
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                })
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>

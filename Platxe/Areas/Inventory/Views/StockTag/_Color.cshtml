@@ -1,0 +1,87 @@
+@model CLiInventory.Cards.Tag.Color
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1666","Color Card")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Color" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+              <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1265","No")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.No).ID("cnt-No").Width(120).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Color").submit(function(event) {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount() {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Color').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/inv/icards/UpdateColor",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Color").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

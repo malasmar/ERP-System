@@ -1,0 +1,93 @@
+@model CLiCore.Platx.PaymentMethods
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1606","Item Unit")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Paymentmethod" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(m => m.User)
+            <div class="xkey">
+                <div class="text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12 ">@iT.T(xLan,"1674","Order")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Order).ID("cntsb-Order").Width(120).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12 ">@iT.T(xLan,"1675","Display")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Display).ID("cntsb-Display").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1333","Account Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m=>m.AccountKind).ID("cntsb-AccountKind").DataSource(iReplacer.finMethodsAccounts(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150)
+                </div>
+            </div>
+            <div class="form-group row mb-3">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1219","Account")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Account).ID("cntsb-Account").InputAttr("required", true).DataSource(CLiFinancial.Selections.Dynamic.UnionSelection(DB,xLan, new PLenums.TransactionAccount[] { PLenums.TransactionAccount.CashBox, PLenums.TransactionAccount.Bank, PLenums.TransactionAccount.Expenses, PLenums.TransactionAccount.CurrentAccount})).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1304","Disable")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cntsb-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Paymentmethod").submit(function(event) {
+            event.preventDefault();
+            UpdatePaymentMethod();
+        });
+        $('#cntsb-AccountKind').dxSelectBox({
+            onValueChanged: function(e) {
+                $("#cntsb-Account").dxLookup({
+                    dataSource: '/api/icore/LoadAccounts?Kind=' + e.value
+                });
+            }
+        });
+        $("#cntsb-Account").dxLookup({
+            dataSource: '/api/icore/LoadAccounts?Kind=' + $('#cntsb-AccountKind').dxSelectBox('option', 'value')
+        });
+    });
+    function UpdatePaymentMethod() {
+        var data = $('#frm-Paymentmethod').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/Manager/icore/UpdatePaymentMethod",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Paymentmethod").modal('toggle');
+                RefreshGridPaymentMethods();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

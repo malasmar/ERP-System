@@ -1,0 +1,218 @@
+@model CLiCore.Configuration.Settings
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"1766","Company Configuration")</h1>
+        <div class="panel panel-inverse">
+           
+            <div class="panel-body">
+                <form id="frm-Settings" data-parsley-validate="true">
+                    <div><small>@iT.T(xLan, "1789","Financial Settings")</small></div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1790","VAT Financial Account")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.vatKey).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.CurrentAccount, PLenums.CurrentAccountKind.Adjustment)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                            <div class="alert alert-yellow mt-1  mb-2 p-1 rounded-1">
+                                This account for VAT,<b class="text-dark"> Important: </b> Account can't change after any transaction.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1791","Close Year Account")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.CloseYear).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1792","Importation Expenses")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.ImportationAccount).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1793","Postdated Cheques")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.PaymentCheck).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1794","Receivable Cheques")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.CollectionCheck).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1795","Under Collection")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.UnderCollection).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="mt-2"><small>@iT.T(xLan, "2400","Employee Accounts")</small></div>
+                    <div class="p-2">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="OpenEmployeeAccounts()">@iT.T(xLan,"2401","Employee Accounts Integration")</button>
+                    </div>
+                    <div class="mt-2"><small>@iT.T(xLan, "1796","Warehouse Account")</small></div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1797","Warehouse Purchase(Assets)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.wPurchase).DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1618","Warehouse Sales(Revenue)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.wSales).Width("100%").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Revenue)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1619","Sales Cost(Expensess)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.wCost).Width("100%").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1798","Under Production(Assets)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            <div class="input-group">
+                                @Html.DevExtreme().CheckBoxFor(m => m.wProductionDetailed).Text(" ").Width(25)
+                                @Html.DevExtreme().LookupFor(m => m.wProduction).Width("92%").DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1799","Finished Good(Assets)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            <div class="input-group">
+                                @Html.DevExtreme().CheckBoxFor(m => m.wFinishGoodDetailed).Text(" ").Width(25)
+                                @Html.DevExtreme().LookupFor(m => m.wFinishGood).Width("92%").DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1800","On Road(Assets)")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.wOnRoad).DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                        </div>
+                    </div>
+                    <div class="mt-2"><small>@iT.T(xLan, "1801","Inventory Financial Integration")</small></div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1802","Expiry Expensess")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.ExpiryExpensess).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2517","Retention Less")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.RetentionLess).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.CurrentAccount)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2518","Payment Discount")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.PaymentDiscount).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1803","Purchase Discount")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.CreditDiscount).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Revenue)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1804","Sales Discount")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.DebitDiscount).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true)
+                        </div>
+                    </div>
+                    <div class="mt-2"><small>@iT.T(xLan, "1805","Stock Configuration")</small></div>
+                           <div class="row">
+                               <div class="col-4">
+                               </div>
+                               <div class="col-8">
+                            <div class="form-group row">
+                                <div class="col-lg-12 col-sm-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.ShowMonthlyNo).Text(iT.T(xLan, "2748","Show Monthly No"))
+                                </div>
+                            </div>
+                       
+                            <div class="form-group row">
+                                <div class="col-lg-12 col-sm-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.ClosePurchaseUnit).Text(iT.T(xLan, "1808","Close Purchase Unit"))
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-12 col-sm-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.AutoReceiptShipping).Text(iT.T(xLan,"1809","Auto Receipt Shipping"))
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-12 col-sm-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.ShowExpiry).ID("ShowExpiry").Text(iT.T(xLan,"1812","Show Expiry"))
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-lg-12 col-sm-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.ShowBatch).ID("ShowBatch").Text(iT.T(xLan,"1813","Show Batch"))
+                                </div>
+                            </div>
+                               </div>
+                           </div>
+                    <div class="me-4 p-3">
+                        <button class="btn btn-danger">@iT.T(xLan,"1772","Save Changed")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-EmployeeAccounts" class="modal"><div class="modal-dialog" id="con-EmployeeAccounts"></div></div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Settings").submit(function (event)
+        {
+            event.preventDefault();
+            UpdateDefault();
+        });
+    });
+    function UpdateDefault() {
+        $.confirm({
+            title: 'Confirm!',
+            content: 'Are you sure to update company profile?',
+            buttons: {
+                Update: function() {
+                    var data = $('#frm-Settings').serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/Settings/iconfiguration/UpdateSettings",
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            $.alert({
+                                title: 'Info',
+                                content: 'Operation Complete',
+                            });
+                        },
+                        failure: function(response) {
+                            alert(response);
+                        },
+                        error: function(response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                cancel: function() {
+                    return;
+                }
+            }
+        });
+    }
+    function OpenEmployeeAccounts(){
+        $('#con-EmployeeAccounts').empty();
+        $("#con-EmployeeAccounts").load('/Settings/Configuration/EmployeeAccounts');
+        $("#mod-EmployeeAccounts").modal({ backdrop: 'static' }).modal('toggle');
+    }
+</script>

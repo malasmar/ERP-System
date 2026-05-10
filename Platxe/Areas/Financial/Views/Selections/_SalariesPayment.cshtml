@@ -1,0 +1,133 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<script class="append-on-ajax-script">
+      function RefreshGrid ()
+    {
+        $('#grd-SalariesPayment').dxDataGrid("instance").refresh();
+    }
+    function GetYear ()
+    {
+        return $('#ctr-Year').dxNumberBox('option', 'value');
+    }
+    function GetMonth ()
+    {
+        return $('#ctr-Month').dxSelectBox('option', 'value');
+    }
+    function GetPaymentKind ()
+    {
+        return $('#ctr-PaymentKind').dxTagBox('option', 'value');
+    }
+</script>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2722","Salaries Payment")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("ctr-Year").ShowSpinButtons(true).Width(130).Value(Year)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1690","Month")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().SelectBox().ID("ctr-Month").Width(130).DataSource(iReplacer.MonthList(xLan)).ValueExpr("Value").DisplayExpr("Display").Value(DateTime.Now.Month)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1335","Payment Kind")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().TagBox().ID("ctr-PaymentKind").Width(300).DataSource(iReplacer.hrPaymentType(xLan)).ValueExpr("Value").DisplayExpr("Display").ShowSelectionControls(true).ShowClearButton(true)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1212","Description")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().TextBox().ID("Salaries-Description").Width(300)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiFinancial.Operation.SalariesPayment>().ID("grd-SalariesPayment")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Financial")
+                .Key("Key")
+                .LoadAction("SalariesPayment").LoadParams(new
+                {
+                    Year = new JS("GetYear"),
+                    Month = new JS("GetMonth"),
+                    PaymentKind = new JS("GetPaymentKind")
+                }).UpdateAction("fackUpdate"))
+                .Editing(ed => ed.Mode(GridEditMode.Batch).AllowUpdating(true).AllowAdding(false).AllowDeleting(false).RefreshMode(GridEditRefreshMode.Repaint).UseIcons(false))
+                .ColumnAutoWidth(true)
+                .FocusedRowEnabled(true)
+                .OnRowUpdated("SelectRowAgesInvoice")
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100).AllowEditing(false);
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1443", "Employee Name")).AllowEditing(false);
+                    columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).AllowEditing(false);
+                    columns.AddFor(m => m.Salary).Caption(iT.T(xLan, "2723", "Salary")).Width(85).Format("0,###.##").AllowEditing(false);
+                    columns.AddFor(m => m.Closed).Caption(iT.T(xLan, "2724", "Closed")).Width(85).Format("0,###.##").AllowEditing(false);
+                    columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "2725", "Remining")).Width(90).Format("0,###.##");
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                })
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .Selection(s => s.Mode(SelectionMode.Multiple).AllowSelectAll(true).ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+      
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+            <button type="button" class="btn btn-yellow" onclick="PaymentSalaries()">@iT.T(xLan,"2726","Payment Selected Rows")</button>
+        </div>
+    </div>
+</div>
+ 

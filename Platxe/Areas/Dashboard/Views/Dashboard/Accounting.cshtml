@@ -1,0 +1,654 @@
+@{
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<style>
+    .tick line {
+        display: none;
+    }
+       .xsc{
+                overflow-y:auto;
+                max-height:450px;
+                    height:450px   ;
+            }
+</style>
+<link href="~/template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+<h1 class="page-header">@iT.T(xLan,"1001","Accounting Dashboard")  <span class="badge bg-Yellow">v14.2</span></h1>
+<div class="row">
+    <div class="col-lg-2 col-md-12">
+        <div class="widget widget-stats bg-white text-dark mb-2">
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1002","Accounts Total")</div>
+                <div class="stats-number"><span id="txt-Acc-Total">0</span></div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 70.1%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">
+                    <b id="txt-Acc-Transaction" class="me-2">0</b>@iT.T(xLan,"1003","Transaction Accounts")
+                </div>
+            </div>
+        </div>
+        <div class="widget widget-stats bg-white text-dark mt-2">
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1004","General Ledger Count")</div>
+                <div class="stats-number"><span id="txt-GL-Total">0</span></div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 70.1%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75"><b id="txt-GL-Opining" class="me-2">11</b>@iT.T(xLan,"1005","Opening GL")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-10 col-md-12">
+        <div class="d-sm-flex align-items-center mb-3">
+            <a href="javascript:;" class="btn btn-dark me-2 text-truncate" id="daterange-filter">
+                <i class="fa fa-calendar fa-fw text-white text-opacity-50 ms-n1"></i>
+                <span>20 October 2022 - 27 October 2022</span>
+                <b class="caret ms-1 opacity-5"></b>
+            </a>
+            <div class="text-dark-300 fw-bold mt-2 mt-sm-0"><span hidden>12 October - 19 October 2022</span></div>
+        </div>
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="card border-0 mb-3 overflow-hidden text-dark">
+                    <div class="card-body">
+                        <div class="mb-3 ">
+                            <b class="mb-3">@iT.T(xLan,"1006","Trial Balance")</b>
+                            <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Conversion Rate" data-bs-placement="top" data-bs-content="Percentage of sessions that resulted in orders from total number of sessions." data-original-title="" title=""></i></span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <h2 class="mb-0"><span id="txt-TB-Total">0</span></h2>
+                        </div>
+                        <hr>
+                        <div class="row text-truncate">
+                            <div class="col-6">
+                                <div class="f-s-12 text-grey">@iT.T(xLan,"1007","Opening")</div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBO-Debit" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1008","Debit")</span></div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBO-Credit" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1009","Credit")</span></div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBO-Balance" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1010","Diff")</span></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="f-s-12 text-grey">@iT.T(xLan,"1011","Transaction")</div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBT-Debit" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1008","Debit")</span></div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBT-Credit" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1009","Credit")</span></div>
+                                <div class="f-s-16 m-b-2 p-b-1"><span id="txt-TBT-Balance" style="font-family:Tahoma" class="me-2">0</span><span class="f-s-10 text-grey" style="font-family:Tahoma">@iT.T(xLan,"1010","Diff")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 mb-3 overflow-hidden text-dark">
+                    <div class="card-body">
+                        <div class="mb-2 ">
+                            <b class="mb-3">@iT.T(xLan,"1012","Accounts Details")</b>
+                            <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Conversion Rate" data-bs-placement="top" data-bs-content="Percentage of sessions that resulted in orders from total number of sessions." data-original-title="" title=""></i></span>
+                        </div>
+                        <div class="mb-1 text-grey" style="margin-top:15px">
+                            @iT.T(xLan,"1013","Total of Trial Balance")
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-blue fs-8px me-2"></i>
+                                @iT.T(xLan,"1014","Assets")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-Kind-Assets" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-yellow fs-8px me-2"></i>
+                                @iT.T(xLan,"1015","Liability")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-Kind-Liability" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-yellow fs-8px me-2"></i>
+                                @iT.T(xLan,"1016","Equty")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-Kind-Equty" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-success fs-8px me-2"></i>
+                                @iT.T(xLan,"1017","Revenue")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-Kind-Revenue" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-danger fs-8px me-2"></i>
+                                @iT.T(xLan,"1018","Expenses")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-Kind-Expenses" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3">
+                <div class="card border-0 text-truncate text-dark" style="height:212px">
+                    <div class="card-body">
+                        <div class="widget-chart-sidebar">
+                            <div class="chart-number">
+                                <b id="txt-Profit"></b>
+                                <small>@iT.T(xLan,"1019","Profit Total")</small>
+                            </div>
+                            <div class="flex-grow-1 d-flex align-items-center">
+                                <div id="Income-donut-chart" style="height: 135px">
+                                    <svg></svg>
+                                </div>
+                            </div>
+                            <ul class="chart-legend fs-11px">
+                                <li><i class="fa fa-circle fa-fw text-teal fs-9px me-5px t-minus-1"></i><b class="me-1" id="txt-per-rev">0</b><span> @iT.T(xLan,"1020","Revenue Percent")</span></li>
+                                <li><i class="fa fa-circle fa-fw text-red fs-9px me-5px t-minus-1"></i><b class="me-1" id="txt-per-exp">0</b><span> @iT.T(xLan,"1021","Expense Percent")</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xl-8 col-lg-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-3"><b>@iT.T(xLan,"1022","Annual Income Statment")</b> <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Top products with units sold" data-bs-placement="top" data-bs-content="Products with the most individual units sold. Includes orders from all sales channels." data-original-title="" title=""></i></span></div>
+                <div class="row">
+                    <div class="col-xl-3 col-4 ">
+                        <h3 class="mb-1"><span id="txt-Annual-Rev" style="color:#00e30f">0</span></h3>
+                        <div>@iT.T(xLan,"1017","Revenue")</div>
+                    </div>
+                    <div class="col-xl-3 col-4 ">
+                        <h3 class="mb-1"><span id="txt-Annual-Exp" class="text-red">0</span></h3>
+                        <div>@iT.T(xLan,"1974","Expense")</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="chart1" style="height:269px">
+                    <div id="nv-stacked-area-chart" class="h-250px">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-4 col-lg-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-2">
+                    <b>@iT.T(xLan,"1024","Monthly Income Statment")</b>
+                    <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i></span>
+                </div>
+                <div>
+                    <div id="nv-bar-chart" style="height:323px">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-2">
+                    <b>@iT.T(xLan,"1025","Annual Revenue Details")</b>
+                    <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i></span>
+                </div>
+                <div id="xxxx" class="xsc">
+                    <div id="nv-bar-Expenses">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-2">
+                    <b>@iT.T(xLan,"1026","Annual Expenses Details")</b>
+                    <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i></span>
+                </div>
+                <div id="xxxx" class="xsc">
+                    <div id="nv-bar-Revenue">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var Year = 0;
+    var handleDateRangeFilter_Acc = function ()
+    {
+        $('#daterange-filter span').html(moment().startOf('year').format('D MMMM YYYY') + ' - ' + moment().endOf('year').format('D MMMM YYYY'));
+        $('#daterange-filter').daterangepicker({
+            format: 'MM/DD/YYYY',
+            startDate: moment().startOf('year'),
+            endDate: moment().endOf('year'),
+            minDate: '01/01/2000',
+            maxDate: '01/01/2060',
+            dateLimit: { days: 365 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+                'Today': [ moment(), moment() ],
+                'Yesterday': [ moment().subtract(1, 'days'), moment().subtract(1, 'days') ],
+                'Last 7 Days': [ moment().subtract(6, 'days'), moment() ],
+                'Last 30 Days': [ moment().subtract(29, 'days'), moment() ],
+                'This Month': [ moment().startOf('month'), moment().endOf('month') ],
+                'This Year': [ moment().startOf('year'), moment().endOf('year') ]
+            },
+            opens: 'right',
+            drops: 'down',
+            buttonClasses: [ 'btn', 'btn-sm' ],
+            applyClass: 'btn-primary',
+            cancelClass: 'btn-default',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                cancelLabel: 'Cancel',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom',
+                daysOfWeek: [ 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa' ],
+                monthNames: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
+                firstDay: 1
+            }
+        }, function (start, end, label)
+        {
+            $('#daterange-filter span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+            var gap = end.diff(start, 'days');
+        });
+    };
+    $(document).ready(function ()
+    {
+        $('#px-loading').prop('hidden', false);
+        Year = Number('@xYear');
+        handleDateRangeFilter_Acc();
+        LoadAccountsTotal();
+        LoadGLTotal();
+        LoadWeaklyIncomeStatment();
+        LoadMonthlyIncomeStatment();
+        LoadIncomeStatmentDetails();
+        var first = moment().startOf('year').format('DD.MM.YYYY'); //'01.01.' + Year.toString();
+        var lats = moment().endOf('year').format('DD.MM.YYYY');//'31.12.' + Year.toString();
+        LoadTrialBalance(first, lats);
+        LoadTrialBalanceKind(first, lats);
+        $('#daterange-filter').on('apply.daterangepicker', function (ev, picker)
+        {
+            LoadTrialBalance(picker.startDate.format('DD.MM.YYYY'), picker.endDate.format('DD.MM.YYYY'));
+            LoadTrialBalanceKind(picker.startDate.format('DD.MM.YYYY'), picker.endDate.format('DD.MM.YYYY'));
+        });
+           $('#px-loading').prop('hidden', true);
+    });
+    function LoadAccountsTotal ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/AccountsTotal",
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-Acc-Total').text(comma(response.Total));
+                $('#txt-Acc-Transaction').text(comma(response.Transaction));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadGLTotal ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/GLTotal",
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-GL-Total').text(comma(response.Total));
+                $('#txt-GL-Opening').text(comma(response.Opening));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadTrialBalance (first, lats)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/TrialBalance",
+            data: { FirstDate: first, LastDate: lats },
+            dataType: "json",
+            success: function (response)
+            {
+                $.ajax({
+                    type: "get",
+                    url: "/api/Dash/iDashboard/TrialBalanceOpening",
+                    data: { FirstDate: first },
+                    dataType: "json",
+                    success: function (resopning)
+                    {
+                        $('#txt-TBO-Debit').text(comma(resopning.Debit));
+                        $('#txt-TBO-Credit').text(comma(resopning.Credit));
+                        $('#txt-TBO-Balance').text(comma(resopning.Debit - resopning.Credit));
+                        $('#txt-TBT-Debit').text(comma(response.Debit));
+                        $('#txt-TBT-Credit').text(comma(response.Credit));
+                        $('#txt-TBT-Balance').text(comma(response.Debit - response.Credit));
+                        $('#txt-TB-Total').text(comma(response.Debit + resopning.Debit));
+                    },
+                    failure: function (response)
+                    {
+                        alert(response);
+                    },
+                    error: function (response)
+                    {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadTrialBalanceKind (first, lats)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/TrialBalanceKind",
+            data: { FirstDate: first, LastDate: lats },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-Kind-Assets').text(comma(response.Assets));
+                $('#txt-Kind-Liability').text(comma(response.Liability));
+                $('#txt-Kind-Equty').text(comma(response.Equty));
+                $('#txt-Kind-Revenue').text(comma(response.Revenue));
+                $('#txt-Kind-Expenses').text(comma(response.Expenses));
+                $('#txt-Profit').text(comma(response.Expenses + response.Revenue))
+                var incomdonat = [];
+                incomdonat.push({
+                    'label': '  Revenue',
+                    'value': response.Revenue * -1,
+                    'color': '#00e30f'
+                });
+                incomdonat.push({
+                    'label': '  Expensess',
+                    'value': response.Expenses,
+                    'color': app.color.red
+                })
+                var totincom = 0;
+                totincom = (response.Revenue * -1) + response.Expenses;
+                if (totincom == 0)
+                {
+                    $('#txt-per-rev').text('0.00 %');
+                    $('#txt-per-exp').text('0.00 %');
+                } else
+                {
+                    $('#txt-per-rev').text(comma((response.Revenue * -1) * 100 / totincom) + ' %');
+                    $('#txt-per-exp').text(comma(response.Expenses * 100 / totincom) + ' %');
+                }
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.pieChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showLabels(true)     //Display pie labels
+                        .labelThreshold(.05)  //Configure the minimum slice size for labels to show up
+                        .labelType("percent") //Configure what type of data to show in the label. Can be "key", "value" or "percent"
+                        .donut(true)          //Turn on Donut mode. Makes pie chart look tasty!
+                        .donutRatio(0.45)     //Configure how big you want the donut hole size to be.
+                        ;
+                    d3.select('#Income-donut-chart svg')
+                        .datum(incomdonat)
+                        .transition().duration(350)
+                        .call(chart);
+                    return chart;
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadWeaklyIncomeStatment ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/IncomeStatmentWeekly",
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                var Rev = 0, Exp = 0;
+                for (const item of response)
+                {
+                    var d = new Date(item.VoucherDate);
+                    Revenue.push([ d, item.Revenue * -1 ]);
+                    Expenses.push([ d, item.Expenses ]);
+                    Rev += item.Revenue * -1;
+                    Exp += item.Expenses;
+                }
+                $('#txt-Annual-Exp').text(comma(Exp));
+                $('#txt-Annual-Rev').text(comma(Rev));
+                var stackedAreaChartData = [ {
+                    'key': 'Expenses',
+                    'color': app.color.red,
+                    'values': Expenses
+                }, {
+                   'key': 'Revenue',
+                    'color': app.color.success,
+                    'values': Revenue
+                } ];
+                nv.addGraph(function ()
+                {
+                    var stackedAreaChart = nv.models.stackedAreaChart()
+                        .useInteractiveGuideline(true)
+                        .x(function (d) { return d[ 0 ] })
+                        .y(function (d) { return d[ 1 ] })
+                        .controlLabels({ stacked: 'Stacked' })
+                        .showControls(false)
+                        .margin({
+                            bottom: 25,
+                            left: 80
+                        })
+                        .duration(300);
+                    stackedAreaChart.xAxis.tickFormat(function (d) { return d3.time.format('%d.%m')(new Date(d)) });
+                    stackedAreaChart.yAxis.tickFormat(d3.format(',.0f'));
+                    d3.select('#nv-stacked-area-chart svg')
+                        .datum(stackedAreaChartData)
+                        .transition().duration(1000)
+                        .call(stackedAreaChart)
+                        .each('start', function ()
+                        {
+                            setTimeout(function ()
+                            {
+                                d3.selectAll('#nv-stacked-area-chart *').each(function ()
+                                {
+                                    if (this.__transition__)
+                                        this.__transition__.duration = 1;
+                                })
+                            }, 0)
+                        });
+                    nv.utils.windowResize(stackedAreaChart.update);
+                    return stackedAreaChart;
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadMonthlyIncomeStatment ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/IncomeStatmentMonthly",
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                for (const item of response)
+                {
+                    Revenue.push({ x: item.Month, y: item.Revenue * -1 });
+                    Expenses.push({ x: item.Month, y: item.Expenses });
+                }
+                var barChartData = [ {
+                    'key': 'Rev',
+                    'color': app.color.success,
+                    'values': Revenue
+                }, {
+                    'key': 'Exp',
+                    'color': app.color.red,
+                    'values': Expenses
+                } ];
+                nv.addGraph({
+                    generate: function ()
+                    {
+                        var stackedBarChart = nv.models.multiBarChart()
+                            .stacked(false)
+                            .showControls(true)
+                            .reduceXTicks(false)
+                            .margin({
+                                left: 80
+                            });
+                        stackedBarChart.xAxis
+                            .axisLabel("Months")
+                        var svg = d3.select('#nv-bar-chart svg').datum(barChartData);
+                        svg.transition().duration(0).call(stackedBarChart);
+                        return stackedBarChart;
+                    }
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadIncomeStatmentDetails ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/IncomeStatmentDetails",
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                for (const item of response)
+                {
+                    if(item.Kind==3){
+                           Revenue.push({ "label": item.Display, "value": item.Balance });
+                    }
+                    if(item.Kind==4){
+                           Expenses.push({ "label": item.Display, "value": item.Balance });
+                    }
+                }
+                //Revenue
+                var barChartDataRev = [ {
+                    'key': 'Revenue',
+                    'color': '#4f99b4',
+                    'values': Revenue
+                }  ];
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((Revenue.length * 20) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-Revenue svg')
+                        .datum(barChartDataRev)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-Revenue').css('height', (Revenue.length * 20) + 70);
+                //Expenses
+                 var barChartDataExp = [ {
+                    'key': 'Expenses',
+                   'color': app.color.red,
+                    'values': Expenses
+                }  ];
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((Expenses.length * 20) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-Expenses svg')
+                        .datum(barChartDataExp)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-Expenses').css('height', (Expenses.length * 20) + 70);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

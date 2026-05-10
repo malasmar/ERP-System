@@ -1,0 +1,152 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string currentPath = Context.Request.Path.Value.ToLower();
+}
+
+<div class="menu">
+
+    <!-- SEARCH -->
+    <div class="menu-search mb-3 px-3">
+        <div class="position-relative">
+            <i class="fa fa-search position-absolute text-muted"
+               style="top:50%;left:15px;transform:translateY(-50%);z-index:10;"></i>
+
+            <input type="text"
+                   class="form-control rounded-pill bg-light border-0 ps-5"
+                   placeholder="@iT.T(xLan, "1140", "Search menu...")"
+                   data-sidebar-search="true" />
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="menu-header">@iT.T(xLan, "1141", "Main")</div>
+
+    <div class="menu-item @(currentPath == "/accounting" ? "active" : "")">
+        <a href="/Accounting"
+               class="menu-link"
+               data-ajax="true"
+               data-ajax-update="#content"
+               data-ajax-complete="PushStatus($(this))">
+            <div class="menu-icon"><i class="fa fa-home"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1142", "Home")</div>
+        </a>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="menu-header">@iT.T(xLan, "1244", "Accounting Cards")</div>
+
+    <div class="menu-item @(currentPath.Contains("/roots") ? "active" : "")">
+        <a href="/Accounting/Cards/Roots?fastlink=1"
+               class="menu-link"
+               data-ajax="true"
+               data-ajax-update="#content">
+            <div class="menu-icon"><i class="fa fa-folder-open"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1245", "Root Accounts")</div>
+        </a>
+    </div>
+
+    <div class="menu-item @(currentPath.Contains("/accounts") ? "active" : "")">
+        <a href="/Accounting/Cards/Accounts?fastlink=1"
+               class="menu-link"
+               data-ajax="true"
+               data-ajax-update="#content">
+            <div class="menu-icon"><i class="fa fa-address-card"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1246", "Accounts Cards")</div>
+        </a>
+    </div>
+
+    <div class="menu-item @(currentPath.Contains("accountstree") ? "active" : "")">
+        <a href="/Accounting/Cards/AccountsTree"
+               class="menu-link"
+               data-ajax="true"
+               data-ajax-update="#content">
+            <div class="menu-icon"><i class="fa fa-sitemap"></i></div>
+            <div class="menu-text">@iT.T(xLan, "2428", "Accounts Tree")</div>
+        </a>
+    </div>
+
+    <!-- SUB MENU -->
+    <div class="menu-header">@iT.T(xLan, "1247", "Definitions & Operations")</div>
+
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon"><i class="fa fa-layer-group"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1155", "Chart of Accounts")</div>
+            <div class="menu-caret"></div>
+        </a>
+
+        <div class="menu-submenu">
+
+            <div class="menu-item">
+                <a href="/Accounting/Cards/Roots"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1249", "Roots")</div>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="/Accounting/Cards/Accounts"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1155", "Chart of Accounts")</div>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="/Accounting/Cards/ChartofAccountTree"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1250", "Accounts Tree")</div>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="/Accounting/Cards/BulkEdit"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1251", "Bulk Edit")</div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FINANCIAL -->
+    <div class="menu-header">@iT.T(xLan, "1253", "Reporting & Analysis")</div>
+
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon"><i class="fa fa-chart-line"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1006", "Trial Balance")</div>
+            <div class="menu-caret"></div>
+        </a>
+
+        <div class="menu-submenu">
+
+            <div class="menu-item">
+                <a href="/Accounting/Reports/TrialBalance"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1237", "Analytical Trial Balance")</div>
+                </a>
+            </div>
+
+            <div class="menu-item">
+                <a href="/Accounting/Reports/TrialBalanceTree"
+                       class="menu-link"
+                       data-ajax="true"
+                       data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "2324", "Tree Trial Balance")</div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>

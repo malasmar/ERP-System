@@ -1,0 +1,78 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2532","Parent Transactions")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiAccounting.Audit.ParentTransactions>().ID("grd-ParentTransactions")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Auditing")
+                    .Key("Key")
+                    .LoadAction("ParentTransactions"))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
+                        columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1167", "Parent Code")).Width(100);
+                        columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Level")).Width(70);
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2532", "Parent Transactions")))
+                    .RowAlternationEnabled(true)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script class="append-on-ajax-script">
+ 
+     function RefreshGrid ()
+    {
+        $('#grd-ParentTransactions').dxDataGrid("instance").refresh();
+    }
+</script>

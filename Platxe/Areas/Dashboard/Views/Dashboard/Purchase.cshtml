@@ -1,0 +1,579 @@
+@{
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<style>
+    .tick line {
+        display: none;
+    }
+</style>
+<link href="~/template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+<h1 class="page-header">@iT.T(xLan,"1080","Purchasing Dashboard ") <span class="badge bg-Yellow">v14.2</span></h1>
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-user"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1081","Suppliers Total")</div>
+                <div class="stats-number" id="txt-Clients">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 70.1%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">@iT.T(xLan,"1082","All the Supplier cards in the system.")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-user-tie"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1083","Active Supplier")</div>
+                <div class="stats-number" id="txt-ActiveClients">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 40.5%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">@iT.T(xLan,"1084","Active Supplier they have invoices.")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-circle-dollar-to-slot"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1085","Credit Supplier")</div>
+                <div class="stats-number" id="txt-Credit">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 76.3%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">
+                    <b id="txt-DebitCount">0</b>
+                    @iT.T(xLan,"1086","Supplier have Credit balance.")
+                    <a href="javascript:;" class="btn btn-xs btn-warning fs-10px float-end">@iT.T(xLan,"1035","More Details")</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up-from-bracket"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1087","Debit Supplier")</div>
+                <div class="stats-number" id="txt-Debit">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 54.9%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">
+                    <b id="txt-CreditCount">0</b>
+                    @iT.T(xLan,"1088","Supplier have Debit balance.")
+                    <a href="javascript:;" class="btn btn-xs btn-warning fs-10px float-end">@iT.T(xLan,"1035","More Details")</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="d-sm-flex align-items-center mb-3">
+    <a href="javascript:;" class="btn btn-dark me-2 text-truncate" id="daterange-filter">
+        <i class="fa fa-calendar fa-fw text-white text-opacity-50 ms-n1"></i>
+        <span>20 October 2022 - 27 October 2022</span>
+        <b class="caret ms-1 opacity-5"></b>
+    </a>
+    <div class="text-dark-300 fw-bold mt-2 mt-sm-0">compared to <span id="daterange-prev-date">12 October - 19 October 2022</span></div>
+</div>
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card border-0 mb-3 overflow-hidden text-dark" style="height:205px">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-12">
+                        <div class="mb-3">
+                            <b>@iT.T(xLan,"1089","Purchasing Total")</b>
+                            <span class="ms-2">
+                                <i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i>
+                            </span>
+                        </div>
+                        <div class="d-flex mb-1">
+                            <h2 class="mb-0"><span id="txt-PurchaseRange-PurchaseAmount">0</span></h2>
+                        </div>
+                        <div class="mb-3">
+                            <b id="txt-PurchaseRange-Net">0</b> @iT.T(xLan,"1090","Purchase Afetr Return")
+                        </div>
+                        <hr>
+                        <div class="row text-truncate">
+                            <div class="col-4">
+                                <div class="">@iT.T(xLan,"1091","Purchasing Quantity")</div>
+                                <div class="fs-18px mb-5px fw-bold" id="txt-PurchaseRange-PurchaseQty">0</div>
+                                <div class="progress h-5px rounded-3 bg-silver mb-5px">
+                                    <div class="progress-bar progress-bar-striped rounded-right bg-green" data-animation="width" data-value="55%" style="width: 55%;"></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="">@iT.T(xLan,"1092","Return Amount")</div>
+                                <div class="fs-18px mb-5px fw-bold"><span id="txt-PurchaseRange-ReturnAmount">0</span></div>
+                                <div class="progress h-5px rounded-3 bg-silver mb-5px">
+                                    <div class="progress-bar progress-bar-striped rounded-right" data-animation="width" data-value="55%" style="width: 55%;"></div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="">@iT.T(xLan,"1093","Return Quantity")</div>
+                                <div class="fs-18px mb-5px fw-bold"><span id="txt-PurchaseRange-ReturnQty">0</span></div>
+                                <div class="progress h-5px rounded-3 bg-silver mb-5px">
+                                    <div class="progress-bar progress-bar-striped rounded-right" data-animation="width" data-value="55%" style="width: 55%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card border-0 text-truncate mb-3 text-dark" style="height:200px">
+                    <div class="card-body">
+                        <div class="mb-3 ">
+                            <b class="mb-3">@iT.T(xLan,"1094","Purchasing Details")</b>
+                            <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Conversion Rate" data-bs-placement="top" data-bs-content="Percentage of sessions that resulted in orders from total number of sessions." data-original-title="" title=""></i></span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            <h2 class="mb-0"><span id="txt-SalesDetailsTotal">0</span></h2>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-red fs-8px me-2"></i>
+                                @iT.T(xLan,"1009","Credit")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-SD-Credit" class="text-end">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-warning fs-8px me-2"></i>
+                                @iT.T(xLan,"1095","Cash")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-SD-Cash" class="text-end">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-warning fs-8px me-2"></i>
+                                @iT.T(xLan,"1096","Bank")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-SD-Bank" class="text-end">0.00</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-lime fs-8px me-2"></i>
+                                @iT.T(xLan,"1097","Discount")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="text-end ps-2 fw-bold"><span id="txt-SD-Discount" class="text-end">0.00</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card border-0 text-truncate mb-3 text-dark" style="height:200px">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <b class="mb-3">@iT.T(xLan,"1098","Purchasing Kind")</b>
+                            <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Store Sessions" data-bs-placement="top" data-bs-content="Number of sessions on your online store. A session is a period of continuous activity from a visitor." data-original-title="" title=""></i></span>
+                        </div>
+                        <div class="d-flex align-items-center mb-1">
+                            <h2 class="mb-0"><span id="txt-ik-Total">0</span></h2>
+                        </div>
+                        <div class="d-flex mb-2 mt-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-teal fs-8px me-2"></i>
+                                @iT.T(xLan,"1099","Stock Items")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="small"><span id="txt-ikp-Stock">0</span> %</div>
+                                <div class="text-end ps-2 fw-bold"><span id="txt-ik-Stock" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-blue fs-8px me-2"></i>
+                                @iT.T(xLan,"1100","Services")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="small"><span id="txt-ikp-Services">0</span> %</div>
+                                <div class="text-end ps-2 fw-bold"><span id="txt-ik-Services" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-circle text-cyan fs-8px me-2"></i>
+                                @iT.T(xLan,"1101","Fixture")
+                            </div>
+                            <div class="d-flex align-items-center ms-auto">
+                                <div class="small"><span id="txt-ikp-Fixture">0</span> %</div>
+                                <div class="text-end ps-2 fw-bold"><span id="txt-ikp-Fixture" class="text-end">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-9">
+        <div class="card border-0 mb-1 text-dark">
+            <div class="card-body">
+                <div class="mb-1">
+                    <b>@iT.T(xLan,"1102","Annual Purchasing")</b>
+                </div>
+                <div class="row m-0">
+                    <div class="col-xl-9 col-lg-9">
+                        <div id="nv-bar-chart" style="height:330px">
+                            <svg></svg>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 p-1">
+                        <div class="widget-chart-info">
+                            <h4 class="widget-chart-info-title">@iT.T(xLan,"1976","Total sales")</h4>
+                            <p class="widget-chart-info-desc">@iT.T(xLan,"1104","Lorem ipsum dolor sit consectetur adipiscing elit.")</p>
+                            <div class="widget-chart-info-progress">
+                                <b>@iT.T(xLan,"1105","Monthly Plan")</b>
+                                <span class="float-end">70%</span>
+                            </div>
+                            <div class="progress h-10px">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill" style="width:70%;"></div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="widget-chart-info">
+                            <h4 class="widget-chart-info-title">@iT.T(xLan,"1106","Task progress")</h4>
+                            <p class="widget-chart-info-desc">@iT.T(xLan,"1107","Vestibulum sollicitudin in lectus a cursus.")</p>
+                            <div class="widget-chart-info-progress">
+                                <b>@iT.T(xLan,"1108","Marketing Research")</b>
+                                <span class="float-end">74%</span>
+                            </div>
+                            <div class="progress h-10px mb-15px">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-indigo" style="width: 74%"></div>
+                            </div>
+                            <div class="widget-chart-info-progress">
+                                <b>@iT.T(xLan,"1109","Mobile App Development")</b>
+                                <span class="float-end">25%</span>
+                            </div>
+                            <div class="progress h-10px mb-15px">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-green" style="width: 25%"></div>
+                            </div>
+                            <div class="widget-chart-info-progress">
+                                <b>@iT.T(xLan,"1110","Website Redesign")</b>
+                                <span class="float-end">95%</span>
+                            </div>
+                            <div class="progress h-10px">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-orange" style="width: 95%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="card border-0 mb-3 text-dark" style="height:380px">
+            <div class="card-body">
+                <div class="mb-1">
+                    <b>@iT.T(xLan,"1111","Top Produts Purchase")</b>
+                    <span class="ms-2 "><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Top products with units sold" data-bs-placement="top" data-bs-content="Products with the most individual units sold. Includes orders from all sales channels."></i></span>
+                </div>
+                <div id="div-ItemsSales" style="height:330px" class="overflow-auto">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var Year = 0;
+    var handleDateRangeFilter = function ()
+    {
+        $('#daterange-filter span').html(moment().startOf('month').format('D MMMM YYYY') + ' - ' + moment().endOf('month').format('D MMMM YYYY'));
+        $('#daterange-prev-date').html(moment().startOf('month').subtract('year', 1).format('D MMMM') + ' - ' + moment().endOf('month').subtract('year', 1).format('D MMMM YYYY'));
+        $('#daterange-filter').daterangepicker({
+            format: 'MM/DD/YYYY',
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month'),
+            minDate: '01/01/2000',
+            maxDate: '01/01/2060',
+            dateLimit: { days: 365 },
+            showDropdowns: true,
+            showWeekNumbers: true,
+            timePicker: false,
+            timePickerIncrement: 1,
+            timePicker12Hour: true,
+            ranges: {
+                'Today': [ moment(), moment() ],
+                'Yesterday': [ moment().subtract(1, 'days'), moment().subtract(1, 'days') ],
+                'Last 7 Days': [ moment().subtract(6, 'days'), moment() ],
+                'Last 30 Days': [ moment().subtract(29, 'days'), moment() ],
+                'This Month': [ moment().startOf('month'), moment().endOf('month') ],
+                'This Year': [ moment().startOf('year'), moment().endOf('year') ]
+            },
+            opens: 'right',
+            drops: 'down',
+            buttonClasses: [ 'btn', 'btn-sm' ],
+            applyClass: 'btn-primary',
+            cancelClass: 'btn-default',
+            separator: ' to ',
+            locale: {
+                applyLabel: 'Submit',
+                cancelLabel: 'Cancel',
+                fromLabel: 'From',
+                toLabel: 'To',
+                customRangeLabel: 'Custom',
+                daysOfWeek: [ 'Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa' ],
+                monthNames: [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ],
+                firstDay: 1
+            }
+        }, function (start, end, label)
+        {
+            $('#daterange-filter span').html(start.format('D MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'));
+            var gap = end.diff(start, 'days');
+            $('#daterange-prev-date').html(moment(start).subtract('year', 1).format('D MMMM') + ' - ' + moment(end).subtract('year', 1).format('D MMMM YYYY'));
+        });
+    };
+    $(document).ready(function ()
+    {
+        handleDateRangeFilter();
+        Year = Number('@xYear');
+        LoadSuppliers();
+        LoadSuppliersBalance();
+        LoadMonthlyIncomeStatment();
+        LoadTopItems();
+        //var f = moment();
+        var first = moment().startOf('month').format('DD.MM.YYYY'); //'01.01.' + Year.toString();
+        var lats = moment().endOf('month').format('DD.MM.YYYY');//'31.12.' + Year.toString();
+        LoadPurchaseRange(first, lats);
+        LoadPurchaseKind(first, lats);
+        LoadPurchaseItemKind(first, lats);
+        $('#daterange-filter').on('apply.daterangepicker', function (ev, picker)
+        {
+            LoadPurchaseRange(picker.startDate.format('DD.MM.YYYY'), picker.endDate.format('DD.MM.YYYY'));
+            LoadPurchaseKind(picker.startDate.format('DD.MM.YYYY'), picker.endDate.format('DD.MM.YYYY'));
+            LoadPurchaseItemKind(picker.startDate.format('DD.MM.YYYY'), picker.endDate.format('DD.MM.YYYY'));
+        });
+    });
+    function LoadSuppliers ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/Suppliers",
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-Clients').text(comma(response.Count));
+                $('#txt-ActiveClients').text(comma(response.Active));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadSuppliersBalance ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/SuppliersBalance",
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-Debit').text(comma(response.Debit));
+                $('#txt-Credit').text(comma(response.Credit));
+                $('#txt-DebitCount').text(comma(response.DebitCount));
+                $('#txt-CreditCount').text(comma(response.CreditCount));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadPurchaseRange (FirstDate, LastDate)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/PurchaseTotal",
+            data: { FirstDate: FirstDate, LastDate: LastDate },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-PurchaseRange-PurchaseAmount').text(comma(response.Purchase));
+                $('#txt-PurchaseRange-Net').text(comma(response.Purchase - response.Return));
+                $('#txt-PurchaseRange-PurchaseQty').text(comma(response.PurchaseQty));
+                $('#txt-PurchaseRange-ReturnAmount').text(comma(response.Return));
+                $('#txt-PurchaseRange-ReturnQty').text(comma(response.ReturnQty));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadPurchaseKind (first, lats)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/PurchaseAccountsKind",
+            data: { FirstDate: first, LastDate: lats },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-SalesDetailsTotal').text(comma(response.Credit + response.Cash + response.Bank))
+                $('#txt-SD-Credit').text(comma(response.Credit))
+                $('#txt-SD-Cash').text(comma(response.Cash))
+                $('#txt-SD-Bank').text(comma(response.Bank))
+                $('#txt-SD-Discount').text(comma(response.Discount))
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadPurchaseItemKind (first, lats)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/PurchaseItemKindTotal",
+            data: { FirstDate: first, LastDate: lats },
+            dataType: "json",
+            success: function (response)
+            {
+                var tot = 0;
+                tot = response.Stock + response.Service + response.Fixture;
+                $('#txt-ik-Total').text(comma(response.Stock + response.Service + response.Fixture));
+                $('#txt-ik-Stock').text(comma(response.Stock));
+                $('#txt-ik-Services').text(comma(response.Service));
+                $('#txt-ik-Fixture').text(comma(response.Fixture));
+                $('#txt-ikp-Stock').text(comma(response.Stock * 100 / tot));
+                $('#txt-ikp-Services').text(comma(response.Service * 100 / tot));
+                $('#txt-ikp-Fixture').text(comma(response.Fixture * 100 / tot));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadMonthlyIncomeStatment ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/MonthlyPurchase",
+            dataType: "json",
+            success: function (response)
+            {
+                var Purchase = [];
+                var Return = [];
+                for (const item of response)
+                {
+                    Purchase.push({ x: item.Month, y: item.Purchase });
+                    Return.push({ x: item.Month, y: item.Return });
+                }
+                var barChartData = [ {
+                    'key': 'Purchase',
+                    'color': app.color.success,
+                    'values': Purchase
+                }, {
+                    'key': 'Return',
+                    'color': app.color.red,
+                    'values': Return
+                } ];
+                nv.addGraph({
+                    generate: function ()
+                    {
+                        var stackedBarChart = nv.models.multiBarChart()
+                            .stacked(false)
+                            .showControls(true)
+                            .reduceXTicks(false)
+                            .margin({
+                                left: 80,
+                                bottom: 50
+                            });
+                        stackedBarChart.xAxis
+                            .axisLabel("Months")
+                        var svg = d3.select('#nv-bar-chart svg').datum(barChartData);
+                        svg.transition().duration(0).call(stackedBarChart);
+                        return stackedBarChart;
+                    }
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadTopItems ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/Top10PurchaseItems",
+            dataType: "json",
+            success: function (response)
+            {
+                $('#div-ItemsSales').empty();
+                var str = '';
+                for (const item of response)
+                {
+                    str = '';
+                    str += '       <div class="d-flex align-items-center me-1">'
+                    str += '                  <div class="text-truncate">'
+                    str += '                      <div>' + item.Display + '</div>'
+                    str += '                      <div class="text-danger fw-500">' + comma(item.Purchase) + ' SR</div>'
+                    str += '                  </div>'
+                    str += '                  <div class="ms-auto text-end">'
+                    str += '                      <div class="fs-13px fw-600"><span>' + comma(item.PurchaseQty) + '</span></div>'
+                    str += '                      <div class="fs-10px">sold</div>'
+                    str += '                  </div>'
+                    str += '        </div>'
+                    $('#div-ItemsSales').append(str);
+                }
+                str = '  <div class="ps__rail-y" style="top: 128px; height: 300px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 90px; height: 209px;"></div></div>'
+                $('#div-ItemsSales').append(str);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

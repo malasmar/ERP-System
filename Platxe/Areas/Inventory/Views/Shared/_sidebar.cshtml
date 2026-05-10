@@ -1,0 +1,108 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Inventory" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1643","Inventory Definitions")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1644","Inventory Cards")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Cards/Warehouse" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1580","Warehouse Cards")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Cards/Unit" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1577","Unit Cards")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Cards/Category" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1436","Categories")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1645","Stock Item Cards")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Cards/StockItem" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1646","Stock Item")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Cards/PackageItems" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2387","Package Items")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1647","Stock Batches")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/StockBatches/ItemBatch" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1648","Item Batche")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1649","Stock Tag")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/StockTag/Color" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1650","Color")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/StockTag/Size" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1651","Size")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/StockTag/Price" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1187","Price")</div></a></div>
+        </div>
+    </div>
+       <div class="menu-header">@iT.T(xLan,"2567","Inventory Operation")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2568","Inventory Operations")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Operation/Stocktaking" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2565","Upload Stocktaking")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1652","Inventory Documents")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1653","Opening Operations")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Documents/OpeningBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1638","Opening Balance")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Manager/OpeningStock" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2569","Opening Balance List")</div></a></div>
+
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1654","Consumption")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Documents/Consumption" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1623","Consumption Stock")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Documents/ConsumptionReturn" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1634","Consumption Return")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2570","Consumption List")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Manager/Consumption" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1623","Consumption Stock")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Manager/ReConsumption" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1634","Consumption Return")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2388","Warehouse Transfer")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Documents/SendToWarehouse" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2389","Send Warehouse")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Documents/ReceiptInWarehouse" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2390","Receipt Warehouse")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Manager/TransferOut" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2654","Transfer Out")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Manager/TransferIncome" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2655","Income Transfer")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2391","Stock Reports")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2392","Stock Statments")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Reports/StockStatment" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2371","Stock Statment")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Reports/StockFullStatment" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2510","Stock Full Statment")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2505","Stock Balance")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Inventory/Reports/WarehouseBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2523","Warehouse Balance")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Reports/WarehousesBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2513","Warehouses Balance")</div></a></div>
+            <div class="menu-item"><a href="/Inventory/Reports/BalanceBaseWarehouse" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2514","Balance Base Warehouse")</div></a></div>
+
+        </div>
+    </div>
+    <div class="menu-item">
+        <a href="/Inventory/Reports/TransactionsDetails" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"2656","Transactions Details")</div></a>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">@iT.T(xLan,"1261","Collapse")</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

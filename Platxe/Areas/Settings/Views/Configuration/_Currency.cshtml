@@ -1,0 +1,117 @@
+@model CLiCore.Configuration.Currency
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1818","Curency Card")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Currency" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").Width(130).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1274","Arabic Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1774","Sub Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.SubCode).ID("cnt-SubCode").Width(130).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1775","Sub Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.SubName1).ID("cnt-SubName1").Width("70%").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1775","Sub Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.SubName2).ID("cnt-SubName2").Width("70%").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1608","Rate Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.RateKind).ID("cnt-Kind").Width(160).DataSource(iReplacer.finCurrencyRate(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1346","Rate")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Rate).ID("cnt-Rate").Width(100)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(70).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Currency").submit(function(event) {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount() {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Currency').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/Settings/iconfiguration/UpdateCurrency",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Currency").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

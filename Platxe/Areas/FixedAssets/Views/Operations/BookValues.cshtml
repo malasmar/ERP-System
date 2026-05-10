@@ -1,0 +1,178 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2196","Book Values")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" class="btn btn-yellow text-dark" onclick="BookValues(null)">@iT.T(xLan, "2197","New Book Values")</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.FixedAssets.Operation.BookValues>().ID("grd-BookValues")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ioperations").Area("FixedAssets")
+                    .Key("OperationKey")
+                    .LoadAction("BookValues"))
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(65).AllowFixing(true).Fixed(true).FixedPosition(devFixd).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.Status).Caption(iT.T(xLan, "1282", "Status")).Width(75).Lookup(L => L.DataSource(iReplacer.finAudit(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Status"));
+                        columns.AddFor(m => m.VoucherDate).Caption(iT.T(xLan, "2172", "Date")).Width(80).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "2198", "No")).Width(60);
+                        columns.AddFor(m => m.ReferenceNo).Caption(iT.T(xLan, "1852", "Reference"));
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).Width("50%").MinWidth(100).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Branch).Caption(iT.T(xLan, "1281", "Branch")).Lookup(L => L.DataSource(CLiFinancial.Selections.Branches.GetList(DB, xLan)).ValueExpr("No").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Prefix).Caption(iT.T(xLan, "1328", "Prefix")).Lookup(L => L.DataSource(CLiFinancial.Selections.Prefix.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.VoucherDate).SummaryType(SummaryType.Count);
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-BookValues" class="modal"><div class="modal-dialog modal-lg" style="margin-top:100px" id="con-BookValues"></div></div>
+
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: "edit" },
+                { icon: "print" }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'edit')
+                        {
+                            BookValues(options.data.OperationKey);
+                        }
+                        break;
+                    case 1:
+                        if (e.itemData.icon == 'trash')
+                        {
+                            DeleteRow(options.data.Key, options.data.Name1);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+
+    function BookValues (Key)
+    {
+        $('#con-BookValues').empty();
+        $("#con-BookValues").load('/FixedAssets/Operations/BookValuesDetails?Key=' + Key);
+        $("#mod-BookValues").modal({ backdrop: 'static' }).modal('toggle');
+    }
+
+    function RefreshGrid ()
+    {
+        $('#grd-BookValues').dxDataGrid("instance").refresh();
+    }
+    function ct4Status (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+    function EditAmount ()
+    {
+        if ($("#Details-Fixture").dxLookup('option', 'value') == null)
+            return;
+
+        var selectedFixture = $("#Details-Fixture").dxLookup('instance').option('selectedItem');
+        var CurrDate = new Date($('#cntsb-VoucherDate').dxDateBox('option', 'value'));
+        var PurDate = new Date($('#Details-PurDate').dxDateBox('option', 'value'));
+
+        var qty = 0, unitprice = 0, tot = 0;
+        qty = $('#Details-Quantity').dxNumberBox('option', 'value');
+        unitprice = $('#Details-UnitPrice').dxNumberBox('option', 'value');
+        $('#Details-Total').dxNumberBox('option', 'value', qty * unitprice);
+        tot = qty * unitprice;
+        var days = 0;
+        days = (CurrDate.getTime() - PurDate.getTime()) / (1000 * 3600 * 24);
+        var per = 0;
+        per = selectedFixture.Percent;
+        var dep = 0;
+        dep = (tot * (days / 365) * per) / 100;
+
+        $('#txt-PurDate').text($('#Details-PurDate').dxDateBox('option', 'text'));
+        $('#txt-CurrDate').text($('#cntsb-VoucherDate').dxDateBox('option', 'text'));
+        $('#txt-Percent').text(per + ' %');
+
+        $('#txt-Total').text(comma(tot));
+        $('#txt-Depreciation').text(comma(dep));
+        $('#txt-Value').text(comma(tot - dep));
+
+    }
+</script>

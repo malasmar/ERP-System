@@ -1,0 +1,90 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Auditing" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2329","Audit Operation")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2330","Accounting Auditor")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/Operation/UnpostedVouchers" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2331","Unposted Vouchers")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2534","Accounting Auditing")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2535","Accounting Review")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/Accounting/GeneralLedgerDiff" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2536","General Ledger Difference")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/Accounting/NullGeneralLedger" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2537","Null General Ledger")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/Accounting/ParentTransactions" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2538","Acc.Parent Transactions")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2539","Accounting Operation")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/Accounting/TransferTransactions" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2540","Transfer Acc. Transactions")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/Accounting/CloseFinancialYear" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2691","Close Financial Year")</div></a></div>
+
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2615","Financial Auditing")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2616","Check Integration")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/Integration/FinancialCards" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2595","Financial Cards")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/Operation/PostVAT" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2702","Re-Post VAT")</div></a></div>
+
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2430","Stock Cost Auditing")</div>
+    <div class="menu-item">
+        <a href="/Auditing/StockCost/RecalculateCost" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"2435","Recalculate Items Cost")</div></a>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2431","Stock Cost Review")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/StockCost/ItemsCost" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2432","Items Cost")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/StockCost/ItemsCostPrices" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2433","Items Cost Prices")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/StockCost/SalesInvoicesItemsCost" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2434","Sales Invoices Cost")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2617","Inventory Cost Review")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/InventoryReports/ItemsCostAudit" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2618","Items Values Audit")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/ItemsCostAuditWarehouse" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2619","Items Values Audit-W")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/WarehousesValues" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2620","Warehouses Values")</div></a></div>
+
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2621","Inventory Reports")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Auditing/InventoryReports/WarehouseBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2523","Warehouse Balance")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/WarehousesBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2513","Warehouses Balance")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/BalanceBaseWarehouse" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2514","Balance Base Warehouse")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/StockStatment" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2371","Stock Statment")</div></a></div>
+            <div class="menu-item"><a href="/Auditing/InventoryReports/StockFullStatment" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2510","Stock Full Statment")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2555","Stock Operation")</div>
+    <div class="menu-item">
+        <a href="/Auditing/Inventory/StocktakingOffset" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"2545","Stocktaking Offset")</div></a>
+    </div>
+         <div class="menu-item">
+        <a href="/Auditing/Inventory/StockOpeningBalance" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"2556","Stock Opening Balance")</div></a>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">Collapse</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

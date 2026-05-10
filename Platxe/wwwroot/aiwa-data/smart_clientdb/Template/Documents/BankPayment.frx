@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/14/2022 13:03:03" ReportInfo.Modified="03/08/2023 13:23:53" ReportInfo.CreatorVersion="2019.3.5.0">
+  <Dictionary>
+    <TableDataSource Name="Company Profile" ReferenceName="Company Profile" DataType="System.Int32" Enabled="true">
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="RC" DataType="System.String"/>
+      <Column Name="vatRNo" DataType="System.String"/>
+      <Column Name="Commercial" DataType="System.String"/>
+      <Column Name="Economic" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+      <Column Name="AddressEnglish" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="Transaction Header" ReferenceName="Transaction Header" DataType="System.Int32" Enabled="true">
+      <Column Name="RecNo" DataType="System.Int32"/>
+      <Column Name="OperationKey" DataType="System.Guid"/>
+      <Column Name="CreateUser" DataType="System.Int32"/>
+      <Column Name="CreateDate" DataType="System.DateTime"/>
+      <Column Name="LastupUser" DataType="System.Int32"/>
+      <Column Name="LastupDate" DataType="System.DateTime"/>
+      <Column Name="Status" DataType="System.Int32"/>
+      <Column Name="Branch" DataType="System.Int32"/>
+      <Column Name="DocumentKind" DataType="System.Int32"/>
+      <Column Name="VoucherNo" DataType="System.Int32"/>
+      <Column Name="VoucherDate" DataType="System.DateTime"/>
+      <Column Name="MonthlyNo" DataType="System.Int32"/>
+      <Column Name="ReferenceNo" DataType="System.String"/>
+      <Column Name="ReferenceDate" DataType="System.DateTime"/>
+      <Column Name="DueDate" DataType="System.DateTime"/>
+      <Column Name="AccountKind" DataType="System.Int32"/>
+      <Column Name="AccountCode" DataType="System.String"/>
+      <Column Name="AccountName1" DataType="System.String"/>
+      <Column Name="AccountName2" DataType="System.String"/>
+      <Column Name="Description" DataType="System.String"/>
+      <Column Name="TransactionNo" DataType="System.String"/>
+      <Column Name="Currency" DataType="System.String"/>
+      <Column Name="Subtotal" DataType="System.Decimal"/>
+      <Column Name="vatAmount" DataType="System.Decimal"/>
+      <Column Name="Total" DataType="System.Decimal"/>
+      <Column Name="Rows" DataType="System.Int32"/>
+      <Column Name="IcloudExp" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="RecipientName" DataType="System.String"/>
+      <Column Name="CategoryName1" DataType="System.String"/>
+      <Column Name="CategoryName2" DataType="System.String"/>
+      <Column Name="PrefixNo" DataType="System.Int32"/>
+      <Column Name="PrefixName1" DataType="System.String"/>
+      <Column Name="PrefixName2" DataType="System.String"/>
+      <Column Name="ArabicText" DataType="System.String"/>
+      <Column Name="EnglishText" DataType="System.String"/>
+      <Column Name="CategoryJVName1" DataType="System.String"/>
+      <Column Name="CategoryJVName2" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="Transaction Details" ReferenceName="Transaction Details" DataType="System.Int32" Enabled="true">
+      <Column Name="RecNo" DataType="System.Int32"/>
+      <Column Name="Key" DataType="System.Guid"/>
+      <Column Name="Index" DataType="System.Int32"/>
+      <Column Name="Status" DataType="System.Int32"/>
+      <Column Name="ReferenceNo" DataType="System.String"/>
+      <Column Name="ReferenceDate" DataType="System.DateTime"/>
+      <Column Name="TransactionNo" DataType="System.String"/>
+      <Column Name="AccountKind" DataType="System.Int32"/>
+      <Column Name="AccountType" DataType="System.Int32"/>
+      <Column Name="AccountCode" DataType="System.String"/>
+      <Column Name="AccountName1" DataType="System.String"/>
+      <Column Name="AccountName2" DataType="System.String"/>
+      <Column Name="CostCenter" DataType="System.Guid"/>
+      <Column Name="Project" DataType="System.Guid"/>
+      <Column Name="Client" DataType="System.Guid"/>
+      <Column Name="Person" DataType="System.Guid"/>
+      <Column Name="Description" DataType="System.String"/>
+      <Column Name="DC" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="Amount" DataType="System.Decimal"/>
+      <Column Name="vatKey" DataType="System.Guid"/>
+      <Column Name="vatRate" DataType="System.Decimal"/>
+      <Column Name="vatAmount" DataType="System.Decimal"/>
+      <Column Name="Total" DataType="System.Decimal"/>
+      <Column Name="cxAmount" DataType="System.Decimal"/>
+      <Column Name="cxvatAmount" DataType="System.Decimal"/>
+      <Column Name="cxTotal" DataType="System.Decimal"/>
+      <Column Name="IsVAT" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="Hidden" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="vatRegNo" DataType="System.String"/>
+      <Column Name="vatCurrent" DataType="System.String"/>
+      <Column Name="Importation" DataType="System.Guid"/>
+      <Column Name="ExpensesKind" DataType="System.Int32"/>
+      <Column Name="PaymentKind" DataType="System.Int32"/>
+      <Column Name="CostCenterCode" DataType="System.String"/>
+      <Column Name="CostCenterName1" DataType="System.String"/>
+      <Column Name="CostCenterName2" DataType="System.String"/>
+      <Column Name="ProjectCode" DataType="System.String"/>
+      <Column Name="ProjectName1" DataType="System.String"/>
+      <Column Name="ProjectName2" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="Branch Details" ReferenceName="Branch Details" DataType="System.Int32" Enabled="true">
+      <Column Name="Key" DataType="System.Guid"/>
+      <Column Name="Prefix" DataType="System.Guid"/>
+      <Column Name="No" DataType="System.Int32"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="CR" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="City" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="User Details" ReferenceName="User Details" DataType="System.Int32" Enabled="true">
+      <Column Name="No" DataType="System.Int32"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+    </TableDataSource>
+    <Total Name="Total" Expression="[Transaction Details.Total]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="Amount" Expression="[Transaction Details.Amount]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="VAT" Expression="[Transaction Details.vatAmount]" Evaluator="Data1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" FirstPageSource="15" OtherPagesSource="15" Guides="9.45,746.55" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="756" Height="368.55">
+      <TextObject Name="Text1" Left="453.6" Top="9.45" Width="292.95" Height="18.9" Text="[Company Profile.Name1]" HorzAlign="Right" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text2" Left="9.45" Top="9.45" Width="292.95" Height="18.9" Text="[Company Profile.Name2]" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TableObject Name="Table1" Left="9.45" Top="37.8" Width="737.1" Height="113.4">
+        <TableColumn Name="Column1" Width="100.17"/>
+        <TableColumn Name="Column2" Width="204.12"/>
+        <TableColumn Name="Column3" Width="137.97"/>
+        <TableColumn Name="Column4" Width="213.57"/>
+        <TableColumn Name="Column5" Width="81.27"/>
+        <TableRow Name="Row1">
+          <TableCell Name="Cell1" Text="C.R. No" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell2" Text="[Company Profile.RC]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell3" Font="Arial, 10pt" RowSpan="5">
+            <PictureObject Name="Picture1" Width="137.97" Height="113.4" Dock="Fill" DataColumn="Company Profile.Logo"/>
+          </TableCell>
+          <TableCell Name="Cell4" Text="[Company Profile.RC]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell5" Text="رقم السجل" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row2">
+          <TableCell Name="Cell6" Text="VAT Number" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell7" Text="[Company Profile.vatRNo]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell8" Font="Arial, 10pt"/>
+          <TableCell Name="Cell9" Text="[Company Profile.vatRNo]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell10" Text="الرقم الضريبي" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row3">
+          <TableCell Name="Cell11" Text="Phone" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell12" Text="[Company Profile.Phone]-[Company Profile.Mobile]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell13" Font="Arial, 10pt"/>
+          <TableCell Name="Cell14" Text="[Company Profile.Phone]-[Company Profile.Mobile]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell15" Text="رقم الهاتف" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row4">
+          <TableCell Name="Cell16" Text="Fax" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell17" Text="[Company Profile.Fax]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell18" Font="Arial, 10pt"/>
+          <TableCell Name="Cell19" Text="[Company Profile.Fax]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell20" Text="الفاكس" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row5" Height="37.8">
+          <TableCell Name="Cell21" Text="Address" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell22" Text="[Company Profile.AddressEnglish]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell23" Font="Arial, 10pt"/>
+          <TableCell Name="Cell24" Text="[Company Profile.Address]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell25" Text="العنوان" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text3" Left="283.5" Top="159.2" Width="207.9" Height="18.9" Text="سند صرف بنكي" HorzAlign="Center" VertAlign="Center" Font="Arial, 14pt, style=Bold"/>
+      <TextObject Name="Text4" Left="283.5" Top="180.1" Width="207.9" Height="18.9" Text="Bank Payment Voucher" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text5" Left="652.05" Top="187" Width="71.15" Height="18.9" Text="رقــم السند" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text6" Left="652.05" Top="208.26" Width="71.15" Height="18.9" Text="تاريخ السند" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text7" Left="652.05" Top="235.52" Width="71.15" Height="18.9" Text="رمــز البنك" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text8" Left="652.05" Top="256.78" Width="71.15" Height="18.9" Text="اسم البنك" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text9" Left="652.05" Top="281.05" Width="71.15" Height="18.9" Text="البيــــان" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text10" Left="151.2" Top="187" Width="75.6" Height="18.9" Text="رقــم المرجع" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text11" Left="151.2" Top="208.26" Width="75.6" Height="18.9" Text="تاريخ المرجع" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text12" Left="642.6" Top="187" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text13" Left="642.6" Top="208.26" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text14" Left="642.6" Top="235.52" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text15" Left="642.6" Top="256.78" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text16" Left="642.6" Top="281.05" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text17" Left="538.65" Top="187" Width="103.95" Height="18.9" Text="[Transaction Header.VoucherNo]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text18" Left="538.65" Top="208.26" Width="103.95" Height="18.9" Text="[Transaction Header.VoucherDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text19" Left="151.2" Top="235.52" Width="491.4" Height="18.9" Text="[Transaction Header.AccountCode]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text20" Left="151.2" Top="256.78" Width="491.4" Height="18.9" Text="[Transaction Header.AccountName1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text21" Left="151.2" Top="285.05" Width="491.4" Height="33.8" Text="[Transaction Header.Description]" HorzAlign="Right" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text22" Left="37.8" Top="187" Width="103.95" Height="18.9" Text="[Transaction Header.ReferenceNo]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text23" Left="37.8" Top="208.26" Width="103.95" Height="18.9" Text="[Transaction Header.ReferenceDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text24" Left="141.75" Top="187" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text25" Left="141.75" Top="208.26" Width="9.45" Height="18.9" Text=":" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TableObject Name="Table2" Left="9.45" Top="330.75" Width="737.1" Height="37.8" Fill.Color="Blue">
+        <TableColumn Name="Column7" Width="77.96"/>
+        <TableColumn Name="Column8" Width="69.51"/>
+        <TableColumn Name="Column9" Width="78.96"/>
+        <TableColumn Name="Column10" Width="247.06"/>
+        <TableColumn Name="Column11" Width="176.2"/>
+        <TableColumn Name="Column12" Width="87.41"/>
+        <TableRow Name="Row6" Height="37.8">
+          <TableCell Name="Cell26" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="الاجمالي&#13;&#10;Total Amount" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 11pt, style=Bold" TextFill.Color="0, 64, 0" TabWidth="50"/>
+          <TableCell Name="Cell27" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="الضريبة&#13;&#10;VAT Amount" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 10pt, style=Bold" TextFill.Color="0, 64, 0"/>
+          <TableCell Name="Cell28" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="المبلغ&#13;&#10;Amount" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 11pt, style=Bold" TextFill.Color="0, 64, 0"/>
+          <TableCell Name="Cell29" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="البيان&#13;&#10;Description" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 11pt, style=Bold" TextFill.Color="0, 64, 0"/>
+          <TableCell Name="Cell30" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="اسم الحساب&#13;&#10;Account Name" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 11pt, style=Bold" TextFill.Color="0, 64, 0"/>
+          <TableCell Name="Cell31" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="رمز الحساب&#13;&#10;Account Code" HorzAlign="Center" VertAlign="Center" Font="Sakkal Majalla, 11pt, style=Bold" TextFill.Color="0, 64, 0"/>
+        </TableRow>
+      </TableObject>
+      <LineObject Name="Line2" Left="9.45" Top="323.3" Width="737.1" Border.Width="0.25" Diagonal="true"/>
+      <LineObject Name="Line1" Left="9.45" Top="153.2" Width="737.1" Border.Width="0.25" Diagonal="true"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="371.75" Width="756" Height="28.35" CanGrow="true" DataSource="Transaction Details">
+      <TextObject Name="Text26" Left="661.15" Width="83.4" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.AccountCode]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text27" Left="482.95" Width="176.65" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.AccountName1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text28" Left="238.7" Width="241.7" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.Description]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text30" Left="9.45" Width="74.7" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.Total]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text40" Left="89.6" Width="63.7" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.vatAmount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text41" Left="157.65" Width="74.7" Height="23.9" CanGrow="true" GrowToBottom="true" Text="[Transaction Details.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="403.3" Width="756" Height="66.15">
+      <LineObject Name="Line3" Left="9.45" Top="0.45" Width="425.25" Border.Width="0.25" Diagonal="true"/>
+      <TextObject Name="Text31" Left="245.7" Top="3" Width="91.05" Height="23.9" Text="الاجمالي" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text32" Left="9.45" Top="3.45" Width="74.7" Height="23.9" Text="[Total]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt, style=Bold" Trimming="EllipsisCharacter"/>
+      <LineObject Name="Line4" Left="9.45" Top="36.35" Width="425.25" Border.Width="0.25" Diagonal="true"/>
+      <TextObject Name="Text39" Left="9.45" Top="37.8" Width="737.1" Height="18.9" Text="[Transaction Header.ArabicText]" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text42" Left="89.6" Top="3.45" Width="63.7" Height="23.9" Text="[VAT]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt, style=Bold" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text43" Left="157.65" Top="3.45" Width="74.7" Height="23.9" Text="[Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt, style=Bold" Trimming="EllipsisCharacter"/>
+    </ReportSummaryBand>
+    <PageFooterBand Name="PageFooter1" Top="472.65" Width="756" Height="141.75">
+      <TextObject Name="Text33" Left="9.45" Top="113.4" Width="195" Height="21.45" Text="Page [Page#] From [TotalPages#]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text34" Left="207.9" Top="113.4" Width="62.7" Height="21.45" Text="Print Date" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text35" Left="274.05" Top="113.4" Width="213.9" Height="21.45" Text="[Date]" Format="Date" Format.Format="f" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text29" Left="595.35" Top="9.45" Width="113.4" Height="18.9" Text="اعداد" HorzAlign="Right" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text36" Left="189" Top="9.45" Width="113.4" Height="18.9" Text="مدير الحسابات" HorzAlign="Right" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text37" Left="9.45" Top="9.45" Width="113.4" Height="18.9" Text="المدير المالي" HorzAlign="Right" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text38" Left="491.4" Top="37.8" Width="217.35" Height="18.9" Text="[User Details.Name1]" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt"/>
+      <LineObject Name="Line5" Left="9.45" Top="0.45" Width="737.1" Border.Width="0.25" Diagonal="true"/>
+      <LineObject Name="Line6" Left="9.45" Top="110.95" Width="737.1" Border.Width="0.25" Diagonal="true"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

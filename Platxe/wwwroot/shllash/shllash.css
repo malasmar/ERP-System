@@ -1,0 +1,335 @@
+﻿@font-face {
+    font-family: 'cairo';
+    src: url('../font/cairo.ttf') format('truetype');
+}
+.app-header .navbar-brand .navbar-logo {
+    text-shadow: 3px -3px #4040404d;
+    color: #424242;
+}
+.app-loader {
+    background: none;
+}
+.jx {
+    display: block;
+    position: fixed;
+    z-index: 1030;
+    top: 63px;
+    right: 28px;
+    height: .9375rem;
+}
+.ptx-tahoma{
+    font-family:Tahoma;
+}
+.modal {
+    z-index: 1400
+}
+.row {
+    margin-top: 3px
+}
+.app-sidebar .menu .menu-item .menu-icon i {
+    background-color:#00000000 !important;
+}
+.xkey {
+    position: absolute;
+    top: auto;
+    bottom: 10px;
+    left: auto;
+    right: 10px;
+    font-size: 10px;
+}
+html[dir=rtl] .xkey {
+    left: 10px;
+    right: auto;
+}
+.modal-x2 {
+    top: 40px;
+    bottom: auto;
+    left: 40px;
+    right: auto;
+    border: 1px solid #787878;
+    border-radius: 7px;
+}
+.dx-header-row {
+    height: 35px !important;
+    word-wrap: break-word
+}
+
+.dx-datagrid-rowsview .dx-row {
+    height: 30px;
+    min-height: 30px;
+}
+.dx-datagrid {
+    font-family: 'system-ui';
+    font-size: 12px;
+    margin-top: 10px
+}
+.dx-datagrid-summary-item {
+    font-family: Tahoma !important
+}
+
+.dx-datagrid-total-footer {
+    font-family: Tahoma !important;
+    font-weight: 600
+}
+
+.dx-datagrid-group-panel {
+    background-color: #e7e7e7
+}
+
+.dx-datagrid .dx-row > td {
+    padding: 4px !important;
+}
+
+.dx-menu-base .dx-menu-item-content {
+    padding: 1px 5px 1px;
+}
+
+.dx-datagrid-content .dx-datagrid-table .dx-row > td, .dx-datagrid-content .dx-datagrid-table .dx-row > tr > td {
+    vertical-align: middle;
+}
+html[dir=rtl] .dx-datagrid-text-content {
+    font-family: Tahoma !important;
+    font-size: 9px;
+    color: #151212 !important;
+    font-weight: 500
+}
+
+html[dir=rtl] .dx-datagrid-total-footer {
+    font-family: Tahoma !important;
+    font-weight: 600
+}
+
+html:not([dir=rtl]) .dx-datagrid-text-content {
+    font-size: 10px !important;
+    font-family: Tahoma;
+    color: #151212 !important;
+    font-weight: 500
+}
+
+.dx-datagrid .badge {
+    display: block;
+    padding: 5px;
+    width: 96%;
+    min-width: 96% !important;
+    line-height: 14px;
+    font-size: 10px;
+    font-family: Tahoma;
+}
+.dx-header-filter {
+    font: 10px/1 DXIcons !important
+}
+
+.dx-placeholder {
+    font-size: 12px
+}
+
+
+
+.dx-treelist-rowsview {
+    font-family: Tahoma;
+    font-size: 10px
+}
+
+.dx-command-select {
+    width: 30px !important;
+    min-width: 30px !important
+}
+
+.dx-texteditor-input {
+    font-family: Tahoma !important;
+    font-size: 11px !important
+}
+
+.dx-lookup-field {
+    font-family: Tahoma !important;
+    font-size: 11px !important
+}
+
+.dx-list-item-content {
+    font-family: Tahoma !important;
+    font-size: 10px !important
+}
+
+.dx-field-item-label-text {
+    font-size: 12px;
+    color: #151212 !important;
+    font-weight: 500
+}
+
+.dx-rtl.dx-toolbar .dx-toolbar-item {
+    padding: 0 1px 0 1px !important
+}
+
+
+html[dir=rtl] .dx-field-item-label-text {
+    font-size: 10px
+}
+
+
+
+
+.form-group > label {
+    font-weight: 400;
+    margin-top: 10px
+}
+
+.form-group label {
+    font-size: 11px
+}
+
+.label {
+    font-weight: 400
+}
+
+div.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 50px;
+    z-index: 1000;
+    padding: 10px 5px 5px 5px;
+    background-color: #fff
+}
+
+div.sticky-0 {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    padding: 10px 5px 5px 5px;
+    background-color: #fff
+}
+
+div.sticky-bottom {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 1px;
+    z-index: 1000;
+    padding: 10px 5px 5px 5px;
+    background-color: #fff
+}
+
+.nomargin {
+    margin-top: 2px!important
+}
+.tag .tag-fin-year {
+    margin: 0;
+    bottom: 1px;
+    display: block;
+    left: 35px;
+    right: auto;
+    position: absolute;
+    z-index: 1002;
+    font-weight: 600
+}
+
+html[dir=rtl] .tag .tag-fin-year {
+    margin: 0;
+    bottom: 1px;
+    display: block;
+    right: 35px;
+    left: auto;
+    position: absolute;
+    z-index: 1002
+}
+
+
+
+.dx-dxtreelist-rowsview .dx-row {
+    height: 30px;
+    min-height: 30px;
+}
+
+.dx-dxtreelist {
+    font-family: 'system-ui';
+    font-size: 12px;
+    margin-top: 10px
+}
+
+.dx-dxtreelist-summary-item {
+    font-family: Tahoma !important
+}
+
+.dx-dxtreelist-total-footer {
+    font-family: Tahoma !important;
+    font-weight: 600
+}
+
+.dx-dxtreelist-group-panel {
+    background-color: #e7e7e7
+}
+
+.dx-dxtreelist .dx-row > td {
+    padding: 4px !important;
+}
+
+.dx-menu-base .dx-menu-item-content {
+    padding: 1px 5px 1px;
+}
+
+.dx-dxtreelist-content .dx-dxtreelist-table .dx-row > td, .dx-dxtreelist-content .dx-dxtreelist-table .dx-row > tr > td {
+    vertical-align: middle;
+}
+
+html[dir=rtl] .dx-dxtreelist-text-content {
+    font-family: Tahoma !important;
+    font-size: 9px;
+    color: #151212 !important;
+    font-weight: 500
+}
+
+html[dir=rtl] .dx-dxtreelist-total-footer {
+    font-family: Tahoma !important;
+    font-weight: 600
+}
+
+html:not([dir=rtl]) .dx-dxtreelist-text-content {
+    font-size: 10px !important;
+    font-family: Tahoma;
+    color: #151212 !important;
+    font-weight: 500
+}
+
+.dx-dxtreelist .badge {
+  
+    padding: 5px;
+    width: 96%;
+    min-width: 96% !important;
+  
+    font-size: 10px;
+    font-family: Tahoma;
+}
+
+
+ 
+
+
+
+.f-s-8  {font-size: 8px;}
+.f-s-9  {font-size: 9px;}
+.f-s-10 {font-size:10px;}
+.f-s-11 {font-size: 11px;}
+.f-s-12 {font-size: 12px;}
+.f-s-13 {font-size: 13px;}
+.f-s-14 {font-size: 14px;}
+.f-s-15 {font-size: 15px;}
+.f-s-16 {font-size: 16px;}
+.f-s-17 {font-size: 17px;}
+.f-s-18 {font-size: 18px;}
+.f-s-19 {font-size: 19px;}
+.f-s-20 {font-size: 20px;}
+.f-s-21 {font-size: 21px;}
+.f-s-22 {font-size: 22px;}
+
+.f-w-100{font-weight:100}
+.f-w-200{font-weight:200}
+.f-w-300{font-weight:300}
+.f-w-400{font-weight:400}
+.f-w-500{font-weight:500!important}
+.f-w-600{font-weight:600}
+.f-w-700{font-weight:700}
+.f-w-800{font-weight:800}
+.f-w-900{font-weight:900}
+
+
+
+  

@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Content Remove="C:\Users\shlla\.nuget\packages\select.htmltopdf.netcore\22.2.0\contentFiles\any\any\Select.Html.dep" />
+    </ItemGroup>
+
+    <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
+    <PackageReference Include="DevExtreme.AspNet.Data" Version="2.9.0" />
+    <PackageReference Include="DevExtreme.AspNet.Core" Version="22.2.6" />
+    <PackageReference Include="FastReport.Web" Version="2023.2.14-demo" />
+    <PackageReference Include="libphonenumber-csharp" Version="8.13.11" />
+    <PackageReference Include="RestSharp" Version="113.1.0" />
+    <PackageReference Include="Select.HtmlToPdf.NetCore" Version="22.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\CLiAccounting\CLiAccounting.csproj" />
+      <ProjectReference Include="..\CLiCore\CLiCore.csproj" />
+      <ProjectReference Include="..\CLiDashboard\CLiDashboard.csproj" />
+      <ProjectReference Include="..\CLiFinancial\CLiFinancial.csproj" />
+      <ProjectReference Include="..\CLiHR\CLiHR.csproj" />
+      <ProjectReference Include="..\CLiInventory\CLiInventory.csproj" />
+      <ProjectReference Include="..\CLiSales\CLiSales.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Areas\Reports\Views\Inventory\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Areas\Auditing\Views\Accounting\CloseFinancialYear.cshtml" />
+      <None Include="Areas\Auditing\Views\Accounting\GeneralLedgerDiff.cshtml" />
+      <None Include="Areas\Auditing\Views\Accounting\NullGeneralLedger.cshtml" />
+      <None Include="Areas\Auditing\Views\Accounting\ParentTransactions.cshtml" />
+      <None Include="Areas\Auditing\Views\Accounting\TransferTransactions.cshtml" />
+      <None Include="Areas\Auditing\Views\Home\Index.cshtml" />
+      <None Include="Areas\Auditing\Views\Integration\FinancialCards.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\BalanceBaseWarehouse.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\ItemsCostAudit.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\ItemsCostAuditWarehouse.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\StockFullStatment.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\StockStatment.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\WarehouseBalance.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\WarehousesBalance.cshtml" />
+      <None Include="Areas\Auditing\Views\InventoryReports\WarehousesValues.cshtml" />
+      <None Include="Areas\Auditing\Views\Inventory\StockOpeningBalance.cshtml" />
+      <None Include="Areas\Auditing\Views\Inventory\StocktakingOffset.cshtml" />
+      <None Include="Areas\Auditing\Views\Inventory\_Stocktaking.cshtml" />
+      <None Include="Areas\Auditing\Views\Operation\PostVAT.cshtml" />
+      <None Include="Areas\Auditing\Views\Operation\UnpostedVouchers.cshtml" />
+      <None Include="Areas\Auditing\Views\Shared\Error.cshtml" />
+      <None Include="Areas\Auditing\Views\Shared\_Layout.cshtml" />
+      <None Include="Areas\Auditing\Views\Shared\_sidebar.cshtml" />
+      <None Include="Areas\Auditing\Views\StockCost\ItemsCost.cshtml" />
+      <None Include="Areas\Auditing\Views\StockCost\ItemsCostPrices.cshtml" />
+      <None Include="Areas\Auditing\Views\StockCost\RecalculateCost.cshtml" />
+      <None Include="Areas\Auditing\Views\StockCost\SalesInvoicesItemsCost.cshtml" />
+      <None Include="Areas\Auditing\Views\StockCost\_ItemCostDetails.cshtml" />
+      <None Include="Areas\Auditing\Views\_ViewImports.cshtml" />
+      <None Include="Areas\Auditing\Views\_ViewStart.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="Views\Account\OTP.cshtml">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ProjectExtensions><VisualStudio><UserProperties TemplateFeatures="NETCORE" /></VisualStudio></ProjectExtensions>
+
+</Project>

@@ -1,0 +1,202 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+}
+<link href="~/Shllash/Structure/Treant.css?version=4.9" rel="stylesheet" />
+<link href="~/Shllash/Structure/custom-color-plus-scrollbar.css?version=4.9" rel="stylesheet" />
+<link href="~/Shllash/Structure/vendor/perfect-scrollbar/perfect-scrollbar.css?version=4.9" rel="stylesheet" />
+<style>
+    .node > img {
+        max-width: 50px !important;
+        min-width: 50px !important;
+        max-height: 50px !important;
+        min-height: 50px !important;
+    }
+    .node-name{
+        font-weight:500;
+    }
+    .nodeExample1{
+        background-color: #858585;
+        text-decoration:none;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"1444","Structure")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshStructure()">@iT.T(xLan, "1156","Refresh")</button>
+                    <button type="button" id="btn-Boss" class="btn btn-danger" onclick="BossDetails(null)">@iT.T(xLan, "1551","Boss Card")</button>
+                </div>
+                <button type="button" class="btn btn-yellow text-dark" onclick="GetAccountDetails(null)">@iT.T(xLan, "1552","New Structure")</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="chart bg-white" style="width:100%" id="OrganiseChart1"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-Structure" class="modal"><div class="modal-dialog" id="con-Structure"></div></div>
+ 
+<script src="~/Shllash/Structure/vendor/raphael.js?version=3.019"></script>
+<script src="~/Shllash/Structure/Treant.js?version=3.019"></script>
+<script src="~/Shllash/Structure/vendor/jquery.mousewheel.js?version=3.019"></script>
+<script src="~/Shllash/Structure/vendor/perfect-scrollbar/perfect-scrollbar.js?version=3.019"></script>
+<script src="~/Shllash/Structure/custom-color-plus-scrollbar.js?version=3.019"></script>
+<script class="append-on-ajax-script">
+    new Treant(ALTERNATIVEx);
+</script>
+<script class="append-on-ajax-script">
+    var config = {
+        container: "#OrganiseChart1",
+        rootOrientation: 'WEST', // NORTH || EAST || WEST || SOUTH
+        // levelSeparation: 30,
+        siblingSeparation: 20,
+        subTeeSeparation: 60,
+        scrollbar: "fancy",
+        connectors: {
+            type: 'step'
+        },
+        node: {
+            HTMLclass: 'nodeExample1'
+        }
+    }
+    $(document).ready(function ()
+    {
+        $('#OrganiseChart1').on('click', 'a', function ()
+        {
+            GetAccountDetails($(this).prop('id'));
+        });
+        LoadStructure();
+    })
+    var ALTERNATIVEx = [];
+    function LoadStructure ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/hr/istructure/StructurexList",
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.length > 0)
+                {
+                    $('#btn-Boss').prop('disabled', true);
+                }
+                while (ALTERNATIVEx.length > 0)
+                {
+                    ALTERNATIVEx.pop();
+                }
+                ALTERNATIVEx.push(config);
+                var i = 0;
+                for (const item of response)
+                {
+                    if (i == 0)
+                    {
+                        ALTERNATIVEx.push({
+                            text: {
+                                name: item.Name1,
+                                title: GetKind(item.Kind),
+                                contact: item.Manager,
+                            },
+                            image: '../../temp/Structure.png',
+                            link: {
+                                href: "javascript:;"
+                            },
+                            HTMLid: item.Key
+                        });
+                    } else
+                    {
+                        ALTERNATIVEx.push({
+                            parent: GetItem(item.Parent),
+                            text: {
+                                name: item.Name1,
+                                title: GetKind(item.Kind),
+                                contact: item.Manager,
+                            },
+                            image: '../../temp/Structure.png',
+                            link: {
+                                href: "javascript:;"
+                            },
+                            HTMLid: item.Key
+                        });
+                    }
+                    ++i;
+                }
+                new Treant(ALTERNATIVEx);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function GetItem (Parent)
+    {
+        for (item of ALTERNATIVEx)
+        {
+            if (item.HTMLid == Parent)
+            {
+                return item;
+            }
+        }
+    }
+    function RefreshStructure ()
+    {
+        LoadStructure();
+    }
+    function GetAccountDetails (key)
+    {
+        $('#con-Structure').empty();
+        $("#con-Structure").load('/HR/Structure/StructureDetails?Key=' + key);
+        $("#mod-Structure").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function BossDetails (key)
+    {
+        $('#con-Structure').empty();
+        $("#con-Structure").load('/HR/Structure/BossDetails?Key=' + key);
+        $("#mod-Structure").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function GetKind (value)
+    {
+        switch (value)
+        {
+            case 0:
+                return 'Department';
+                break;
+            case 1:
+                return 'Management';
+                break;
+            case 2:
+                return 'Separator';
+                break;
+        }
+    }
+    function GetConfirm (value)
+    {
+        switch (value)
+        {
+            case 0:
+                return 'No/Confirmation';
+                break;
+            case 1:
+                return 'Department Level';
+                break;
+            case 2:
+                return 'Human Resourcing';
+                break;
+            case 3:
+                return 'Financial Level';
+                break;
+            case 4:
+                return 'General Manager';
+                break;
+        }
+    }
+</script>

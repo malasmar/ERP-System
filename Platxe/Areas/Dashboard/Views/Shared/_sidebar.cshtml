@@ -1,0 +1,30 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Dashboard" class="menu-link" data-ajax="true" data-ajax-method="Get" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1143","Dashboard")</div>
+    <div class="menu-item">
+        <a href="/Dashboard/Dashboard/Financial" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fas fa-chart-pie"></i></div><div class="menu-text">@iT.T(xLan,"1144","Financial Management")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Dashboard/Dashboard/Sales" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fas fa-tags"></i></div><div class="menu-text">@iT.T(xLan,"1145","Sales Management")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Dashboard/Dashboard/Purchase" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fas fa-truck"></i></div><div class="menu-text">@iT.T(xLan,"1146","Purchase Management")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Dashboard/Dashboard/Accounting" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fas fa-calculator"></i></div><div class="menu-text">@iT.T(xLan,"1147","Accounting Management")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Dashboard/Dashboard/CostCenter" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fas fa-square-poll-vertical"></i></div><div class="menu-text">@iT.T(xLan,"1154","Cost Center Project")</div></a>
+    </div>
+</div>

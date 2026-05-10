@@ -1,0 +1,269 @@
+@model InvoiceData
+
+@{
+    //  Layout = "_xLayout";
+    Layout = null;
+    string xLan = Model.xLan;
+    string DB = Model.DB;
+    CLiCore.Configuration.Profile profile = new CLiCore.Configuration.Profile().GetItem(DB);
+}
+
+<!DOCTYPE html>
+<html id="xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Platxe</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    @* Uncomment to use the HtmlEditor control *@
+    @* <script src="https://unpkg.com/devextreme-quill@21_2/dist/dx-quill.min.js?version=3.019"></script> *@
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    @{
+        if (xLan == "ar")
+        {
+            <link href="~/Template/assets/css/apple/app-rtl.min.css?version=3.019" rel="stylesheet" />
+        }
+        else
+        {
+            <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+        }
+    }
+    <link href="~/Template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+  
+</head>
+<body>
+  
+    <div id="app" class="app app-header-fixed app-sidebar-fixed app-without-sidebar">
+        <div id="content" class="app-content">
+            <div class="invoice">
+                <!-- BEGIN invoice-company -->
+                <div class="invoice-company">
+                    <div class="float-end">
+                        <p class="m-1">TAX Invoice</p>
+                        <p class="m-1">فاتورة ضريبية</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex">
+                                <a class="w-lg-200px w-100px" href="javascript:;">
+                                    <img src="~/aiwa-data/@DB/Content/Logo/@profile.Image" alt="" class="mw-100 rounded">
+                                </a>
+                                <div class="flex-1 ps-3">
+                                    <table class="table-sm">
+
+                                        <tbody class="fw-bold fs-10px">
+                                            <tr><td colspan="2">@profile.Name1</td></tr>
+                                            <tr><td colspan="2">@profile.Name2</td></tr>
+                                            <tr><td>CR.No</td><td>@profile.RC</td></tr>
+                                            <tr><td>VAT Reg.No</td><td>@profile.vatRegNo</td></tr>
+                                            <tr class="mt-1"><td>Address</td><td>@profile.Address</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!-- END invoice-company -->
+                <!-- BEGIN invoice-header -->
+                <div class="invoice-header">
+
+                    <div class="invoice-from">
+                        <table class="table-sm">
+
+                            <tbody class="fw-bold fs-10px">
+                                <tr><td>Invoice No</td><td><strong class="text-dark">#@Model.Transaction.InvoiceNo</strong></td></tr>
+                                <tr><td>Invoice Date</td><td>@Model.Transaction.InvoiceDate.Value.ToLongDateString()</td></tr>
+                                <tr>
+                                    <td>Payment Kind</td>
+                                    <td>
+                                        @{
+                                            if (Model.Transaction.AccountKind == 0)
+                                            {
+                                                <span class="badge bg-yellow text-dark f-s-12">Credit</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-yellow text-dark f-s-12">Cash/Bank</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                                <tr><td>Due Date</td><td>@Model.Transaction.DueDate.Value.ToLongDateString()</td></tr>
+                                <tr>
+                                    <td>Invoice Kind</td>
+                                    <td>
+                                        @{
+                                            if (Model.Transaction.InvoiceKind == 0)
+                                            {
+                                                <span>Local</span>
+                                            }
+                                            else
+                                            {
+                                                <span>Transportation</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                                <tr><td>Description</td><td>@Model.Transaction.Description</td></tr>
+                            </tbody>
+                        </table>
+
+
+
+
+                    </div>
+                    <div class="invoice-to">
+                        <small>Customer Details</small>
+                        <table class="table-sm">
+
+                            <tbody class="fw-bold fs-10px">
+                                <tr><td>Customer No</td><td>@Model.CurrentAccount.Code</td></tr>
+                                <tr><td>Customer Name</td><td>@Model.CurrentAccount.Name1</td></tr>
+                                <tr><td>CR.No</td><td>@Model.CurrentAccount.CR</td></tr>
+                                <tr><td>VAT.No</td><td>@Model.CurrentAccount.vat</td></tr>
+                                <tr><td>Phone</td><td>@Model.CurrentAccount.Phone</td></tr>
+                                <tr><td>Address</td><td>@Model.CurrentAccount.Address</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="invoice-to">
+                    </div>
+                </div>
+                <!-- END invoice-header -->
+                <!-- BEGIN invoice-content -->
+                <div class="invoice-content">
+                    <!-- BEGIN table-responsive -->
+                    <div class="table-responsive">
+                        <table class="table table-invoice">
+                            <thead>
+                                <tr>
+                                    <th style="width:100%">ITEM DESCRIPTION</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">UNIT</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">QUNTITY</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">UNIT PRICE</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">AMOUNT</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">DISCOUNT</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">VAT</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (CLiInventory.Documents.TransactionDetails item in Model.Details)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="text-dark">@item.jnAccount.Display</span><br>
+                                                <small>@item.Description</small>
+                                            </td>
+                                            <td class="text-end">@item.Unit</td>
+                                            <td class="text-end">@item.Quantity.ToString("n2")</td>
+                                            <td class="text-end">@item.UnitPrice.ToString("n2")</td>
+                                            <td class="text-end">@item.Amount.ToString("n2")</td>
+                                            <td class="text-end">@item.Discount.ToString("n2")</td>
+                                            <td class="text-end">@item.vatAmount.ToString("n2") <br /><small class="me-1 f-s-9 text-mute">@item.vatRate.ToString("n0") %</small></td>
+                                            <td class="text-end">@item.Total.ToString("n2")</td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- END table-responsive -->
+                    <!-- BEGIN invoice-price -->
+                    <div class="invoice-price">
+                        <div class="invoice-price-left">
+                            <div class="invoice-price-row">
+                         
+                            </div>
+                        </div>
+                        <div class="invoice-price-right">
+                          <span class="fw-bold">@Model.Details.Sum(x=>x.Total).ToString("n2")</span>
+                        </div>
+                    </div>
+                    <!-- END invoice-price -->
+                </div>
+                <!-- END invoice-content -->
+                <!-- BEGIN invoice-note -->
+             
+                    <div class="row">
+                        <div class="col-6">
+                        <div class="invoice-price p-2">
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:100%;min-width:130px"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="f-s-12 f-w-600" style="padding:0.15rem 0.15rem;">
+                                    <tr><td>@iT.T(xLan,"1347","Subtotal")</td><td><span id="txt-Amount">@Model.Transaction.SubTotal.ToString("n2") </span></td></tr>
+                                    <tr><td>@iT.T(xLan,"2153","Discount")</td><td><span id="txt-Discount">@Model.Transaction.Discount.ToString("n2")</span></td></tr>
+                                    <tr><td>@iT.T(xLan,"1350","VAT Amount")</td><td><span id="txt-vatAmount">@Model.Transaction.vatAmount.ToString("n2")</span></td></tr>
+                                    <tr><td>@iT.T(xLan,"2517","Retention Less")</td><td>@Model.Transaction.RetentionLess.ToString("n2") </td></tr>
+                                    <tr><td>@iT.T(xLan,"2518","Payment Discount")</td><td>@Model.Transaction.PaymentDiscount.ToString("n2")</td></tr>
+                                    <tr><td><b>@iT.T(xLan,"1120","Total")</b></td><td><b>@Model.Transaction.Total.ToString("n2")</b></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="float-end"   id="qrcode"></div>
+                        </div>
+                    </div>
+               
+                <!-- END invoice-note -->
+                <!-- BEGIN invoice-footer -->
+                <div class="invoice-footer">
+                    <p class="text-center mb-5px fw-bold">
+                        Powered by Plate ERP
+                    </p>
+                 
+                </div>
+                <!-- END invoice-footer -->
+            </div>
+        </div>
+     
+    </div>
+    <!-- ================== BEGIN core-js ================== -->
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <!-- ================== END core-js ================== -->
+    <script src="~/shllash/jquery-confirm.min.js?version=3.019"></script>
+    <script src="~/shllash/application.js?version=3.019"></script>
+     <script src="~/shllash/qrcode.js" type="text/javascript" ></script>
+    <script src="~/shllash/html5-qrcode.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function(){
+            updateQRCode('@Model.QR');
+        })
+        function updateQRCode (text)
+        {
+
+            var element = document.getElementById("qrcode");
+
+            var bodyElement = document.body;
+            if (element.lastChild)
+                element.replaceChild(showQRCode(text), element.lastChild);
+            else
+                element.appendChild(showQRCode(text));
+
+        }
+
+       // updateQRCode('@Model.QR');
+    </script>
+
+</body>
+</html>
+

@@ -1,0 +1,343 @@
+@model CLiCore.Configuration.Profile
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    CLiCore.Platx.UserDefaultData userdata = new CLiCore.Platx.UserDefaultData().GetItem(DB, xLan, UserKey);
+}
+
+<style>
+    /* Premium Dashboard Styles */
+    .dashboard-wrapper {
+        padding: 1rem 16px;
+        font-family: "Inter", "Segoe UI", sans-serif;
+    }
+    
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    @@media (max-width: 991.98px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+    }
+    
+    .card-modern {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+        margin-bottom: 12px;
+    }
+    
+    .card-modern-header {
+        padding: 12px 16px;
+        border-bottom: 1px dashed #E2E8F0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #F8FAFC;
+    }
+    
+    .card-modern-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #0F172A;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+    
+    .card-modern-body {
+        padding: 12px 16px;
+    }
+    
+    .company-profile {
+        text-align: center;
+        padding: 16px;
+        position: relative;
+    }
+    
+    .company-logo-wrapper {
+        width: 72px;
+        height: 72px;
+        margin: 0 auto 12px;
+        background: #ffffff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #E2E8F0;
+        overflow: hidden;
+    }
+    
+    .company-logo {
+        width: 100%;
+        height: 100%;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+    .company-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0F172A;
+        margin-bottom: 4px;
+        letter-spacing: -0.01em;
+    }
+    
+    .company-desc {
+        font-size: 0.8rem;
+        color: #475569;
+        margin-bottom: 12px;
+    }
+    
+    .badge-soft-warning {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    
+    .kv-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .kv-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+        border-bottom: 1px dashed #E2E8F0;
+    }
+    
+    .kv-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .kv-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 500;
+    }
+    
+    .kv-label i {
+        font-size: 1.1rem;
+        color: #94a3b8;
+    }
+    
+    .kv-value {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0F172A;
+        text-align: right;
+    }
+    
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        padding-top: 12px;
+    }
+    
+    .social-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        background: #ffffff;
+        border: 1px solid #E2E8F0;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        font-size: 1.1rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .social-btn:hover {
+        background: #3b82f6;
+        color: #fff;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    }
+
+    /* Warning Alerts Modernization */
+    .alert-modern {
+        border-radius: 10px;
+        border: none;
+        background: rgba(245, 158, 11, 0.1);
+        color: #b45309;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    .alert-modern i {
+        font-size: 1.25rem;
+        color: #f59e0b;
+    }
+    .alert-modern-content {
+        flex: 1;
+    }
+    .alert-modern-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-size: 0.85rem;
+    }
+    .alert-modern-desc {
+        font-size: 0.75rem;
+        opacity: 0.9;
+    }
+</style>
+
+<div class="container-fluid dashboard-wrapper" style="background-image:url(../template/assets/img/cover/pattern1.webp);background-size:cover;background-position:center;">
+    <div class="dashboard-grid">
+        <!-- Sidebar Column -->
+        <div class="dashboard-sidebar">
+            
+            <!-- Warning Alerts -->
+            <div class="alert-modern" hidden>
+                <i class='bx bx-error-alt'></i>
+                <div class="alert-modern-content">
+                    <div class="alert-modern-title">@iT.T(xLan, "2321","Warning")</div>
+                    <div class="alert-modern-desc">
+                        @iT.T(xLan, "1901","Your subscribe expiry after") @ViewBag.ExpDays @iT.T(xLan, "2322","days").<br/>
+                        @iT.T(xLan, "1903","Please contact your service provider to renew the subscription.").
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Profile Card -->
+            <div class="card-modern">
+                <div class="company-profile">
+                    <div class="company-logo-wrapper">
+                        <div class="company-logo" style="background-image: url(../aiwa-data/@DB/Content/Logo/@Model.Image)"></div>
+                    </div>
+                    <h3 class="company-name">@Model.Name1</h3>
+                    <p class="company-desc">@Model.Name2</p>
+                    <div class="badge-soft-warning mb-3">
+                        <i class='bx bx-check-shield'></i> Licenced Copy
+                    </div>
+                    
+                    <div class="kv-list mt-2">
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-id-card'></i> CR Number</span>
+                            <span class="kv-value">@Model.RC</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-receipt'></i> VAT Reg No</span>
+                            <span class="kv-value">@Model.vatRegNo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Details Card -->
+            <div class="card-modern">
+                <div class="card-modern-header">
+                    <h4 class="card-modern-title">@iT.T(xLan, "1904","Platx Login Details")</h4>
+                    <i class='bx bx-user-circle text-muted' style="font-size: 1.25rem;"></i>
+                </div>
+                <div class="card-modern-body">
+                    <div class="kv-list">
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-user'></i> User</span>
+                            <span class="kv-value">@User.FindFirstValue("eName2")</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-time-five'></i> Login Date</span>
+                            <span class="kv-value">@User.FindFirstValue("LoginDate")</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-envelope'></i> Email</span>
+                            <span class="kv-value text-truncate" style="max-width: 140px;" title="@User.FindFirstValue(ClaimTypes.Email)">@User.FindFirstValue(ClaimTypes.Email)</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-data'></i> @iT.T(xLan, "1905","File")</span>
+                            <span class="kv-value">
+                                @(User.FindFirstValue("aiwLan") == "en" ? User.FindFirstValue("aiwDBD1") : User.FindFirstValue("aiwDBD2"))
+                            </span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-calendar'></i> @iT.T(xLan, "1222","Year")</span>
+                            <span class="kv-value">@User.FindFirstValue("aiwYear")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Default Data Card -->
+            <div class="card-modern">
+                <div class="card-modern-header">
+                    <h4 class="card-modern-title">@iT.T(xLan, "1906","Default Data")</h4>
+                    <i class='bx bx-slider-alt text-muted' style="font-size: 1.25rem;"></i>
+                </div>
+                <div class="card-modern-body">
+                    <div class="kv-list">
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-store-alt'></i> @iT.T(xLan, "1281","Branch")</span>
+                            <span class="kv-value">@userdata.Branch</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-purchase-tag'></i> @iT.T(xLan, "1328","Prefix")</span>
+                            <span class="kv-value">@userdata.Prefix</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-wallet'></i> @iT.T(xLan, "1907","Cash Hand")</span>
+                            <span class="kv-value">@userdata.Cash</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-line-chart-down'></i> @iT.T(xLan, "1199","Cost Center")</span>
+                            <span class="kv-value">@userdata.CostCenter</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-label"><i class='bx bx-package'></i> @iT.T(xLan, "1625","Warehouse")</span>
+                            <span class="kv-value">@userdata.Warehouse</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help & Support -->
+            <div class="text-center mt-4">
+                <p style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted, #64748b); margin-bottom: 0.75rem;">Platx ERP System</p>
+                <div class="social-links">
+                    <a href="javascript:;" class="social-btn" title="Facebook"><i class='bx bxl-facebook'></i></a>
+                    <a href="javascript:;" class="social-btn" title="WhatsApp"><i class='bx bxl-whatsapp'></i></a>
+                    <a href="javascript:;" class="social-btn" title="Documentation"><i class='bx bx-question-mark'></i></a>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Main Content Column (Modules Grid) -->
+        <div class="dashboard-main">
+            @{
+                await Html.RenderPartialAsync("_Modules");
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,270 @@
+@model CLiAccounting.Documents.GeneralLedger
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    CLiCore.Shared.UserRights userRights = new CLiCore.Shared.UserRights().GetItem(UserKey);
+ 
+}
+<style>
+    .shl-invoice-header > span {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    .shl-invoice-header > p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    .xd > tr:hover {
+        cursor: pointer;
+    }
+
+    .wd70 {
+        width: 65px !important;
+        min-width: 65px !important;
+        max-width: 65px !important;
+    }
+
+    .badg-plx {
+        width: 55px !important;
+        min-width: 55px !important;
+        max-width: 55px !important;
+        line-height: 22px !important;
+        font-size: 10px;
+    }
+</style>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">General Ledger <span> # @Model.No</span></h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                @{
+                    <button type="button" class="btn btn-dark btn-sm" onclick="PrintGeneralLedger('@Model.OperationKey')">@iT.T(xLan,"","Print GL")</button>
+                    if (userRights.CanDelete == true)
+                    {
+                    
+                            <div class="btn-group">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="DeleteFinancialTransaction('@Model.OperationKey')">@iT.T(xLan,"","Delete")</button>
+                            </div>
+                       
+                    }
+                }
+            </div>
+        </div>
+        <div class="invoice">
+            <div class="invoice-header">
+                <div class="invoice-from">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <b class="mb-3">Voucher Details</b>
+                            </div>
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:auto"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="fw-bold fs-10px">
+
+                                    <tr><td>GL No</td><td>@Model.No</td></tr>
+                                    <tr><td>GL Date</td><td>@Model.Date.Value.ToString("dd.MM.yyyy")</td></tr>
+                                    <tr class="mt-1"><td>Description</td><td>@Model.Description</td></tr>
+                                </tbody>
+                            </table>
+                            <div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card border-0 text-truncate mb-3 text-dark">
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
+                                    <!-- BEGIN title -->
+                                    <div class="mb-2">
+                                        <b class="mb-3">Voucher Total</b>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h2 class="mb-2"><span>@Model.Total.ToString("n2")</span></h2>
+                                    </div>
+                                
+                               
+                              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card border-0 text-truncate mb-3 text-dark">
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
+                                    <!-- BEGIN title -->
+                                    <div class="mb-3 ">
+                                        <b class="mb-3">Voucher Details</b>
+                                    </div>
+                                    <table class="table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:auto"></th>
+                                                <th style="width:auto"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="fw-bold fs-10px">
+                                    
+                                            <tr class="mt-1"><td>Create Date</td><td>@(Model.CreateDate.HasValue == true ? Model.CreateDate.Value.ToString("dd.MM.yyyy HH:mm") : "")</td></tr>
+                                            <tr><td>Update Date</td><td>@(Model.CreateDate.HasValue == true ? Model.CreateDate.Value.ToString("dd.MM.yyyy HH:mm") : "")</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice-content mt-3">
+                <div class="table-responsive">
+                    <table class="table table-invoice table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:100px;max-width:100px">@iT.T(xLan,"1215","Actions")</th>
+                                <th style="width:60px;min-width:60px;max-width:60px">@iT.T(xLan,"1158","Kind")</th>
+                                <th style="width:70px;min-width:70px;max-width:70px">@iT.T(xLan,"1164","Code")</th>
+                                <th style="width:30%;min-width:150px">@iT.T(xLan,"1216","Name")</th>
+                                <th style="width:70%">@iT.T(xLan,"1212","Description")</th>
+                                <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1008","Debit")</th>
+                                <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1009","Credit")</th>
+                            </tr>
+                        </thead>
+                        <tbody class="xd" id="tb-GLRows">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="invoice-price">
+                    <div class="invoice-price-left">
+                        <div class="invoice-price-row">
+                            <div class="sub-price">
+                                <small>@iT.T(xLan,"1008","Debit")</small>
+                                <span id="txt-Debit" class="text-dark">0.00</span>
+                            </div>
+                            <div class="sub-price">
+                                <small>@iT.T(xLan,"1009","Credit")</small>
+                                <span id="txt-Credit" class="text-dark">0.00</span>
+                            </div>
+                            <div class="sub-price">
+                                <small>@iT.T(xLan,"1010","Diff")</small>
+                                <span id="txt-Diff" class="text-red me-2">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-price-right">
+                        <small>@iT.T(xLan,"1120","TOTAL")</small> <span class="fw-bold" id="txt-xTotal">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"2315","Close")</button>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var vatHidden = '';
+    var DocumentKind = 0;
+    var opk = null;
+
+    $(document).ready(function ()
+    {
+           opk = '@Model.OperationKey';
+        LoadData(opk);
+    });
+    function LoadData (key)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/idocuments/LoadGeneralLedger",
+            data: { key: key },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                $("#tb-GLRows").empty();
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '">'
+                    str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetAccountKind(item.jnAccount.Kind) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td>' + item.Description + '</td>'
+                    str += '      <td>' + comma(item.Debit) + '</td>'
+                    str += '      <td>' + comma(item.Credit) + '</td>'
+                    str += '<td hidden id="td-Debit" data-value="' + item.Debit + '"></td>'
+                    str += '<td hidden id="td-Credit" data-value="' + item.Credit + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-GLRows").append(str);
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function CalcAmount ()
+    {
+        var db = 0;
+        var cr = 0;
+        $('#tb-GLRows').find('tr').each(function ()
+        {
+            db += $(this).find('[id="td-Debit"]').data('value');
+            cr += $(this).find('[id="td-Credit"]').data('value');
+        });
+        $('#txt-Diff').text(comma(db - cr));
+        $('#txt-Debit').text(comma(db));
+        $('#txt-Credit').text(comma(cr));
+        $('#txt-xTotal').text(comma(db));
+    }
+       function GetAccountKind(kind) {
+        switch (kind) {
+            case 0:
+                return '<div class="wd70"><span class="badge bg-yellow text-dark" style="width:100%">' + 'Assets' + '</span></div>';
+                break;
+            case 1:
+                return '<div class="wd70"><span class="badge bg-danger text-dark" style="width:100%">' + 'Liability' + '</span></div>';
+                break;
+            case 2:
+                return '<div class="wd70"><span class="badge bg-info text-dark" style="width:100%">' + 'Equity' + '</span></div>';
+                break;
+            case 3:
+                return '<div class="wd70"><span class="badge bg-success text-dark" style="width:100%">' + 'Revenue' + '</span></div>';
+                break;
+            case 4:
+                return '<div class="wd70"><span class="badge bg-warning text-dark" style="width:100%">' + 'Expenses' + '</span></div>';
+                break;
+        }
+    }
+    function PrintGeneralLedger (Key)
+    {
+        window.open('/Print/Documents/PrintGeneralLedger?Key=' + Key);
+    }
+</script>

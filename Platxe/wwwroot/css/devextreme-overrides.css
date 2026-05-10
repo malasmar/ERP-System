@@ -1,0 +1,114 @@
+/* ==========================================================================
+   DEVEXTREME OVERRIDES (SaaS Layout & Typography)
+   ========================================================================== */
+
+/* Universal Reset */
+.dx-widget {
+    font-family: inherit !important;
+    font-size: 13px !important;
+}
+
+/* DataGrid Structure */
+.dx-datagrid {
+    border-radius: var(--border-radius) !important;
+    overflow: hidden !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-soft) !important;
+    background: #ffffff !important;
+    line-height: 1.4; /* Improves spacing naturally */
+}
+
+/* DataGrid Headers */
+.dx-datagrid-headers {
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    font-family: inherit; /* CRITICAL FIX: Forces custom font */
+}
+
+.dx-datagrid-headers .dx-datagrid-text-content {
+    text-transform: uppercase !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--text-muted) !important;
+    letter-spacing: 0.015em !important;
+}
+
+/* DataGrid Rows & Cells */
+.dx-datagrid-rowsview .dx-row {
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.dx-datagrid-rowsview .dx-row:last-child {
+    border-bottom: none !important;
+}
+
+.dx-datagrid-rowsview .dx-data-row:hover {
+    background-color: #f1f5f9 !important;
+}
+
+/* CRITICAL FIX: Table padding for premium SaaS feel */
+.dx-datagrid-rowsview .dx-row > td {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: var(--text-main) !important;
+}
+
+/* Form Inputs / TextEditors */
+.dx-texteditor.dx-editor-outlined {
+    border-radius: 8px !important;
+    border-color: var(--border-color) !important;
+    background: #ffffff !important;
+}
+
+.dx-texteditor-input {
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: var(--text-main) !important;
+}
+
+.dx-texteditor.dx-state-hover {
+    border-color: #cbd5e1 !important;
+}
+
+.dx-texteditor.dx-state-focused {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+/* Buttons */
+.dx-button {
+    border-radius: 8px !important;
+    text-transform: none !important;
+}
+
+.dx-button-text {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.015em !important;
+}
+
+/* Global Generic Buttons (Bootstrap) */
+.btn {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; }
+.btn-success { background-color: var(--success-color) !important; border-color: var(--success-color) !important; }
+.btn-danger { background-color: var(--danger-color) !important; border-color: var(--danger-color) !important; }
+
+/* DevExtreme Cards */
+.dx-card {
+    border-radius: var(--border-radius) !important;
+    box-shadow: var(--shadow-soft) !important;
+    border: 1px solid var(--border-color) !important;
+}

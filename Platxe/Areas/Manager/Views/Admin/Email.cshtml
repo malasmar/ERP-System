@@ -1,0 +1,132 @@
+@model CLiCore.Configuration.MyEmail
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"2732","Email Settings")</h1>
+        <div class="panel panel-inverse">
+
+            <div class="panel-body">
+
+                <div class="note note-warning note-with-end-icon mb-3 mr-2 ml-2">
+                    <div class="note-icon"><i class="fa fa-ban"></i></div>
+                    <div class="note-content text-start">
+                        <h4><b>Payment Service!</b></h4>
+                        <p>
+                            Email Service need to payment additional fees,Your <b>Subscribe </b> not support this service
+                        </p>
+                    </div>
+                </div>
+
+                <form id="frm-MyEmail" data-parsley-validate="true">
+                    <div><small>@iT.T(xLan, "2733","My Email Settings")</small></div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2734","Email")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Email).Width(300).Mode(TextBoxMode.Email)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2735","UserName")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.UserName).Width(300)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2736","Password")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Password).Width(300).Mode(TextBoxMode.Password)
+                        </div>
+                    </div>
+                
+                    <hr class="m-2 p-0" />
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2737","Port")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Port).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan, "2738","SMTP")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.SMTP).Width(300) 
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"2739","Use Default Credentials")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.UseDefaultCredentials).ID("cnt-UseDefaultCredentials").Width(120).DataSource(iReplacer.BoolTF(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"2740","Enable SSL")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.EnableSSL).ID("cnt-EnableSSL").Width(120).DataSource(iReplacer.BoolTF(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"2741","HTML Body")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.IsBodyHtml).ID("cnt-IsBodyHtml").Width(120).DataSource(iReplacer.BoolTF(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="me-4 p-3">
+                        <button class="btn btn-danger">@iT.T(xLan,"1772","Save Changed")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-MyEmail").submit(function (event)
+        {
+            event.preventDefault();
+            UpdateDefault();
+        });
+    });
+    function UpdateDefault ()
+    {
+        $.confirm({
+            title: 'Confirm!',
+            content: 'Are you sure to update MyEmail settings?',
+            buttons: {
+                Update: function ()
+                {
+                    var data = $('#frm-MyEmail').serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/Manager/icore/UpdateEmail",
+                        data: data,
+                        dataType: "json",
+                        success: function (response)
+                        {
+                            $.alert({
+                                title: 'Info',
+                                content: 'Operation Complete',
+                            });
+                        },
+                        failure: function (response)
+                        {
+                            alert(response);
+                        },
+                        error: function (response)
+                        {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                cancel: function ()
+                {
+                    return;
+                }
+            }
+        });
+    }
+
+</script>

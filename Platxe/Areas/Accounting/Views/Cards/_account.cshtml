@@ -1,0 +1,228 @@
+@model CLiAccounting.Cards.Account
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1193","Account Card")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Account" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(m => m.Source)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1172","Parent")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Parent).ID("cnt-Parent").InputAttr("required", true).DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB,xLan)).ValueExpr("Code").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12"> </label>
+                <div class="col-lg-9 col-sm-12">
+                    <table class="table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width:auto"></th>
+                                <th style="width:auto"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="fw-bold fs-10px">
+                            <tr><td>@iT.T(xLan,"1164","Code")</td><td><span id="txt-Code"></span></td></tr>
+                            <tr><td>@iT.T(xLan,"1274","Arabic Name")</td><td><span id="txt-Name1"></span></td></tr>
+                            <tr><td>@iT.T(xLan,"1166","English Name")</td><td><span id="txt-Name2"></span></td></tr>
+                            <tr><td>@iT.T(xLan,"1163","Level")</td><td><span id="txt-Level"></span></td></tr>
+                            <tr><td>@iT.T(xLan,"1158","Kind")</td><td><span id="txt-Kind"></span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <hr />
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1194","Level Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.IsParent).ID("cnt-IsParent").DataSource(iReplacer.accLevelKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150).ReadOnly(Model.Source==true?true:false)
+                </div>
+            </div>
+                 <div class="form-group row">
+           <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2323","DC Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.DC).ID("cnt-DC").DataSource(iReplacer.accDCKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150)
+                </div>
+            </div>
+            <div class="form-group row" hidden>
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1195","Balance Item")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.BalanceItem).ID("cnt-BalanceItem").DataSource(CLiAccounting.Selections.BalanceSheetItems.GetTransaction(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1162","Category")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Category).ID("cnt-Category").DataSource(iReplacer.accCategory(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150)
+                    <div>
+                        <p class="m-1 p-1 f-s-10">@iT.T(xLan,"2524","Used to open in financial cards categoreis")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1196","Financial Transaction")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Financial).ID("cnt-Financial").DataSource(iReplacer.accFinancial(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150).ReadOnly(Model.Source==true?true:false || Model.IsParent==true?true:false)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12"> </label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m=>m.CloseSubAccounts).Text(iT.T(xLan,"","Closed Sub Accounts"))
+                    <div>
+                        <p class="m-1 p-1 f-s-10">@iT.T(xLan,"2525","Used to make integration group level financial cards")</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-Account").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+        $('#cnt-Parent').dxLookup({
+            onValueChanged: function (e)
+            {
+                ParentDetails(e.value, true);
+            }
+        });
+        ParentDetails($('#cnt-Parent').dxLookup('option', 'value'), false);
+        if ($('#Source').val() == 'True')
+        {
+            $('#cnt-Financial').dxSelectBox('option', 'readOnly', true);
+        }
+    });
+    function SaveAccount ()
+    {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        if ($('#cnt-Parent').dxLookup('option', 'text') == "" || $('#cnt-Parent').dxLookup('option', 'value') == null)
+        {
+            $.alert({
+                title: 'Stop',
+                content: "Please select parent account.",
+            });
+            return;
+        }
+        var data = $('#frm-Account').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/acc/icards/UpdateAccount",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-Account").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ParentDetails (code, autocode)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/icards/AccountDetails",
+            data: { Key: code },
+            dataType: "json",
+            success: function (response)
+            {
+                if (response != null)
+                {
+                    $('#txt-Code').text(response.Code);
+                    $('#txt-Name1').text(response.Name1);
+                    $('#txt-Name2').text(response.Name2);
+                    $('#txt-Level').text(response.Level);
+                    $('#txt-Kind').text(response.Kind);
+                    if (autocode == true)
+                    {
+                        $('#cnt-BalanceItem').dxSelectBox('option', 'value', response.BalanceItem);
+                        $.ajax({
+                            type: "get",
+                            url: "/api/acc/icards/AccountCode",
+                            data: { Parent: code },
+                            dataType: "json",
+                            success: function (res)
+                            {
+                                $('#cnt-Code').dxTextBox('option', 'value', res);
+                            },
+                            failure: function (response)
+                            {
+                                alert(response);
+                            },
+                            error: function (response)
+                            {
+                                alert(response.responseText);
+                            }
+                        });
+                    }
+                }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

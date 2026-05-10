@@ -1,0 +1,122 @@
+@model CLiHR.Cards.Structure
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1553","Boss Cards")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Boss" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "2493","Manager")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @(Html.DevExtreme().LookupFor(m => m.Manager).ID("cnt-Manager").DataSource(CLiHR.Selections.Employees.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").InputAttr("required", true))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1554","No (ID)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.No).ID("cntb-No").ReadOnly(true).Width(100)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1555","Name (Arabic)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cntb-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1230","Name (English)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cntb-Name2").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1212","Description") </label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Description).ID("cntb-Description")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1556","Finale Confirmation")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.FinalConfirmation).ID("cntb-Boss").Value(true).ReadOnly(true).Text(iT.T(xLan, "1557","Finale Confirmation (Boss)"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1558","All Structure")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.FullStructre).ID("cntb-FullStructre").Value(true).ReadOnly(true).Text(iT.T(xLan, "1559","Confirm Full Structure"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1560","Human Resourcing")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.HRDepartment).ID("cntb-HumanResourcing").Value(true).ReadOnly(true).Text(iT.T(xLan, "1561","Human Resourcing Department"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1562","Financial Confirmation")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.HRDepartment).ID("cntb-Financial").Value(true).ReadOnly(true).Text(iT.T(xLan, "1562","Financial Confirmation"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1563","Administrative")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.AdministrativeDepartment).ID("cntb-Administrative").Value(true).ReadOnly(true).Text(iT.T(xLan, "1563","Administrative"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cntb-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Boss").submit(function (event)
+        {
+            event.preventDefault();
+            SaveBossAccount();
+        });
+    });
+    function SaveBossAccount() {
+        var data = $('#frm-Boss').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/hr/istructure/UpdateStructure",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Structure").modal('toggle');
+                LoadStructure(); 
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

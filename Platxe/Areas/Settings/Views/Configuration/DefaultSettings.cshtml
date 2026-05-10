@@ -1,0 +1,106 @@
+@model CLiCore.Configuration.DefaultSettings
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"1766","Company Configuration")</h1>
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+                <b>@iT.T(xLan,"1767","Company Profile")</b>
+            </div>
+            <div class="panel-body">
+                <form id="frm-Default" data-parsley-validate="true">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">Time Zone UTC Offset</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.UTCOffset).Width(130).InputAttr("required", true)
+                            <small>Use Minutes of UTC Offset</small>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1778","Currency Code")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Currency).Width(130).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1994","Currency Arabic Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.CurrencyName1).Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1995","Currency English Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.CurrencyName2).Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1996","Sub Currency Code")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.SubCurrency).Width(130).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1997","Sub Arabic Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.CurrencySubName1).Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1776","Sub English Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.CurrencySubName2).Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="me-4">
+                        <button class="btn btn-danger">@iT.T(xLan,"1772","Save Changed")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Default").submit(function(event) {
+            event.preventDefault();
+            UpdateDefault();
+        });
+    });
+    function UpdateDefault() {
+        $.confirm({
+            title: 'Confirm!',
+            content: 'Are you sure to update company profile?',
+            buttons: {
+                Update: function() {
+                    var data = $('#frm-Default').serialize();
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/Settings/iconfiguration/UpdateDefaultSettings",
+                        data: data,
+                        dataType: "json",
+                        success: function(response) {
+                            $.alert({
+                                title: 'Info',
+                                content: 'Operation Complete',
+                            });
+                        },
+                        failure: function(response) {
+                            alert(response);
+                        },
+                        error: function(response) {
+                            alert(response.responseText);
+                        }
+                    });
+                },
+                cancel: function() {
+                    return;
+                }
+            }
+        });
+    }
+</script>

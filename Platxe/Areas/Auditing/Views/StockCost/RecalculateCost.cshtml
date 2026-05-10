@@ -1,0 +1,323 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"2449","Reculculate Stock Transaction Cost")</h1>
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+                <b>@iT.T(xLan,"2450","Items Cost Operation")</b>
+            </div>
+            <div class="panel-body">
+                <h4>@iT.T(xLan, "2449","Reculculate Stock Transaction Cost")</h4>
+                <hr />
+                <h6><b>@iT.T(xLan, "2451","Rcalculate Operation")</b></h6>
+                <div class="note note-secondary">
+                    <div class="note-content">
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8 "></i> @iT.T(xLan, "2452","The system will Cost for all purchase invoice after selected date.")</p>
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8"></i> @iT.T(xLan, "","Important to wait until operation finish,The operation take long time don't worry.")</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-2 ">@iT.T(xLan, "2453","From Date")</label>
+                    @Html.DevExtreme().DateBox().ID("edFromDate").Width(130).DisplayFormat("dd.MM.yyyy")
+                </div>
+                <div class="btn-group m-t-10">
+                    <button class="btn btn-danger" onclick="GetInvoicesKeys()">@iT.T(xLan, "2454","Get Invoices")</button>
+                </div>
+                <div class="widget-list widget-list-rounded">
+                    <table class="table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width:auto"></th>
+                                <th style="width:auto"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="f-s-10 f-w-600">
+                            <tr><td>@iT.T(xLan, "2455","Purchase Invoices") </td><td><span id="txt-PurchaseInvoice"></span><span class="text-red" id="txt-PurchaseComplete"></span></td></tr>
+                            <tr><td>@iT.T(xLan, "2456","Sales Invoices") </td><td><span id="txt-SalesInvoice"></span><span class="text-red" id="txt-SalesComplete"></span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="note note-secondary m-t-20">
+                    <div class="note-content">
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-9"></i> @iT.T(xLan, "","�You must start with purchase cost audit then Recalc sales cost.")</p>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-danger" onclick="ConfirmReCostPurchase()">@iT.T(xLan, "2457","Recalculate Purchasing")</button>
+                    <button class="btn btn-danger" onclick="ConfirmReCostSales()">@iT.T(xLan, "2458","Recalculate Sales Invoices")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mod-PurchaseCost" class="modal">
+    <div class="modal-dialog modal-lg" id="con-PurchaseCost">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@iT.T(xLan,"2459","Reculculate Items Cost")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-2" id="div-Progress">
+                            <div class="text-center">
+                                <p class="f-s-11 text-dark mb-0 pb-0">Post Transaction <small> Please Wait</small></p>
+                                <p class="f-s-10 text-red mt-1 pt-1" id="txtInfo">@iT.T(xLan, "2328","Please Wait")</p>
+                            </div>
+                            <div id="progress">
+                                @(Html.DevExtreme().ProgressBar().ID("progressBarStatus").Min(0).Width("100%"))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-SalesCost" class="modal">
+    <div class="modal-dialog modal-lg" id="con-SalesCost">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@iT.T(xLan,"2460","Sales Items Cost")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-2" id="div-Progress">
+                            <div class="text-center">
+                                <p class="f-s-11 text-dark mb-0 pb-0">Post Transaction <small> Please Wait</small></p>
+                                <p class="f-s-10 text-red mt-1 pt-1" id="txtInfo">@iT.T(xLan, "2328","Please Wait")</p>
+                            </div>
+                            <div id="progress">
+                                @(Html.DevExtreme().ProgressBar().ID("prgSalesCost").Min(0).Width("100%"))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script class="append-on-ajax-script">
+
+    var PurchaseKeys;
+    var SalesKeys;
+    var InvoicesTotRows = 0;
+
+    function GetInvoicesKeys ()
+    {
+        if ($('#edFromDate').dxDateBox('option', 'value') == null)
+        {
+            alert('Please select date??');
+            return;
+        }
+        var d = new Date();
+        d = $('#edFromDate').dxDateBox('option', 'value');
+        $.ajax({
+            type: "get",
+            url: "/api/Auditing/icore/PurchaseInvoicesKeys",
+            data: { Date: d.toLocaleDateString() },
+            dataType: "json",
+            success: function (response)
+            {
+                PurchaseKeys = response;
+
+                $.ajax({
+                    type: "get",
+                    url: "/api/Auditing/icore/SalesInvoicesKeys",
+                    data: { Date: d.toLocaleDateString() },
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        SalesKeys = response;
+                        $('#txt-PurchaseInvoice').text(comma(PurchaseKeys.length));
+                        $('#txt-SalesInvoice').text(comma(SalesKeys.length));
+                    },
+                    failure: function (response)
+                    {
+                        alert(response);
+                    },
+                    error: function (response)
+                    {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function ConfirmReCostPurchase ()
+    {
+        if (PurchaseKeys.length == 0)
+            return;
+
+        $.confirm({
+            title: '<span class="f-s-10 text-grey">Confirm</span>',
+            content: 'Are you sure to post Recalculate cost? can not undo this operation',
+            buttons: {
+                Delete: {
+                    text: 'Recalculate',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        DeleteItemsCost();
+                    }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return
+                    }
+                }
+            }
+        });
+    }
+    function PostPurchaseTransactionRow (i)
+    {
+        var d = new Date();
+        d = $('#edFromDate').dxDateBox('option', 'value');
+        $("#progressBarStatus").dxProgressBar("option", "value", i + 1);
+        $.ajax({
+            type: "Post",
+            url: "/api/Auditing/icore/UpdateTransactionCost",
+            data: { Key: PurchaseKeys[ i ].Key, DocKind: PurchaseKeys[ i ].Kind, StartDate: d.toLocaleDateString() },
+            dataType: "json",
+            success: function (response)
+            {
+                ++i;
+                if (i < InvoicesTotRows)
+                {
+                    PostPurchaseTransactionRow(i);
+                }
+                if (i == InvoicesTotRows)
+                {
+                    PurchaseKeys = null;
+                    $('#txt-PurchaseComplete').text(' Updated Successfully');
+                    $("#mod-PurchaseCost").modal('toggle');
+                }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function DeleteItemsCost ()
+    {
+        var d = new Date();
+        d = $('#edFromDate').dxDateBox('option', 'value');
+        $.ajax({
+            type: "post",
+            url: "/api/Auditing/icore/DeleteTransactionCost",
+            data: { Date: d.toLocaleDateString() },
+            dataType: "json",
+            success: function (response)
+            {
+                InvoicesTotRows = PurchaseKeys.length;
+                $("#progressBarStatus").dxProgressBar("option", "max", InvoicesTotRows);
+                PostPurchaseTransactionRow(0);
+
+                $("#mod-PurchaseCost").modal('toggle');
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+
+
+    function ConfirmReCostSales ()
+    {
+        if (SalesKeys.length == 0)
+            return;
+
+        $.confirm({
+            title: '<span class="f-s-10 text-grey">Confirm</span>',
+            content: 'Post sales cost? can not undo this operation',
+            buttons: {
+                Delete: {
+                    text: 'Recalculate',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        InvoicesTotRows = SalesKeys.length;
+                        $("#prgSalesCost").dxProgressBar("option", "max", InvoicesTotRows);
+                        PostSalesTransactionRow(0);
+
+                        $("#mod-SalesCost").modal('toggle');
+                    }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return
+                    }
+                }
+            }
+        });
+    }
+
+
+    function PostSalesTransactionRow (i)
+    {
+        $("#prgSalesCost").dxProgressBar("option", "value", i + 1);
+        $.ajax({
+            type: "Post",
+            url: "/api/Auditing/icore/UpdateTransactionCost",
+            data: { Key: SalesKeys[ i ].Key, DocKind: SalesKeys[ i ].Kind },
+            dataType: "json",
+            success: function (response)
+            {
+                ++i;
+                if (i < InvoicesTotRows)
+                {
+                    PostSalesTransactionRow(i);
+                }
+                if (i == InvoicesTotRows)
+                {
+                    SalesKeys = null;
+                    $('#txt-SalesComplete').text(' Updated Successfully');
+                    $("#mod-SalesCost").modal('toggle');
+                }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+  
+</script>

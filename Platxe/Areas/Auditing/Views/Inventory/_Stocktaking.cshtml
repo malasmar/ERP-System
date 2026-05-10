@@ -1,0 +1,69 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2554","Stocktaking History")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Audit.Stocktaking>().ID("grd-Stocktaking")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("icore").Area("Auditing")
+                .Key("Key")
+                .LoadAction("Stocktaking"))
+                .ColumnAutoWidth(true)
+                .FocusedRowEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4Stocktaking"));
+                    columns.AddFor(m => m.Status).Caption(iT.T(xLan, "1282", "Status")).Width(75).Lookup(L => L.DataSource(iReplacer.invStcoktakingStatus(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Status"));
+                    columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1210", "Date")).Width(80).Format("dd.MM.yyyy");
+                    columns.AddFor(m => m.Warehouse).Caption(iT.T(xLan, "2511", "Source Warehouse")).Width(150).Lookup(L => L.DataSource(CLiInventory.Selections.Warehouse.GetList(DB, xLan)).ValueExpr("No").DisplayExpr("Display"));
+                    columns.AddFor(m => m.Person).Caption(iT.T(xLan, "1731", "Person")).Width(150);
+                    columns.AddFor(m => m.Comment).Caption(iT.T(xLan, "1587", "Unit")).Width("100%");
+                
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                })
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+

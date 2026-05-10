@@ -1,0 +1,454 @@
+@model CLiCore.Platx.Users
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    Guid Subscribe = Guid.Parse(User.FindFirstValue("aiwSubscribe"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1679","User Details")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-User" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(x=>x.Subscribe)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <ul class="nav nav-pills mb-2">
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-1" data-bs-toggle="tab" class="nav-link active">
+                        <span class="d-sm-none">General</span>
+                        <span class="d-sm-block d-none">General</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-2" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">Details</span>
+                        <span class="d-sm-block d-none">Details</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-3" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">Modules</span>
+                        <span class="d-sm-block d-none">Modules</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-4" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">Payment Methods</span>
+                        <span class="d-sm-block d-none">Payment Methods</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content p-3 rounded-top panel rounded-0 m-0">
+                <div class="tab-pane fade active show" id="nav-pills-tab-1">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.No).ID("cnt-No").Width(120).InputAttr("required", true).ReadOnly(true)
+                            <p class="f-s-10 mt-1 mb-2">User No:<span> Will generated after save</span></p>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2").Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1303","Email")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Email).ID("cnt-Email").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1676","Phone No")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Phone).ID("cnt-Phone").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"","Whatsapp No")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.WhatsappNumber).ID("cnt-WhatsappNumber").InputAttr("required", true).Mask("+000000000000").MaskChar("x")
+                            <div>
+                                <p class="m-1 p-1 f-s-10 f-w-600">@iT.T(xLan,"","Important start with international code,We will send OTP by whatsapp")</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1678","Passwoard")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Passwoard).ID("cnt-Passwoard").Mode(TextBoxMode.Password).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1671","DataBase")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.DataBase).ID("cnt-DataBase").DataSource(CLiCore.Account.Selections.Database.GetData(xLan,Subscribe)).ValueExpr("Key").DisplayExpr("Display").Width("50%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1680","Access")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Kind).ID("cnt-Kind").DataSource(iReplacer.UserKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width("50%")
+                        </div>
+                    </div>
+                    <p class="f-s-12 text-dark">Next options for application access</p>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.AppSalesPerson).ID("cnt-AppSalesPerson").Text(iT.T(xLan,"2215","Sales Person Application"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.AppSales).ID("cnt-AppSales").Text(iT.T(xLan,"2216","Sales Application"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.AppWarehouse).ID("cnt-AppWarehouse").Text(iT.T(xLan,"2217","Warehouse Application"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-2">
+                    <p class="f-s-12">Default and Integration</p>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1281","Branch")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("cnt-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1328","Prefix")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Prefix).ID("cnt-Prefix").DataSource(CLiFinancial.Selections.Prefix.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.ActiveFilter).ID("cnt-ActiveFilter").Text(iT.T(xLan,"2515","Active Prefix Filter"))
+                            <div>
+                                <p class="m-1 p-1 f-s-10">The active filter used to filter user current accounts and transactions prefix.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1625","Warehouse")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.WarehouseNo).ID("cnt-WarehouseNo").DataSource(CLiInventory.Selections.Warehouse.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1095","Cash")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Cash).ID("cnt-Cash").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan,PLenums.TransactionAccount.CashBox)).ValueExpr("Key").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1681","CostCenter")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.CostCenter).ID("cnt-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1220","Project")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Project).ID("cnt-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%")
+                        </div>
+                    </div>
+                    <hr class="p-0 m-0 mt-3 mb-1" />
+                    <p class="f-s-12">Rights and Privilege</p>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.CanDelete).ID("cnt-CanDelete").Text(iT.T(xLan,"2218","Can Delete"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.CanPost).ID("cnt-CanPost").Text(iT.T(xLan,"2219","Can Post"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.ConfirmFinance).ID("cnt-ConfirmFinance").Text(iT.T(xLan,"2220","Financial Confirmation"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.ConfirmSales).ID("cnt-ConfirmSales").Text(iT.T(xLan,"2221","Sales Confirmation"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.ConfirmInventory).ID("cnt-ConfirmInventory").Text(iT.T(xLan,"2222","Inventory Confirmation"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.ConfirmPurchase).ID("cnt-ConfirmPurchase").Text(iT.T(xLan,"2223","Purchase Confirmation"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.CloseSalesPrice).ID("cnt-CloseSalesPrice").Text(iT.T(xLan,"2224","Close Sales Price"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.CloseSalesDiscount).ID("cnt-CloseSalesDiscount").Text(iT.T(xLan,"2225","Close Sales Discount"))
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-3">
+                    <div class="btn-group mb-2 mt-2">
+                        <button type="button" class="btn btn-dark btn-sm" onclick="CheckAll()">@iT.T(xLan, "1682","Select All")</button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="UnCheckAll()">@iT.T(xLan, "1683","Remove All")</button>
+                    </div>
+                    <div data-scrollbar="true" style="padding:10px 10px;overflow:auto;height:500px;">
+                        <div id="jstree-checkable" style="height:100%"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-4">
+                    <div class="me-2">
+                        <div class="alert  alert-yellow p-1">
+                            User Payment Methods: Used on application sales <small>.</small>
+                        </div>
+                        <div class="btn-group mt-2">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="NewPaymentMethod(null,'@Model.Key')">@iT.T(xLan,"1684","Add Method")</button>
+                        </div>
+                    </div>
+                    <div>
+                        @(Html.DevExtreme().DataGrid<CLiCore.Platx.PaymentMethods>().ID("grd-PaymentMethods")
+                            .ShowBorders(true).Width("100%").Height(400)
+                            .DataSource(d => d.WebApi()
+                            .Controller("icore").Area("Manager")
+                            .Key("Key")
+                            .LoadAction("PaymentMethods").LoadParams(new { Key = Model.Key }))
+                            .ColumnAutoWidth(true)
+                            .Columns(columns =>
+                            {
+                                columns.Add().Name("act").Caption(iT.T(xLan, "1263", "Action")).Width(80).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4PaymentMethods"));
+                                columns.AddFor(m => m.Display).Caption(iT.T(xLan, "1675", "Display"));
+                            })
+                            .RowAlternationEnabled(true)
+                            .RtlEnabled(devRtl)
+                            )
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div id="mod-Paymentmethod" class="modal"><div class="modal-dialog modal-x2" id="con-Paymentmethod"></div></div>
+<script class="append-on-ajax-script">
+    var UserKey = null;
+    $(document).ready(function ()
+    {
+        UserKey = '@Model.Key';
+        LoodTree();
+        $("#frm-User").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function Submitfrm ()
+    {
+        $('#frm-User').submit();
+    }
+    function SaveAccount ()
+    {
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Email').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Email !');
+            return;
+        }
+        if ($('#cnt-Phone').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Phone !');
+            return;
+        }
+        if ($('#cnt-DataBase').dxSelectBox('option', 'value') == null)
+        {
+            alert('Please select user data file!');
+            return;
+        }
+        var data = $('#frm-User').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/Manager/icore/UpdateUser",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                if (response == 'ErrorValidEmial')
+                {
+                    $.alert({
+                        title: 'Stop',
+                        content: "The Email is invalid email.",
+                    });
+                    return;
+                }
+                if (response == 'ErrorEmial')
+                {
+                    $.alert({
+                        title: 'Stop',
+                        content: "This Email already registered.",
+                    });
+                    return;
+                }
+                if (response == 'ErrorPhone')
+                {
+                    $.alert({
+                        title: 'Stop',
+                        content: "This Phone already registered.",
+                    });
+                    return;
+                }
+                UserKey = response;
+                UpdateUserModules();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function RefreshGridPaymentMethods ()
+    {
+        $('#grd-PaymentMethods').dxDataGrid("instance").refresh();
+    }
+    function NewPaymentMethod (Key, User)
+    {
+        $('#con-Paymentmethod').empty();
+        $("#con-Paymentmethod").load('/Manager/Index/PaymentMethodDetails?User=' + User);
+        $("#mod-Paymentmethod").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function CheckAll ()
+    {
+        $("#jstree-checkable").jstree().check_all(true);
+    }
+    function UnCheckAll ()
+    {
+        $("#jstree-checkable").jstree().uncheck_all(true);
+    }
+    function LoodTree ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Manager/icore/LoadUserModules",
+            data: { Key: UserKey },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#jstree-checkable').jstree({
+                    'plugins': [ "wholerow", "checkbox", "types" ],
+                    'core': {
+                        "themes": {
+                            "responsive": false
+                        },
+                        'data': response
+                    },
+                    "types": {
+                        "default": {
+                            "icon": "fa fa-folder text-primary fa-lg"
+                        },
+                        "file": {
+                            "icon": "fa fa-file text-success fa-lg"
+                        }
+                    }
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function UpdateUserModules ()
+    {
+        var dt = [];
+        dt = $('#jstree-checkable').jstree().get_bottom_selected(true);
+        $.ajax({
+            type: "POST",
+            url: "/api/Manager/icore/UpdateUserModules",
+            data: { Key: UserKey, data: JSON.stringify(dt) },
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-User").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

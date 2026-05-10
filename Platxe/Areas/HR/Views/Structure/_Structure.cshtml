@@ -1,0 +1,255 @@
+@model CLiHR.Cards.Structure
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1987","Structure Cards")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Structure" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1565","Parent Managment")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @(Html.DevExtreme().LookupFor(m => m.Parent).ID("cnt-Parent").DataSource(CLiHR.Selections.Structure.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").InputAttr("required", true))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "2493","Manager")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @(Html.DevExtreme().LookupFor(m => m.Manager).ID("cnt-Manager").DataSource(CLiHR.Selections.Employees.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").InputAttr("required", true))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1554","No (ID)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.No).ID("edNo").ReadOnly(true).Width(100).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1555","Name (Arabic)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1230","Name (English)")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1212","Description") </label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Description)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1566","Min Person")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Min).Width(100).ShowSpinButtons(true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1567","Max Person")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Max).Width(100).ShowSpinButtons(true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12  ">@iT.T(xLan, "1568","Target")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Target).Width(100).ShowSpinButtons(true)
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.FullStructre).Text(iT.T(xLan, "2494","Confirm All Structure"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.HRDepartment).Text(iT.T(xLan, "1561","Human Resourcing Department"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.FinancialDepartment).Text(iT.T(xLan, "1562","Financial Confirmation"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.AdministrativeDepartment).Text(iT.T(xLan, "1563","Administrative"))
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmAdvance).Text(iT.T(xLan, "2495","Confirm Advance Request"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmLoan).Text(iT.T(xLan, "2496","Confirm Loan Request"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmAnnualLeave).Text(iT.T(xLan, "2497","Confirm Annual Leave"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmNormalLeave).Text(iT.T(xLan, "2498","Confirm Leave"))
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmHourLeave).Text(iT.T(xLan, "2499","Confirm Hourly Leave"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmHourLeaveFinal).Text(iT.T(xLan, "2500","Close Hourly Leave"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmPenalty).Text(iT.T(xLan, "2501","Confirm Penalties"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.ConfirmReward).Text(iT.T(xLan, "2502","Confirm Rewards"))
+                </div>
+            </div>
+                  <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.PenaltyEdit).Text(iT.T(xLan, "2503","Edit Penalty"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  "></label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.RewardEdit).Text(iT.T(xLan, "2504","Edit Rewards"))
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1569","Close Advance")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.CloseAdvance).Width(100).ShowSpinButtons(true)
+                    <div class="p-1">
+                        <small>For the financial department confirm advance less than amount.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12  ">@iT.T(xLan, "1570","Close Days")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.CloseDays).Width(100).ShowSpinButtons(true)
+                    <div class="p-1">
+                        <small>For the HR department confirm Normal Leave less than days.</small>
+                    </div>
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="p-1">
+                <small>Close or Stop Request</small>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2364","Leave Request")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.StopLeave).ID("cnt-StopLeave").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2365","Annual Leave")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.StopAnnualLeave).ID("cnt-StopAnnualLeave").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2366","Advance Request")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.StopAdvance).ID("cnt-StopAdvance").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-Structure").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount ()
+    {
+        if ($('#cnt-Parent').dxLookup('option', 'value') == null)
+        {
+            alert('Please');
+            return;
+        }
+        var data = $('#frm-Structure').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/hr/istructure/UpdateStructure",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-Structure").modal('toggle');
+                LoadStructure();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

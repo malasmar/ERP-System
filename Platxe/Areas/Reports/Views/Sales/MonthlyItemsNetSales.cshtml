@@ -1,0 +1,170 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"2667","Items Monthly Sales")<small> @iT.T(xLan,"","")</small></h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(90).Value(Year)
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiSales.Reports.MonthlySales>().ID("grd-MonthlySales")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Reports")
+                    .Key("Key")
+                    .LoadAction("MonthlyNetSales")
+                    .LoadParams(new
+                    {
+                        Year = new JS("getYear")
+                    })
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "2663", "Kind")).Width(80).Lookup(L => L.DataSource(iReplacer.finItemKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).MinWidth(200).CellTemplate(new JS("ctWordWrap"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).MinWidth(200).CellTemplate(new JS("ctWordWrap")).Visible(false);
+                        columns.AddFor(m => m.Jan).Caption(iT.T(xLan, "2668", "Jan")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Feb).Caption(iT.T(xLan, "2669", "Feb")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Mar).Caption(iT.T(xLan, "2670", "Mar")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Apr).Caption(iT.T(xLan, "2671", "Apr")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.May).Caption(iT.T(xLan, "2672", "May")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Jun).Caption(iT.T(xLan, "2673", "Jun")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Jul).Caption(iT.T(xLan, "2674", "Jul")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Aug).Caption(iT.T(xLan, "2675", "Aug")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Sep).Caption(iT.T(xLan, "2676", "Sep")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Oct).Caption(iT.T(xLan, "2677", "Oct")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Nov).Caption(iT.T(xLan, "2678", "Nov")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Dec).Caption(iT.T(xLan, "2679", "Dec")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Net).Caption(iT.T(xLan, "2622", "Total")).Width(100).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Kind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Jan).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Feb).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Mar).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Apr).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.May).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Jun).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Jul).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Aug).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Sep).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Oct).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Nov).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Dec).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Net).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.GroupItems(item =>
+                        {
+                            item.AddFor(m => m.Kind).SummaryType(SummaryType.Count);
+                    
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Grouping(g => g.AutoExpandAll(false).AllowCollapsing(true))
+                    .GroupPanel(gp => gp.Visible(true))
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2665", "Items Sales")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+
+    function RefreshGrid ()
+    {
+        $('#grd-MonthlySales').dxDataGrid("instance").refresh();
+    }
+
+    function getYear ()
+    {
+        return $('#edYear').dxNumberBox('option', 'value');
+    }
+
+ 
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 6:
+                str = '<div class="text-center"><span class="badge bg-success">' + options.text + '</span></div>';
+                break;
+            case 8:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 5:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+ 
+</script>

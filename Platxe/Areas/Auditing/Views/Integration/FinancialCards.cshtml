@@ -1,0 +1,165 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2595","Financial Cards")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.CheckIntegration.FinancialAccounts>().ID("grd-CurrentAccount")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Auditing")
+                    .Key("Key")
+                    .LoadAction("IntegrationCards"))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(45).Fixed(true).FixedPosition(devFixd).AllowFixing(true).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(75).Lookup(L => L.DataSource(iReplacer.finAccounts(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
+                        columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1172", "Parent")).Width(165).Lookup(L => L.DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")).CellTemplate(new JS("ctWordWrap"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).MinWidth(180).CellTemplate(new JS("ctWordWrap"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).MinWidth(180).Width("100%").CellTemplate(new JS("ctWordWrap")).Visible(false);
+                        columns.AddFor(m => m.Account).Caption(iT.T(xLan, "2596", "Integration Account")).MinWidth(200).Lookup(L => L.DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")).CellTemplate(new JS("ctWordWrap"));
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2597", "Current Account Cards")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-CurrentAccount" class="modal"><div class="modal-dialog" id="con-CurrentAccount"></div></div>
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'edit' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'edit')
+                        {
+                            switch (options.data.Kind)
+                            {
+                                case 0:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/Financial/Cards/CurrentAccountDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                                case 2:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/Financial/Cards/CashBoxDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                                case 3:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/Financial/Cards/BankDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                                case 5:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/Financial/Cards/ExpensesDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                                case 6:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/Financial/Cards/RevenueDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                                case 1:
+                                    $('#con-CurrentAccount').empty();
+                                    $("#con-CurrentAccount").load('/HR/Cards/EmployeeDetails?Key=' + options.data.Key);
+                                    $("#mod-CurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+                                    break;
+                            }
+
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-CurrentAccount').dxDataGrid("instance").refresh();
+    }
+
+
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-dark">' + options.text + '</span></div>';
+                break;
+            case 4:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 5:
+                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                break;
+            case 6:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+
+</script>

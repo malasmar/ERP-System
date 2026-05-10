@@ -1,0 +1,183 @@
+@model CLiCore.Configuration.Profile
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"1766","Company Configuration")</h1>
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+                <b>@iT.T(xLan,"1767","Company Profile")</b>
+            </div>
+            <div class="panel-body">
+                <form id="frm-profile" data-parsley-validate="true" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <div class="h-100px d-flex">
+                                <img id="img-clogo" class="widget-img widget-img-xl rounded bg-dark float-start me-5px mb-5px" src="../../aiwa-data/@DB/Content/Logo/@Model.Image" alt="No Logo">
+                            </div>
+                            <input type="file" id="xuploader" name="uploader" accept=".jpg,.png,.jpeg,.tiff|image/*" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1768","Company Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name1).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1230","Name (English)")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name2).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1769","Registration Code")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.RC).InputAttr("required", true).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1371","VAT Reg.No")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.vatRegNo).InputAttr("required", true).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1770","Commercial Type")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Commercial).Width("70%")
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"","Detail [1]")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Detail1)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"","Detail [2]")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Detail2)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"","Detail [3]")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Detail3)
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1190","Phone")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Phone).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1189","Mobile")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Mobile).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1317","Fax")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Fax).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1303","Email")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Email).Mode(TextBoxMode.Email).Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1771","Website")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Websit).Mode(TextBoxMode.Url).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1206","Address")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextAreaFor(m => m.Address).Height(80)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2399","English Address")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextAreaFor(m => m.Address_en).Height(80)
+                        </div>
+                    </div>
+                    <div class="me-4">
+                        <button class="btn btn-danger">@iT.T(xLan,"1772","Save Changed")</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+    $("#frm-profile").submit(function(event) {
+        event.preventDefault();
+        UpdateCompany();
+    });
+    $("#xuploader").change(function() {
+        readURL(this);
+    });
+});
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#img-clogo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+function UpdateCompany() {
+    $.confirm({
+        title: 'Confirm!',
+        content: 'Are you sure to update company profile?',
+        buttons: {
+            Update: function() {
+                var data = $('#frm-profile')[0];
+                var input = document.getElementById('xuploader');
+                var files = input.files;
+                var formData = new FormData(data);
+                //for (var i = 0; i != files.length; i++) {
+                formData.append("files", files[0]);
+                //}
+                $.ajax({
+                    type: "POST",
+                    url: "/api/Settings/iconfiguration/UpdateCompanyProfile",
+                    enctype: 'multipart/form-data',
+                    data: formData,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $.alert({
+                            title: 'Info',
+                            content: 'Operation Complete',
+                        });
+                    },
+                    failure: function(response) {
+                        alert(response);
+                    },
+                    error: function(response) {
+                        alert(response.responseText);
+                    }
+                });
+            },
+            cancel: function() {
+                return;
+            }
+        }
+    });
+}
+</script>

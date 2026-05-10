@@ -1,0 +1,185 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"2666","Items Return Sales")<small> @iT.T(xLan,"","")</small></h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(90).Value(Year).OnValueChanged("ChangeYear")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1224","First Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1225","Last Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiSales.Reports.ItemsSales>().ID("grd-ItemsSales")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Reports")
+                    .Key("Key")
+                    .LoadAction("ReturnItemsSales")
+                    .LoadParams(new
+                    {
+                        FirstDate = new JS("getFirst"),
+                        LastDate = new JS("getLast")
+                    })
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                       columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "2663", "Kind")).Width(80).Lookup(L => L.DataSource(iReplacer.finItemKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).MinWidth(200).CellTemplate(new JS("ctWordWrap"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).MinWidth(200).CellTemplate(new JS("ctWordWrap")).Visible(false);
+                        columns.AddFor(m => m.RQuantity).Caption(iT.T(xLan, "2647", "Quantity")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.RAmount).Caption(iT.T(xLan, "2630", "Amount")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.RDiscount).Caption(iT.T(xLan, "2649", "Discount")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.RTotal).Caption(iT.T(xLan, "2622", "Total")).Width(100).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Kind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.RQuantity).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.RAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.RDiscount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.RTotal).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.GroupItems(item =>
+                        {
+                            item.AddFor(m => m.Kind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.RQuantity).SummaryType(SummaryType.Sum).ValueFormat("0,###.##").AlignByColumn(true);
+                            item.AddFor(m => m.RAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##").AlignByColumn(true);
+                            item.AddFor(m => m.RDiscount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##").AlignByColumn(true);
+                            item.AddFor(m => m.RTotal).SummaryType(SummaryType.Sum).ValueFormat("0,###.##").AlignByColumn(true);
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Grouping(g => g.AutoExpandAll(false).AllowCollapsing(true))
+                    .GroupPanel(gp => gp.Visible(true))
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2666", "Items Return Sales")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+ 
+    function RefreshGrid ()
+    {
+        $('#grd-ItemsSales').dxDataGrid("instance").refresh();
+    }
+    function getFirst ()
+    {
+        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        return fd.toLocaleDateString();
+    }
+    function getLast ()
+    {
+        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        return ld.toLocaleDateString();
+    }
+    function ChangeYear ()
+    {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 6:
+                str = '<div class="text-center"><span class="badge bg-success">' + options.text + '</span></div>';
+                break;
+            case 8:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 5:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+</script>

@@ -1,0 +1,128 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2432","Items Cost")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiInventory.Audit.Cost.ItemsCost>().ID("grd-ItemsCost")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Auditing")
+                    .Key("Key")
+                    .LoadAction("ItemsCost"))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(35).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.Category).Caption(iT.T(xLan, "1172", "Parent")).Lookup(L => L.DataSource(CLiInventory.Selections.Categories.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
+                        columns.AddFor(m => m.StandardCost).Caption(iT.T(xLan, "2436", "Standard Cost")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Cost).Caption(iT.T(xLan, "1576", "Cost")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.UpdateDate).Caption(iT.T(xLan, "2437", "Update Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.Transactions).Caption(iT.T(xLan, "2438", "Transactions")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Price).Caption(iT.T(xLan, "1187", "Price")).Width(85).Format("0,###.##"); 
+                        columns.AddFor(m => m.vatKey).Caption(iT.T(xLan, "1297", "vat Rate")).Width(100).Lookup(L => L.DataSource(CLiFinancial.Selections.vatRate.vatRates(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(85).Format("0,###.##"); 
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RowAlternationEnabled(true)
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2432", "Items Cost")))
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-ItemDetails" class="modal"><div class="modal-dialog modal-lg" id="con-ItemDetails"></div></div>
+
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'tips' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'tips')
+                        {
+                            ItemBatches(options.data.Key);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-ItemsCost').dxDataGrid("instance").refresh();
+    }
+    function ct4Disable (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ItemBatches (Key)
+    {
+        $('#con-ItemDetails').empty();
+        $("#con-ItemDetails").load('/Auditing/StockCost/ItemCostDetails?Key=' + Key);
+        $("#mod-ItemDetails").modal({ backdrop: 'static' }).modal('toggle');
+    }
+
+
+</script>

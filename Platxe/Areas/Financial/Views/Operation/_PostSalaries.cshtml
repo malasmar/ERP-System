@@ -1,0 +1,101 @@
+@model CLiFinancial.Documents.Transaction
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string Currency = CLiCore.VoucherOperation.DefaultCurrency(DB);
+    Guid? vatAccount = xConfig.vatKey(DB);
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2712","Create Salaries JV")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Salaries" data-parsley-validate="true">
+        <div class="modal-body">
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1328","Prefix")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Prefix).ID("frm-Prefix").DataSource(CLiFinancial.Selections.Prefix.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width(200)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1162","Category")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Category).ID("frm-Category").DataSource(CLiFinancial.Selections.Groups.JVCategories(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width(200)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1212","Description")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextAreaFor(m => m.Description).ID("frm-Description").Height(65)
+                </div>
+            </div>
+            <hr class="m-1" />
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1281","Branch")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("frm-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Width(185)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1330","Reference No")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.ReferenceNo).ID("frm-ReferenceNo").Width(185)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1331","Ref.Date")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().DateBoxFor(m => m.ReferenceDate).ID("frm-ReferenceDate").Width(110).DisplayFormat("dd.MM.yyyy")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark" >@iT.T(xLan,"2713","Post Salaries")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+
+    $(document).ready(function ()
+    {
+        $("#frm-Salaries").submit(function (event)
+        {
+            event.preventDefault();
+            PostSalaries();
+        });
+   
+    });
+    function PostSalaries(){
+        var voucher = $('#frm-Salaries').serialize();
+        $.ajax({
+            type: "post",
+            url: "/api/fin/idocuments/PostSalaries",
+            data: voucher + '&Year=' + $('#ctr-Year').dxNumberBox('option', 'value') + '&Month=' + $('#ctr-Month').dxSelectBox('option', 'value'),
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.Status == true)
+                {
+                    exDocumentError(response);
+                    return;
+                }
+               $("#mod-Post").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

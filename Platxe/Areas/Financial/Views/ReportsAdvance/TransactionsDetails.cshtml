@@ -1,0 +1,347 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2714","Transactions Details")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3">
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("num-Year").ShowSpinButtons(true).Width(90).Value(Year)
+                            <span class="input-group-append">
+                                <button type="button" class="btn btn-default btn-white" onclick="RefreshGrid()" title="@iT.T(xLan,"1156","Refresh")" style="height:36px"><i class="fa fa-sync-alt" style="width:15px;min-width:15px"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Reports.Advance.TransactionDetails>().ID("grd-Transactions")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ireports").Area("Financial")
+                    .Key("Row")
+                    .LoadAction("TransactionDetails").LoadParams(new { Year = new JS("GetYear"), DocKind = 80 }))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(75).AllowFixing(true).Fixed(true).FixedPosition(devFixd).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1975", "DocumentKind")).Width(110).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan, true)).ValueExpr("Value").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1210", "Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.No).Caption(iT.T(xLan, "1265", "No")).Width(80).CellTemplate(new JS("ctBold"));
+                        columns.AddFor(m => m.Kind1).Caption(iT.T(xLan, "2705", "Account Kind")).Width(80).Lookup(L => L.DataSource(iReplacer.finAccountsFull(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4ItemKind"));
+                        columns.AddFor(m => m.Code1).Caption(iT.T(xLan, "1164", "Code")).Width(90);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1274", "Arabic Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
+                        columns.AddFor(m => m.Kind2).Caption(iT.T(xLan, "2705", "Account Kind")).Width(80).Lookup(L => L.DataSource(iReplacer.finAccountsFull(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4ItemKind"));
+                        columns.AddFor(m => m.Acc2Code).Caption(iT.T(xLan, "2715", "Counter Code")).Width(90);
+                        columns.AddFor(m => m.Acc2Name1).Caption(iT.T(xLan, "2716", "Counter Arabic Name"));
+                        columns.AddFor(m => m.Acc2Name2).Caption(iT.T(xLan, "2717", "Counter English Name")).Visible(false);
+                        columns.AddFor(m => m.VoucherDescription).Caption(iT.T(xLan, "2718", "Voucher Description")).Width(160).MinWidth(180).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "2653", "Line Description")).Width(160).MinWidth(180).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "2630", "Amount")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.vatRate).Caption(iT.T(xLan, "2651", "vat Rate")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.vatAmount).Caption(iT.T(xLan, "2652", "vat Amount")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "2622", "Total")).Width(80).Format("0,###.##").CellTemplate(new JS("ctBold"));
+
+
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Date).SummaryType(SummaryType.Count);
+
+                            item.AddFor(m => m.vatAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Total).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2719", "Transactions List")))
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: "edit" },
+                { icon: "tips" } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        OpenTransaction(options.data.DocumentKind, options.data.OperationKey);
+                        break;
+                    case 1:
+                        ShowTransaction(options.data.DocumentKind, options.data.OperationKey);
+                        break;
+                }
+            },
+        });
+    }
+    function RowDblClick (e)
+    {
+        ViewSalesInvoices(e.data.OperationKey);
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-Transactions').dxDataGrid("instance").refresh();
+    }
+    function GetYear ()
+    {
+        return $('#num-Year').dxNumberBox('option', 'value');
+    }
+    function ct4Posted (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case true:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case false:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Retrned (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Status (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+    function ct4ItemKind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-dark">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-blue">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 4:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 5:
+                str = '<div class="text-center"><span class="badge bg-success">' + options.text + '</span></div>';
+                break;
+            case 6:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 7:
+                str = '<div class="text-center"><span class="badge bg-danger text-dark">' + options.text + '</span></div>';
+                break;
+            default:
+                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4AccountKind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Source (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ChangeAdvanceOption (e)
+    {
+        var grd = $('#grd-Transactions').dxDataGrid("instance");
+        grd.columnOption('Category', 'visible', e.value);
+        grd.columnOption('Branch', 'visible', e.value);
+        grd.columnOption('Prefix', 'visible', e.value);
+    }
+    function OpenTransaction (Kind, Key)
+    {
+        switch (Kind)
+        {
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                window.open('/Financial/Documents/Transaction?Key=' + Key);
+                break;
+            case 9:
+                window.open('/Financial/Documents/JournalVoucher?Key=' + Key);
+                break;
+            case 80:
+                window.open('/Sales/Documents/SalesInvoice?Key=' + Key);
+                break;
+            case 83:
+                window.open('/Sales/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 71:
+                window.open('/Purchasing/Documents/PurchaseInvoice?Key=' + Key);
+                break;
+            case 75:
+                window.open('/Purchasing/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 77:
+                window.open('/Inventory/Documents/Consumption?Key=' + Key);
+                break;
+            case 78:
+                window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    function ShowTransaction (Kind, Key)
+    {
+        switch (Kind)
+        {
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                ViewFinancialTransaction(Key);
+                break;
+            case 9:
+                ViewJournalVoucher(Key);
+                break;
+            case 80:
+            case 83:
+                ViewSalesInvoices(Key);
+                break;
+            case 71:
+            case 75:
+                ViewPurchaseInvoice(Key);
+                break;
+
+                window.open('/Purchasing/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 77:
+                window.open('/Inventory/Documents/Consumption?Key=' + Key);
+                break;
+            case 78:
+                window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
+                break;
+            default:
+
+                break;
+        }
+    }
+</script>

@@ -1,0 +1,423 @@
+@model CLiFinancial.Documents.TransactionInfo
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    CLiCore.Shared.UserRights userRights = new CLiCore.Shared.UserRights().GetItem(UserKey);
+    string vatHidden = "";
+    if (Model.DocumentKind == (int)DocumentKind.finBankCollection || Model.DocumentKind == (int)DocumentKind.finCashCollection)
+    {
+        vatHidden = "hidden";
+    }
+}
+<style>
+    .shl-invoice-header > span {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+    .shl-invoice-header > p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+    /*  .xd > tr:hover .ccp {
+                            display: block !important;
+                        }*/
+    .xd > tr:hover {
+        cursor: pointer;
+    }
+    .wd70 {
+        width: 65px !important;
+        min-width: 65px !important;
+        max-width: 65px !important;
+    }
+    .badg-plx {
+        width: 55px !important;
+        min-width: 55px !important;
+        max-width: 55px !important;
+        line-height: 22px !important;
+        font-size: 10px;
+    }
+</style>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iCore.DocumentsName(xLan,Model.DocumentKind) <span> # @Model.VoucherNo</span></h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                @{
+                    if (userRights.CanDelete == true)
+                    {
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="DeleteFinancialTransaction('@Model.Key')">@iT.T(xLan,"","Delete")</button>
+                        </div>
+
+                    }
+                    if (userRights.ConfirmFinance == true)
+                    {
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-success btn-sm" onclick="UpdateFinancialTransaction('@Model.Key',2)">@iT.T(xLan,"","Confirm")</button>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="UpdateFinancialTransaction('@Model.Key',3)">@iT.T(xLan,"","ReAudit")</button>
+
+                        </div>
+                       
+                    }
+
+                    <button type="button" class="btn btn-gray btn-sm" onclick="ViewGeneralLedger('@Model.Key')">@iT.T(xLan,"","GL")</button>
+               
+                }
+            </div>
+        </div>
+        <div class="invoice">
+            <div class="invoice-header">
+                <div class="invoice-from">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <b class="mb-3">Voucher Details</b>
+                            </div>
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:auto"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="fw-bold fs-10px">
+                                    <tr><td>Voucher Status</td><td id="td-Status"></td></tr>
+                                    <tr><td>Voucher No</td><td>@Model.VoucherNo</td></tr>
+                                    <tr><td>Voucher Date</td><td>@Model.VoucherDate.Value.ToString("dd.MM.yyyy")</td></tr>
+                                    <tr class="mt-1"><td>Client Name</td><td>@Model.Account.Display</td></tr>
+                                    <tr class="mt-1"><td>Description</td><td>@Model.Description</td></tr>
+                                </tbody>
+                            </table>
+                            <div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card border-0 text-truncate mb-3 text-dark">
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
+                                    <!-- BEGIN title -->
+                                    <div class="mb-2">
+                                        <b class="mb-3">Voucher Total</b>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-1">
+                                        <h2 class="mb-2"><span>@Model.Total.ToString("n2")</span></h2>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa fa-circle text-red fs-8px me-2"></i>Subtotal
+                                        </div>
+                                        <div class="d-flex align-items-center ms-auto">
+                                            <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Subtotal.ToString("n2")</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa fa-circle text-red fs-8px me-2"></i>VAT
+                                        </div>
+                                        <div class="d-flex align-items-center ms-auto">
+                                            <div class="w-50px text-end ps-2 fw-bold"><span>@Model.vatAmount.ToString("n2")</span></div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa fa-circle text-red fs-8px me-2"></i>Total
+                                        </div>
+                                        <div class="d-flex align-items-center ms-auto">
+                                            <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Total.ToString("n2")</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="card border-0 text-truncate mb-3 text-dark">
+                                <!-- BEGIN card-body -->
+                                <div class="card-body">
+                                    <!-- BEGIN title -->
+                                    <div class="mb-3 ">
+                                        <b class="mb-3">Voucher Details</b>
+                                    </div>
+                                    <table class="table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:auto"></th>
+                                                <th style="width:auto"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="fw-bold fs-10px">
+                                            <tr><td>Create User</td><td>@Model.CreateUser.Display</td></tr>
+                                            <tr><td>Update User</td><td>@Model.LastupUser.Display</td></tr>
+                                            <tr class="mt-1"><td>Create Date</td><td>@(Model.CreateDate.HasValue == true ? Model.CreateDate.Value.ToString("dd.MM.yyyy HH:mm") : "")</td></tr>
+                                            <tr><td>Update Date</td><td>@(Model.CreateDate.HasValue == true ? Model.CreateDate.Value.ToString("dd.MM.yyyy HH:mm") : "")</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice-content mt-3">
+                <div class="table-responsive">
+                    <table class="table table-invoice table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:100px;max-width:100px">@iT.T(xLan,"1215","Actions")</th>
+                                <th style="width:110px;min-width:110px;max-width:110px">@iT.T(xLan,"1158","Kind")</th>
+                                <th style="width:70px;min-width:70px;max-width:70px">@iT.T(xLan,"1164","Code")</th>
+                                <th style="width:30%;min-width:150px">@iT.T(xLan,"1165","Account Name")</th>
+                                <th style="width:70%">@iT.T(xLan,"1212","Description")</th>
+                                <th @vatHidden style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1077","Amount")</th>
+                                <th @vatHidden style="width:90px;min-width:90px;max-width:90px"><small class="f-s-9">@iT.T(xLan,"1345","VAT")</small> @iT.T(xLan,"1346","Rate")</th>
+                                <th @vatHidden style="width:90px;min-width:90px;max-width:90px"><small class="f-s-9">@iT.T(xLan,"1345","VAT")</small> @iT.T(xLan,"1077","Amount")</th>
+                                <th style="width:120px;min-width:120px;max-width:120px">@iT.T(xLan,"1347","Subtotal")</th>
+                            </tr>
+                        </thead>
+                        <tbody class="xd" id="tb-FinancialRows">
+                        </tbody>
+                    </table>
+                </div>
+                <div class="invoice-price">
+                    <div class="invoice-price-left">
+                        <div class="invoice-price-row">
+                            <div @vatHidden class="sub-price">
+                                <small>Subtotal</small>
+                                <span id="txt-Amount" class="text-dark">0.00</span>
+                            </div>
+                            <div @vatHidden class="sub-price">
+                                <small>vat Total</small>
+                                <span id="txt-vatAmount" class="text-dark">0.00</span>
+                            </div>
+                            <div class="sub-price">
+                                <small>Total</small>
+                                <span id="txt-Total" class="text-red me-2">0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-price-right">
+                        <small>TOTAL</small> <span class="fw-bold" id="txt-xTotal">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"2315","Close")</button>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var vatHidden = '';
+    var DocumentKind = 0;
+    var opk = null;
+    var Status = 0;
+    $(document).ready(function ()
+    {
+        DocumentKind = Number('@Model.DocumentKind');
+        opk = '@Model.Key';
+        Status = Number('@Model.Status');
+        switch (DocumentKind)
+        {
+            case 4:
+            case 6:
+                vatHidden = ' hidden ';
+                break;
+            default:
+                vatHidden = '';
+        }
+        switch (Status)
+        {
+            case 0:
+                $('#td-Status').empty();
+                $('#td-Status').append('<span class="badge bg-yellow text-dark badg-plx">Pending</span>');
+                break;
+            case 3:
+                $('#td-Status').empty();
+                $('#td-Status').append('<span class="badge bg-yellow text-dark badg-plx">Re-Audit</span>');
+                break;
+            case 2:
+                $('#td-Status').empty();
+                $('#td-Status').append('<span class="badge bg-yellow text-dark badg-plx">Confirmed</span>');
+                break;
+        }
+        LoadData(opk);
+    });
+    function LoadData (key)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/fin/idocuments/TransactionDetails",
+            data: { key: key },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                $("#tb-FinancialRows").empty();
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '">'
+                    str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '          </div>'
+                    str += '          <div class="ccp position-absolute d-none mt-1">'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Cost Center:</b>' + item.jnCostCenter.Display + '</p>'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Project:</b>' + item.jnProject.Display + '</p>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetAccountKind(item.AccountKind, item.AccountType) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td>' + item.Description + '</td>'
+                    str += '      <td ' + vatHidden + ' >' + comma(item.Amount) + '</td>'
+                    str += '      <td ' + vatHidden + ' ><small class="f-s-9">' + item.jnvatDetails.Display + '</small></td>'
+                    str += '      <td ' + vatHidden + ' >' + comma(item.vatAmount) + '</td>'
+                    str += '      <td>' + comma(item.Total) + '</td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-FinancialRows").append(str);
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function CalcAmount ()
+    {
+        var amount = 0;
+        var vat = 0;
+        var total = 0;
+        $('#tb-FinancialRows').find('tr').each(function ()
+        {
+            amount += $(this).find('[id="td-Amount"]').data('value');
+            vat += $(this).find('[id="td-vatAmount"]').data('value');
+            total += $(this).find('[id="td-Total"]').data('value');
+        });
+        $('#txt-Amount').text(comma(amount));
+        $('#txt-vatAmount').text(comma(vat));
+        $('#txt-Total').text(comma(total));
+        $('#txt-xTotal').text(comma(total));
+    }
+    function GetAccountKind (kind, Type)
+    {
+        var strKind = '';
+        var strType = '';
+        switch (kind)
+        {
+            case 0:
+                strKind = '<span  class="badge bg-yellow text-dark badg-plx me-1">' + 'C/A' + '</span>';
+                break;
+            case 1:
+                strKind = '<span  class="badge bg-danger text-dark badg-plx me-1">' + 'Employee' + '</span>';
+                break;
+            case 2:
+                strKind = '<span  class="badge bg-info text-dark badg-plx me-1">' + 'Cash' + '</span>';
+                break;
+            case 3:
+                strKind = '<span  class="badge bg-success text-dark badg-plx me-1">' + 'Bank' + '</span>';
+                break;
+            case 4:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Fixture' + '</span>';
+                break;
+            case 6:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Revenue' + '</span>';
+                break;
+            case 5:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Expenses' + '</span>';
+                break;
+            case 7:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Account' + '</span>';
+                break;
+        }
+        switch (kind)
+        {
+            case 0:
+                switch (Type)
+                {
+                    case 0:
+                        strType = '<span class="badge bg-yellow text-dark badg-plx">' + 'General' + '</span>';
+                        break;
+                    case 1:
+                        strType = '<span class="badge bg-info text-dark badg-plx">' + 'Supplier' + '</span>';
+                        break;
+                    case 2:
+                        strType = '<span class="badge bg-success text-dark badg-plx">' + 'Client' + '</span>';
+                        break;
+                    case 3:
+                        strType = '<span class="badge bg-dark text-dark badg-plx">' + 'Employee' + '</span>';
+                        break;
+                    case 4:
+                        strType = '<span class="badge bg-danger text-dark badg-plx">' + 'Owner' + '</span>';
+                        break;
+                    case 5:
+                        strType = '<span class="badge bg-info text-dark badg-plx">' + 'Sister/C' + '</span>';
+                        break;
+                    case 6:
+                        strType = '<span class="badge bg-danger text-dark badg-plx">' + 'Adj.' + '</span>';
+                        break;
+                }
+                break
+            case 0:
+                switch (Type)
+                {
+                    case 0:
+                        strType = '<span class="badge bg-success text-dark badg-plx">' + 'Salary' + '</span>';
+                        break;
+                    case 1:
+                        strType = '<span class="badge bg-info text-dark badg-plx">' + 'Advance' + '</span>';
+                        break;
+                    case 2:
+                        strType = '<span class="badge bg-dark text-dark badg-plx">' + 'Loan' + '</span>';
+                        break;
+                    case 3:
+                        strType = '<span class="badge bg-danger text-dark badg-plx">' + 'End Serv.' + '</span>';
+                        break;
+                    case 4:
+                        strType = '<span class="badge bg-danger text-dark badg-plx">' + 'Vacation' + '</span>';
+                        break;
+                }
+                break
+            case 2:
+                strType = '<span class="badge bg-gray  badg-plx">' + 'General' + '</span>';
+                break;
+            case 3:
+                strType = '<span class="badge bg-gray  badg-plx">' + 'General' + '</span>';
+                break;
+            case 4:
+                strType = '<span class="badge bg-gray badg-plx">' + 'General' + '</span>';
+                break;
+            case 5:
+                strType = '<span class="badge bg-gray badg-plx">' + 'General' + '</span>';
+                break;
+            case 6:
+                strType = '<span class="badge bg-gray badg-plx">' + 'General' + '</span>';
+                break;
+            case 7:
+                strType = '<span class="badge bg-gray badg-plx">' + 'General' + '</span>';
+                break;
+        }
+        return '<div class="d-flex">' + strKind + strType + '</div>'
+    }
+</script>

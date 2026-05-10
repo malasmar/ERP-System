@@ -1,0 +1,153 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"1823","Current Account Groups")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                    <button type="button" class="btn btn-yellow textdark" onclick="GetDetails(null)">@iT.T(xLan, "1171","Create New Item")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Cards.Groups.CurrentAccountGroup>().ID("grd-GrpCurrentAccount")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                    .Controller("iFinancialCategories").Area("Settings")
+                .Key("Key")
+                .LoadAction("GrpCurrentAccount"))
+                .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                .Columns(columns =>
+                {
+                columns.Add().Name("act").Caption(iT.T(xLan,  "","#")).Width(70).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                columns.AddFor(m => m.Relations).Caption(iT.T(xLan, "1821","Relations")).Width(100);
+                columns.AddFor(m => m.No).Caption(iT.T(xLan, "1265","No")).Width(100);
+                columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1274","Arabic Name"));
+                columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name"));
+                })
+                .Pager(pg =>
+                {
+                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                pg.ShowNavigationButtons(true);
+                pg.ShowPageSizeSelector(true);
+                pg.ShowInfo(true);
+                pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                sp.Width(250);
+                sp.Visible(true);
+                })
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-GrpCurrentAccount" class="modal"><div class="modal-dialog" id="con-GrpCurrentAccount"></div></div>
+<script class="append-on-ajax-script">
+    function ct4Action(container, options) {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'edit' },
+                { icon: 'trash' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function(e) {
+                switch (e.itemIndex) {
+                    case 0:
+                        if (e.itemData.icon == 'edit') {
+                            GetDetails(options.data.Key);
+                        }
+                        break;
+                    case 1:
+                        if (e.itemData.icon == 'trash') {
+                            if (options.data.Relations > 0) {
+                                $.alert({
+                                    title: 'Stop',
+                                    content: "Cannot delete Current Account Group,It is have a child's",
+                                });
+                                return;
+                            }
+                            DeleteRow(options.data.Key, options.data.Name1);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid() {
+        $('#grd-GrpCurrentAccount').dxDataGrid("instance").refresh();
+    }
+    function GetDetails(Key) {
+        $('#con-GrpCurrentAccount').empty();
+        $("#con-GrpCurrentAccount").load('/Settings/FinancialCategories/GrpCurrentAccountDetails?Key=' + Key);
+        $("#mod-GrpCurrentAccount").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function DeleteRow(Key, Display) {
+        $.confirm({
+            title: 'Confirm',
+            content: 'Are you sure to delete Current Account Group: ' + Display,
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Delete',
+                    btnClass: 'btn-red',
+                    action: function() {
+                        $.ajax({
+                            type: "Delete",
+                            url: "/api/Settings/iFinancialCategories/DeleteGrpCurrentAccount",
+                            data: { Key: Key },
+                            dataType: "json",
+                            success: function(response) {
+                                if (response == 0) {
+                                    $.alert({
+                                        title: 'Stop',
+                                        content: "Cannot delete Current Account,It is have a child's",
+                                    });
+                                } else {
+                                    RefreshGrid();
+                                }
+                            },
+                            failure: function(response) {
+                                alert(response);
+                            },
+                            error: function(response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function() {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+</script>

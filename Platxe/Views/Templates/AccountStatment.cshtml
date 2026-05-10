@@ -1,0 +1,215 @@
+@model AccountStatmentData
+
+@{
+    //  Layout = "_xLayout";
+    Layout = null;
+    string xLan = Model.xLan;
+    string DB = Model.DB;
+    CLiCore.Configuration.Profile profile = new CLiCore.Configuration.Profile().GetItem(DB);
+}
+
+<!DOCTYPE html>
+<html id="xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Platxe</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    @* Uncomment to use the HtmlEditor control *@
+    @* <script src="https://unpkg.com/devextreme-quill@21_2/dist/dx-quill.min.js?version=3.019"></script> *@
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    @{
+        if (xLan == "ar")
+        {
+            <link href="~/Template/assets/css/apple/app-rtl.min.css?version=3.019" rel="stylesheet" />
+        }
+        else
+        {
+            <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+        }
+    }
+    <link href="~/Template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+  
+</head>
+<body>
+       <style>
+        .invoice .invoice-note {
+            color: rgba(var(--app-component-color-rgb),.9);
+             margin-top: 10px; 
+            font-size: 11px;
+            line-height: 1.75;
+        }
+
+        .invoice .invoice-price .invoice-price-left {
+            padding: 5px;
+             font-size: 13px; 
+             font-weight: normal; 
+            position: relative;
+            vertical-align: middle;
+            flex: 1;
+        }
+       </style>
+    <div id="app" class="app app-header-fixed app-sidebar-fixed app-without-sidebar">
+        <div id="content" class="app-content">
+            <div class="invoice">
+                <!-- BEGIN invoice-company -->
+                <div class="invoice-company">
+                    <div class="float-end">
+                        <p class="m-1">Account Statment</p>
+                        <p class="m-1">تقرير كشف حساب</p>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex">
+                                <a class="w-lg-200px w-100px" href="javascript:;">
+                                    <img src="~/aiwa-data/@DB/Content/Logo/@profile.Image" alt="" class="mw-100 rounded">
+                                </a>
+                                <div class="flex-1 ps-3">
+                                    <table class="table-sm">
+
+                                        <tbody class="fw-bold fs-10px">
+                                            <tr><td colspan="2">@profile.Name1</td></tr>
+                                            <tr><td colspan="2">@profile.Name2</td></tr>
+                                            <tr><td>CR.No</td><td>@profile.RC</td></tr>
+                                            <tr><td>VAT Reg.No</td><td>@profile.vatRegNo</td></tr>
+                                            <tr class="mt-1"><td>Address</td><td>@profile.Address</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <!-- END invoice-company -->
+                <!-- BEGIN invoice-header -->
+                <div class="invoice-header">
+
+                    <div class="invoice-from">
+                        <table class="table-sm">
+                            <tbody class="fw-bold fs-10px">
+                                <tr><td>Customer No</td><td>@Model.Account.Code</td></tr>
+                                <tr><td>Customer Name</td><td>@Model.Account.Name1</td></tr>
+                                <tr><td>CR.No</td><td>@Model.Account.CR</td></tr>
+                                <tr><td>VAT.No</td><td>@Model.Account.vat</td></tr>
+                                <tr><td>Phone</td><td>@Model.Account.Phone</td></tr>
+                                <tr><td>Address</td><td>@Model.Account.Address</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="invoice-to">
+                       
+                  
+                    </div>
+                    <div class="invoice-to">
+                        <table class="table-sm">
+                            <tbody class="fw-bold fs-10px">
+                                <tr><td>From Date</td><td>@Model.FirstDate.ToString("dd.MM.yyyy")</td></tr>
+                                <tr><td>To Date</td><td>@Model.LastDate.ToString("dd.MM.yyyy")</td></tr>
+
+                            </tbody>
+                        </table>
+                <p class="f-s-11">كل الارقام الواردة في التقرير هي بالريال السعودي</p>
+                    </div>
+                </div>
+                <!-- END invoice-header -->
+                <!-- BEGIN invoice-content -->
+                <div class="invoice-content">
+                    <!-- BEGIN table-responsive -->
+                    <div class="table-responsive">
+                        <table class="table table-invoice">
+                            <thead>
+                                <tr>
+                                 
+                                    <th  style="width:120px;min-width:120px;max-width:120px">Document Kind<br />المعاملة</th>
+                                    <th  style="width:100px;min-width:100px;max-width:100px">Date<br />التاريخ</th>
+                                    <th  style="width:110px;min-width:110px;max-width:110px">Voucher No<br /> رقم المعاملة</th>
+                                    <th style="width:100%">DESCRIPTION<br />البيان</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">Debit<br />مدين</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">Credit<br />دائن</th>
+                                    <th class="text-end" style="width:100px;min-width:100px;max-width:100px">Balance<br />الرصيد</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (CLiFinancial.Reports.AccountStatment.CurrentAccount item in Model.Statment)
+                                    {
+                                        <tr>
+                                         
+                                            <td>@item.DocumentKind</td>
+                                            <td>@item.VoucherDate.Value.ToString("dd.MM.yyyy")</td>
+                                            <td>@item.VoucherNo</td>
+                                            <td>
+                                                <p class="f-s-11" style="white-space:pre-line;margin-left:8px;margin-right:8px;font-size:12px;">@item.Description</p>
+                                            </td>
+                                            <td class="text-end">@item.Debit.ToString("n2")</td>
+                                            <td class="text-end">@item.Credit.ToString("n2")</td>
+                                            <td class="text-end">@((item.DebitBalance-item.CreditBalance).ToString("n2"))</td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- END table-responsive -->
+                    <!-- BEGIN invoice-price -->
+                    <div class="invoice-price">
+                        <div class="invoice-price-left">
+                            <div class="invoice-price-row">
+                            
+                        </div>
+                            </div>
+                        <div class="invoice-price-right">
+                            <span class="fw-bold">@Model.Statment.Sum(x=>x.Debit-x.Credit).ToString("n2")</span>
+                        </div>
+                       
+                    </div>
+                    <!-- END invoice-price -->
+
+                 
+               
+                </div>
+                <!-- END invoice-content -->
+                <!-- BEGIN invoice-note -->
+             
+                
+               
+                <!-- END invoice-note -->
+                <!-- BEGIN invoice-footer -->
+                <div class="invoice-footer">
+                    <p class="text-center mb-5px fw-bold">
+                        Powered by Plate ERP
+                    </p>
+                 
+                </div>
+                <!-- END invoice-footer -->
+            </div>
+        </div>
+     
+    </div>
+    <!-- ================== BEGIN core-js ================== -->
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <!-- ================== END core-js ================== -->
+    <script src="~/shllash/jquery-confirm.min.js?version=3.019"></script>
+    <script src="~/shllash/application.js?version=3.019"></script>
+     <script src="~/shllash/qrcode.js" type="text/javascript" ></script>
+    <script src="~/shllash/html5-qrcode.js" type="text/javascript"></script>
+    <script>
+  
+
+     
+    </script>
+
+</body>
+</html>
+

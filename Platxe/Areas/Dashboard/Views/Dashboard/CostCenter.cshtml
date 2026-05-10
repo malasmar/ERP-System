@@ -1,0 +1,426 @@
+@{
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<style>
+    /*    .tick line {
+            display: none;
+        }
+        div.outer {
+            overflow:auto !important;
+        }
+            div.outer .inner {
+                height: 600px;
+            }*/
+            .xsc{
+                overflow-y:auto;
+                max-height:450px;
+                    height:450px   ;
+            }
+                 .costdetails{
+                overflow-y:auto;
+                max-height:570px;
+                    height:570px   ;
+            }
+</style>
+<h1 class="page-header">@iT.T(xLan,"1027","Cost Center and Project Dashboard")<span class="badge bg-Yellow">v14.2</span></h1>
+<div class="row">
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-user"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1148","Cost Center Count")</div>
+                <div class="stats-number" id="txt-Clients">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 70.1%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">@iT.T(xLan,"1149","All the Cost Center in the system.")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-icon stats-icon-square bg-gradient-cyan-blue text-white d-flex align-items-center justify-content-center"><i class="fas fa-user-tie"></i></div>
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75">@iT.T(xLan,"1150","Project Count")</div>
+                <div class="stats-number" id="txt-ActiveClients">0</div>
+                <div class="stats-progress progress">
+                    <div class="progress-bar" style="width: 40.5%;"></div>
+                </div>
+                <div class="stats-desc text-dark text-opacity-75">@iT.T(xLan,"1151","All Project in the system.")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75 mb-3">@iT.T(xLan,"1032","Cost Center Profit Status")</div>
+                <div class="stats-desc text-dark text-opacity-75 mb-2">
+                    <i class="fa fa-circle fa-fw text-red fs-9px me-5px t-minus-1"></i>
+                    <b id="txt-Cost-Loss">0</b>
+                    @iT.T(xLan,"1033","Loss Cost Center")
+                </div>
+                <div class="stats-desc text-dark text-opacity-75 mb-2">
+                    <i class="fa fa-circle fa-fw text-teal fs-9px me-5px t-minus-1"></i>
+                    <b id="txt-Cost-Profit">0</b>
+                    @iT.T(xLan,"1034","Profit Cost Center")
+                </div>
+                <a href="javascript:;" class="btn btn-xs btn-dark fs-10px float-end">@iT.T(xLan,"1035","More Details")</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="widget widget-stats bg-white text-dark">
+            <div class="stats-content">
+                <div class="stats-title text-dark text-opacity-75 mb-3">@iT.T(xLan,"1036","Project Profit Status")</div>
+                <div class="stats-desc text-dark text-opacity-75 mb-2">
+                    <i class="fa fa-circle fa-fw text-red fs-9px me-5px t-minus-1"></i>
+                    <b id="txt-Project-Loss">0</b>
+                    @iT.T(xLan,"1037","Loss Project")
+                </div>
+                <div class="stats-desc text-dark text-opacity-75 mb-2">
+                    <i class="fa fa-circle fa-fw text-teal fs-9px me-5px t-minus-1"></i>
+                    <b id="txt-Project-Profit">0</b>
+                    @iT.T(xLan,"1038","Profit Project")
+                </div>
+                <a href="javascript:;" class="btn btn-xs btn-dark fs-10px float-end">@iT.T(xLan,"1035","More Details")</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-2">
+                    <b>@iT.T(xLan,"1039","Cost Center Income Details")</b>
+                    <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i></span>
+                </div>
+                <div id="xxxx" class="xsc">
+                    <div id="nv-bar-costcenter">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="mb-2">
+                    <b>@iT.T(xLan,"1040","Projects Income Details")</b>
+                    <span class="ms-2"><i class="fa fa-info-circle" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-title="Total sales" data-bs-placement="top" data-bs-content="Net sales (gross sales minus discounts and returns) plus taxes and shipping. Includes orders from all sales channels."></i></span>
+                </div>
+                <div id="xxxx" class="xsc">
+                    <div id="nv-bar-Projects">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="d-flex mb-2">
+                    <div class="d-flex align-items-center">
+                        <b>@iT.T(xLan,"1041","Cost Center Details")</b>
+                    </div>
+                    <div class="d-flex align-items-center ms-auto">
+                        @Html.DevExtreme().Lookup().ID("cnt-CostCenter").Width(250).DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true).OnValueChanged("ChangeCostCenter")
+                    </div>
+                </div>
+                <div class="costdetails">
+                    <div id="nv-bar-costcenter-details">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card border-0 mb-3 text-dark">
+            <div class="card-body">
+                <div class="d-flex mb-2">
+                    <div class="d-flex align-items-center">
+                        <b>@iT.T(xLan,"1042","Project Income Details")</b>
+                    </div>
+                    <div class="d-flex align-items-center ms-auto">
+                        @Html.DevExtreme().Lookup().ID("cnt-Project").Width(250).DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true).OnValueChanged("ChangeProject")
+                    </div>
+                </div>
+                <div class="costdetails">
+                    <div id="nv-bar-project-details">
+                        <svg></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var Year = 0;
+    $(document).ready(function ()
+    {
+        $('#px-loading').prop('hidden', false);
+        Year = Number('@xYear');
+        LoadMonthlyIncomeStatment();
+        LoadProjectIncomeStatment();
+        $('#px-loading').prop('hidden', true);
+    });
+    function LoadMonthlyIncomeStatment ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/CostCenterIncomeBalance",
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                var profit = 0, loss = 0;
+                for (const item of response)
+                {
+                    Revenue.push({ "label": item.Display, "value": item.Credit });
+                    Expenses.push({ "label": item.Display, "value": item.Debit });
+                    if (item.Balance > 0)
+                    {
+                        ++profit;
+                    } else
+                    {
+                        ++loss;
+                    }
+                }
+                $('#txt-Cost-Profit').text(comma(profit));
+                $('#txt-Cost-Loss').text(comma(loss));
+                var barChartData = [ {
+                    'key': 'Revenue',
+                    'color': '#4f99b4',
+                    'values': Revenue
+                }, {
+                    'key': 'Expenses',
+                    'color': '#d67777',
+                    'values': Expenses
+                } ];
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((response.length * 35) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-costcenter svg')
+                        .datum(barChartData)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-costcenter').css('height', (response.length * 35) + 70);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function LoadProjectIncomeStatment ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/ProjectIncomeBalance",
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                var profit = 0, loss = 0;
+                for (const item of response)
+                {
+                    Revenue.push({ "label": item.Display, "value": item.Credit });
+                    Expenses.push({ "label": item.Display, "value": item.Debit });
+                    if (item.Balance > 0)
+                    {
+                        ++profit;
+                    } else
+                    {
+                        ++loss;
+                    }
+                }
+                $('#txt-Project-Profit').text(comma(profit));
+                $('#txt-Project-Loss').text(comma(loss));
+                var barChartData = [ {
+                    'key': 'Revenue',
+                    'color': '#4f99b4',
+                    'values': Revenue
+                }, {
+                    'key': 'Expenses',
+                    'color': '#d67777',
+                    'values': Expenses
+                } ];
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((response.length * 35) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-Projects svg')
+                        .datum(barChartData)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-Projects').css('height', (response.length * 35) + 70);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ChangeCostCenter (e)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/CostIncomeDetails",
+            data: { Key: e.value },
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                for (const item of response)
+                {
+                    if (item.Kind == 6)
+                    {
+                        Revenue.push({ "label": item.Display, "value": item.Balance });
+                    }
+                    if (item.Kind == 5)
+                    {
+                        Expenses.push({ "label": item.Display, "value": item.Balance });
+                    }
+                }
+                //Revenue
+                var barChartDataRev = [ {
+                    'key': 'Revenue',
+                    'color': '#4f99b4',
+                    'values': Revenue
+                }, {
+                    'key': 'Expenses',
+                    'color': '#FA5642',
+                    'values': Expenses
+                } ];
+                var xLen = 0;
+                xLen = Revenue.length + Expenses.length;
+                if (xLen < 2)
+                {
+                    xLen = 2;
+                }
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((xLen * 20) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-costcenter-details svg')
+                        .datum(barChartDataRev)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-costcenter-details').css('height', (xLen * 20) + 70);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ChangeProject (e)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Dash/iDashboard/ProjectIncomeDetails",
+            data: { Key: e.value },
+            dataType: "json",
+            success: function (response)
+            {
+                var Revenue = [];
+                var Expenses = [];
+                for (const item of response)
+                {
+                    if (item.Kind == 6)
+                    {
+                        Revenue.push({ "label": item.Display, "value": item.Balance });
+                    }
+                    if (item.Kind == 5)
+                    {
+                        Expenses.push({ "label": item.Display, "value": item.Balance });
+                    }
+                }
+                //Revenue
+                var barChartDataRev = [ {
+                    'key': 'Revenue',
+                    'color': '#4f99b4',
+                    'values': Revenue
+                }, {
+                    'key': 'Expenses',
+                    'color': '#FA5642',
+                    'values': Expenses
+                } ];
+                var xLen = 0;
+                xLen = Revenue.length + Expenses.length;
+                if (xLen < 2)
+                {
+                    xLen = 2;
+                }
+                nv.addGraph(function ()
+                {
+                    var chart = nv.models.multiBarHorizontalChart()
+                        .x(function (d) { return d.label })
+                        .y(function (d) { return d.value })
+                        .showValues(true)
+                        .margin({ top: 30, right: 15, bottom: 50, left: 150 }).height((xLen * 20) + 70);
+                    chart.yAxis
+                        .tickFormat(d3.format(',.2f'));
+                    d3.select('#nv-bar-project-details svg')
+                        .datum(barChartDataRev)
+                        .call(chart);
+                    nv.utils.windowResize(chart.update);
+                    return chart;
+                });
+                $('#nv-bar-project-details').css('height', (xLen * 20) + 70);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

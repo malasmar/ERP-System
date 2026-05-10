@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/27/2021 13:44:37" ReportInfo.Modified="03/27/2021 14:03:43" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <TableDataSource Name="Company Profile" ReferenceName="Company Profile" DataType="System.Int32" Enabled="true">
+      <Column Name="ArabicName" DataType="System.String"/>
+      <Column Name="EnglishName" DataType="System.String"/>
+      <Column Name="RegistrationCode" DataType="System.String"/>
+      <Column Name="CommercialType" DataType="System.String"/>
+      <Column Name="Kind" DataType="System.String"/>
+      <Column Name="VATRegestration" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+    </TableDataSource>
+    <TableDataSource Name="Report Data" ReferenceName="Report Data" DataType="System.Int32" Enabled="true">
+      <Column Name="Key" DataType="System.Guid"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="Category" DataType="System.Guid"/>
+      <Column Name="SubCategory" DataType="System.Guid"/>
+      <Column Name="Quantity" DataType="System.Int32"/>
+      <Column Name="PurchaseDate" DataType="System.DateTime"/>
+      <Column Name="Price" DataType="System.Decimal"/>
+      <Column Name="DepPercent" DataType="System.Int32"/>
+      <Column Name="BeforDays" DataType="System.Int32"/>
+      <Column Name="RangeDays" DataType="System.Int32"/>
+      <Column Name="Dep" DataType="System.Decimal"/>
+      <Column Name="BookValue" DataType="System.Decimal"/>
+      <Column Name="CurrentDep" DataType="System.Decimal"/>
+      <Column Name="NewBookValue" DataType="System.Decimal"/>
+      <Column Name="CatName1" DataType="System.String"/>
+      <Column Name="CatName2" DataType="System.String"/>
+      <Column Name="FirstDate" DataType="System.DateTime"/>
+      <Column Name="LastDate" DataType="System.DateTime"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Landscape="true" PaperWidth="297" PaperHeight="210" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="1084.86" Height="189">
+      <TextObject Name="Text22" Left="1003.7" Top="160.65" Width="75.6" Height="18.9" Text="الرمز" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text23" Left="844.5" Top="160.65" Width="160.65" Height="18.9" Text="اسم الاصل" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text24" Left="683.4" Top="160.65" Width="160.65" Height="18.9" Text="التصنيف" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text25" Left="633.15" Top="160.65" Width="47.25" Height="18.9" Text="النسبة" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text26" Left="582.45" Top="160.65" Width="47.25" Height="18.9" Text="الكمية" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text27" Left="481.95" Top="160.65" Width="94.5" Height="18.9" Text="تاريخ الشراء" Format="Date" Format.Format="d" HorzAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text28" Left="386.67" Top="160.65" Width="94.5" Height="18.9" Text="سعر الشراء" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" WordWrap="false" Font="Tahoma, 9pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text29" Left="291.39" Top="160.65" Width="94.5" Height="18.9" Text="الاهلاك" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" WordWrap="false" Font="Tahoma, 9pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text30" Left="196.11" Top="160.65" Width="94.5" Height="18.9" Text="القيمة الدفترية" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" WordWrap="false" Font="Tahoma, 9pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text31" Left="100.83" Top="160.65" Width="94.5" Height="18.9" Text="اهلاك الفترة" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" WordWrap="false" Font="Tahoma, 9pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text32" Left="5.55" Top="160.65" Width="94.5" Height="18.9" Text="القيمة الجديدة" Format="Currency" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Center" WordWrap="false" Font="Tahoma, 9pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text33" Left="907.2" Top="37.8" Width="160.65" Height="28.35" Fill.Color="Black" Text="كشف الاصول الثابتة" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 10pt, style=Bold" TextFill.Color="White"/>
+      <TextObject Name="Text34" Left="963.9" Top="75.6" Width="56.7" Height="18.9" Text="من تاريخ" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text35" Left="963.9" Top="103.95" Width="56.7" Height="18.9" Text="الى تاريخ" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text36" Left="859.95" Top="75.6" Width="103.95" Height="18.9" Text="[Report Data.FirstDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text37" Left="859.95" Top="103.95" Width="103.95" Height="18.9" Text="[Report Data.LastDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="193.08" Width="1084.86" Height="28.35" DataSource="Report Data">
+      <TextObject Name="Text1" Left="1003.7" Top="2.45" Width="75.6" Height="24.9" Text="[Report Data.Code]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text3" Left="844.5" Top="2.45" Width="160.65" Height="24.9" Text="[Report Data.Name1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text5" Left="683.4" Top="2.45" Width="160.65" Height="24.9" Text="[Report Data.CatName1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text7" Left="633.15" Top="2.45" Width="47.25" Height="24.9" Text="[Report Data.DepPercent]" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text9" Left="582.45" Top="2.45" Width="47.25" Height="24.9" Text="[Report Data.Quantity]" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text11" Left="481.95" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.PurchaseDate]" Format="Custom" Format.Format="dd.MM.yyyy" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text13" Left="386.67" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.Price]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text15" Left="291.39" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.Dep]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text17" Left="196.11" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.BookValue]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text19" Left="100.83" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.CurrentDep]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text21" Left="5.55" Top="2.45" Width="94.5" Height="24.9" Text="[Report Data.NewBookValue]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="225.51" Width="1084.86" Height="56.7">
+      <TextObject Name="Text62" Left="1032.5" Top="18.9" Width="47.25" Height="18.9" Text="الصفحة" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text64" Left="989.25" Top="18.9" Width="37.8" Height="18.9" Anchor="Top, Right" Text="[Page#]" AutoWidth="true" HorzAlign="Right" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text65" Left="916.65" Top="18.9" Width="47.25" Height="18.9" Anchor="Top, Right" Text="[TotalPages#]" AutoWidth="true" HorzAlign="Right" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text63" Left="966.35" Top="18.9" Width="19.35" Height="18.9" Anchor="Top, Right" Text="من" AutoWidth="true" Font="Tahoma, 7pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/29/2021 01:01:35" ReportInfo.Modified="03/29/2021 01:30:27" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <TableDataSource Name="Company Profile" ReferenceName="Company Profile" DataType="System.Int32" Enabled="true">
+      <Column Name="ArabicName" DataType="System.String"/>
+      <Column Name="EnglishName" DataType="System.String"/>
+      <Column Name="RegistrationCode" DataType="System.String"/>
+      <Column Name="CommercialType" DataType="System.String"/>
+      <Column Name="Kind" DataType="System.String"/>
+      <Column Name="VATRegestration" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+    </TableDataSource>
+    <TableDataSource Name="Report Data" ReferenceName="Report Data" DataType="System.Int32" Enabled="true">
+      <Column Name="Key" DataType="System.Guid"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="JoinDate" DataType="System.DateTime"/>
+      <Column Name="ServiceDays" DataType="System.Int32"/>
+      <Column Name="Salary" DataType="System.Decimal"/>
+      <Column Name="Benefit1" DataType="System.Decimal"/>
+      <Column Name="Benefit2" DataType="System.Decimal"/>
+      <Column Name="Registered" DataType="System.Decimal"/>
+      <Column Name="GroupKey" DataType="System.Guid"/>
+      <Column Name="DepartmentKey" DataType="System.Guid"/>
+      <Column Name="CostCenter" DataType="System.Guid"/>
+      <Column Name="atDate" DataType="System.DateTime"/>
+    </TableDataSource>
+    <Total Name="totSalary" Expression="[Report Data.Salary]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="totBen1" Expression="[Report Data.Benefit1]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="totBen2" Expression="[Report Data.Benefit2]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="totReg" Expression="[Report Data.Registered]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="totRem" Expression="[Report Data.Benefit1]+[Report Data.Benefit2]-[Report Data.Registered]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="297" PaperHeight="210" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="1047.06" Height="135.3">
+      <TextObject Name="Text1" Left="850.5" Top="28.35" Width="160.65" Height="18.9" Text="كشف مخصص نهاية الخدمة" HorzAlign="Right" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text2" Left="963.9" Top="56.7" Width="47.25" Height="18.9" Text="التاريخ" HorzAlign="Right" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text3" Left="954.45" Top="56.7" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text4" Left="850.5" Top="56.7" Width="94.5" Height="18.9" Text="[Report Data.atDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text6" Left="935.55" Top="103.95" Width="103.95" Height="28.35" Text="رمز الموظف" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text8" Left="667.95" Top="103.95" Width="264.6" Height="28.35" Text="اسم الموظف" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text10" Left="567" Top="103.95" Width="94.5" Height="28.35" Text="تاريخ التوظيف" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text12" Left="491.4" Top="103.95" Width="75.6" Height="28.35" Text="الخدمة يوم" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text15" Left="393.9" Top="103.95" Width="94.5" Height="28.35" Text="الراتب" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text17" Left="297.4" Top="103.95" Width="94.5" Height="28.35" Text="قبل 5 سنة" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text19" Left="201.9" Top="103.95" Width="94.5" Height="28.35" Text="اكبر من 5" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text21" Left="106.4" Top="103.95" Width="94.5" Height="28.35" Text="السابق" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text22" Left="10.9" Top="103.95" Width="94.5" Height="28.35" Text="المتبقي" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <LineObject Name="Line2" Left="9.45" Top="135.3" Width="1030.05" Border.Color="Gray" Border.Width="0.5" Diagonal="true"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="139.38" Width="1047.06" Height="26.45" DataSource="Report Data">
+      <TextObject Name="Text5" Left="935.55" Width="103.95" Height="23.9" Text="[Report Data.Code]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text7" Left="667.95" Width="264.6" Height="23.9" Text="[Report Data.Name1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text9" Left="567" Width="94.5" Height="23.9" Text="[Report Data.JoinDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text11" Left="491.4" Width="75.6" Height="23.9" Text="[Report Data.ServiceDays]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text13" Left="393.9" Width="94.5" Height="23.9" Text="[Report Data.Salary]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text14" Left="297.4" Width="94.5" Height="23.9" Text="[Report Data.Benefit1]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text16" Left="201.9" Width="94.5" Height="23.9" Text="[Report Data.Benefit2]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text18" Left="106.4" Width="94.5" Height="23.9" Text="[Report Data.Registered]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text20" Left="10.9" Width="94.5" Height="23.9" Text="[ToDecimal([Report Data.Benefit1]+[Report Data.Benefit2]-[Report Data.Registered])]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <LineObject Name="Line1" Left="9.45" Top="26.45" Width="1030.05" Border.Color="Gray" Border.Width="0.25" Diagonal="true"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="169.91" Width="1047.06" Height="37.8">
+      <TextObject Name="Text27" Left="9.45" Top="4" Width="94.5" Height="23.9" Text="[totRem]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text23" Left="392.45" Top="4" Width="94.5" Height="23.9" Text="[totSalary]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text24" Left="295.95" Top="4" Width="94.5" Height="23.9" Text="[totBen1]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text25" Left="200.45" Top="4" Width="94.5" Height="23.9" Text="[totBen2]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text26" Left="104.95" Top="4" Width="94.5" Height="23.9" Text="[totReg]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="0" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text28" Left="491.4" Top="4" Width="94.5" Height="23.9" Text="الاجمالي" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <LineObject Name="Line3" Top="0.45" Width="595.35" Border.Color="Gray" Border.Width="0.5" Diagonal="true"/>
+    </ReportSummaryBand>
+    <PageFooterBand Name="PageFooter1" Top="211.79" Width="1047.06" Height="75.6"/>
+  </ReportPage>
+</Report>

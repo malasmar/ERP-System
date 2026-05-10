@@ -1,0 +1,84 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2320","Print Template")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="table-responsive" style="min-height:150px;">
+            <table class="table table-invoice table-hover">
+                <thead>
+                    <tr>
+                        <th style="width:100px;max-width:100px">No</th>
+                        <th style="width:100%;min-width:100px;">Template</th>
+                        <th style="width:120px;min-width:120px;" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tb-PrintPreview"></tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+<script>
+    var dockind = 0;
+    var key = null;
+    $(document).ready(function ()
+    {
+        dockind = Number('@ViewBag.DocKind');
+        key = '@ViewBag.Key';
+        GetData();
+        $('#tb-PrintPreview').on('click', '#btn-Print', function ()
+        {
+            PrintPreviewDocument($(this).data('template'));
+        });
+    });
+    function PrintPreviewDocument (Template)
+    {
+        window.open('/Print/Documents/PrintTransaction?Key=' + key + '&DocKind=' + dockind + '&Template=' + Template);
+    }
+
+    function GetData ()
+    {
+        $.ajax({
+            type: "Get",
+            url: "/api/icore/PrintTemplates",
+            data: { DocKind: dockind },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#tb-PrintPreview').empty();
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="' + item.RecNo + '">'
+                    str += '     <td>' + item.No + '</td>'
+                    str += '     <td>' + item.Name + '</td>'
+                    str += '    <td>'
+                    str += '        <div class="text-center">'
+                    str += '            <button id="btn-Print" class="btn btn-small btn-yellow text-dark" data-template="' + item.FileName + '">' + 'Print Preview' + '</button>'
+                    str += '        </div>'
+                    str += '    </td>'
+                    str += '  </tr>'
+                    $('#tb-PrintPreview').append(str)
+                }
+            },
+            failure: function (response)
+            {
+                alert(response)
+            },
+            error: function (response)
+            {
+                alert(response.responseText)
+            }
+        });
+    }
+</script>

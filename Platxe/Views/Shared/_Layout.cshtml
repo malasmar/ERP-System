@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<html id="xhtml" dir="@(xLan == "ar" ? "rtl" : "ltr")" lang="@(xLan == "ar" ? "ar" : "en")">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="ERP ERP Dashboard">
+    <meta name="author" content="">
+    <title>ERP ERP</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    @{
+        if (xLan == "ar")
+        {
+            <link href="~/Template/assets/css/apple/app-rtl.min.css?version=3.019" rel="stylesheet" />
+        }
+        else
+        {
+            <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+        }
+    }
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Boxicons for modern icons -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <script src="~/shllash/devlanguage.js?version=3.019"></script>
+    <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+    <script src="~/shllash/jquery.unobtrusive-ajax.js?version=3.019"></script>
+    <link rel="stylesheet" href="~/css/theme.css?version=3.019" />
+    <link rel="stylesheet" href="~/css/typography.css?version=3.019" />
+    <link rel="stylesheet" href="~/css/devextreme-overrides.css?version=3.019" />
+    <link href="~/css/layoutstyle.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="loader" class="app-loader">
+        <span class="spinner"></span>
+    </div>
+    
+    <div id="app" class="modern-layout">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <!-- Modern Sidebar -->
+        <aside id="sidebar" class="modern-sidebar">
+            <div class="sidebar-brand">
+                <i class='bx bx-cube-alt'></i>
+                <span>ERP</span>
+            </div>
+         <div class="sidebar-menu px-2">
+    @{
+        await Html.RenderPartialAsync("_Applications");
+    }
+</div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Modern Header -->
+      <header id="header" class="modern-header">
+    <!-- LEFT -->
+    <div class="header-left">
+        <div class="navbar-nav gap-2">
+
+            <!-- Toggle -->
+            <div class="navbar-item">
+                <a href="javascript:;" class="navbar-link" onclick="toggleSidebar()">
+                    <i class='bx bx-menu' style="font-size: 1.6rem;"></i>
+                </a>
+            </div>
+
+            <!-- Database -->
+            <div class="navbar-item navbar-user dropdown">
+                <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                    <i class='bx bx-data me-2'></i>
+
+                    <span class="fw-medium d-none d-lg-inline">
+                        @(xLan == "en" 
+                            ? User.FindFirstValue("aiwDBD2") 
+                            : User.FindFirstValue("aiwDBD1"))
+                    </span>
+                </a>
+                <div class="dropdown-menu" id="dropdown-database"></div>
+            </div>
+
+            <!-- Year -->
+            <div class="navbar-item navbar-user dropdown">
+                <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                    <i class='bx bx-time me-2'></i>
+                    <span>@User.FindFirstValue("aiwYear")</span>
+                </a>
+                <div class="dropdown-menu" id="dropdown-year"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+<div class="header-right">
+
+    <!-- Search -->
+@*     <div class="header-search">
+        <i class='bx bx-search'></i>
+        <input type="text" placeholder="@iT.T(xLan,"1988","Search...")" />
+    </div> *@
+
+    <div class="navbar-nav align-items-center gap-2">
+
+        <!-- Notifications -->
+        <div class="navbar-item dropdown">
+            <a class="navbar-link position-relative" data-bs-toggle="dropdown">
+                <i class='bx bx-bell'></i>
+                <span class="badge">3</span>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end p-0" style="width: 320px;">
+                <div class="p-3 border-bottom fw-semibold">
+                    Notifications
+                </div>
+
+                <div class="p-2" style="max-height: 260px; overflow-y:auto;">
+                    <div class="dropdown-item small">
+                        New invoice created
+                    </div>
+                    <div class="dropdown-item small">
+                        Payment received
+                    </div>
+                    <div class="dropdown-item small">
+                        System update completed
+                    </div>
+                </div>
+
+                <div class="p-2 border-top text-center">
+                    <a href="#" class="small text-primary">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Language -->
+        <div class="navbar-item dropdown">
+            <a class="navbar-link d-flex align-items-center gap-1" data-bs-toggle="dropdown">
+                <i class='bx bx-globe'></i>
+                <span class="d-none d-md-inline">@iT.T(xLan,"1969","Language")</span>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" onclick="ChangeLanguage('ar')">
+                   @iT.T(xLan,"1860","Arabic")
+                </a>
+                <a class="dropdown-item" onclick="ChangeLanguage('en')">
+                    @iT.T(xLan,"1970","English")
+                </a>
+            </div>
+        </div>
+
+        <!-- User -->
+        <div class="navbar-item dropdown">
+            <a class="navbar-link d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                <img src="../Template/assets/img/user/avatar-larg.png" class="user-avatar" />
+
+                <div class="d-none d-md-flex flex-column text-start">
+                    <span class="fw-semibold" style="font-size: 0.8rem;">
+                        @(xLan == "en" 
+                            ? User.FindFirstValue("eName2") 
+                            : User.FindFirstValue("eName1"))
+                    </span>
+                    <small class="text-muted">Admin</small>
+                </div>
+            </a>
+
+            <div class="dropdown-menu dropdown-menu-end" style="min-width: 220px;">
+                
+                <div class="px-3 py-2 border-bottom">
+                    <div class="fw-semibold">
+                        @(xLan == "en" 
+                            ? User.FindFirstValue("eName2") 
+                            : User.FindFirstValue("eName1"))
+                    </div>
+                    <small class="text-muted">admin@erp.com</small>
+                </div>
+
+                <a class="dropdown-item" href="#">
+                    <i class='bx bx-user me-2'></i> Profile
+                </a>
+
+                <a class="dropdown-item" href="#" onclick="ChangePassword()">
+                    <i class='bx bx-lock me-2'></i> Change Password
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <a class="dropdown-item text-danger" href="/Account/Logout">
+                    <i class='bx bx-log-out me-2'></i> Logout
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+</header>
+
+            <!-- Content Area -->
+            <main id="content" class="modern-content">
+                @RenderBody()
+            </main>
+            
+            <!-- Modern Footer -->
+<footer class="modern-footer">
+
+    <!-- LEFT -->
+    <div class="footer-left">
+        <div class="footer-brand">
+            <i class='bx bx-cube-alt'></i>
+            <span>ERP ERP</span>
+        </div>
+
+        <div class="footer-meta">
+            <span>&copy; @DateTime.Now.Year</span>
+            <span class="dot"></span>
+            <span>All rights reserved</span>
+        </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="footer-center">
+        <a href="#">Help Center</a>
+        <a href="#">Docs</a>
+        <a href="#">Support</a>
+        <a href="#">Privacy</a>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="footer-right">
+        <span class="version">v3.019</span>
+
+        <span class="status online">
+            <span class="pulse"></span>
+            System Online
+        </span>
+    </div>
+
+</footer>
+        </div>
+        
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-primary btn-scroll-to-top" data-toggle="scroll-to-top" style="position: fixed; bottom: 24px; right: 24px; z-index: 1000;"><i class='bx bx-up-arrow-alt'></i></a>
+    </div>
+    
+    <div id="mod-FinTransaction" class="modal"><div class="modal-dialog" id="con-FinTransaction"></div></div>
+    <div id="mod-Password" class="modal"><div class="modal-dialog" id="con-Password"></div></div>
+    
+    <!-- ================== BEGIN core-js ================== -->
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <!-- ================== END core-js ================== -->
+    
+    <script src="~/shllash/jquery-confirm.min.js?version=3.019"></script>
+    <script src="~/shllash/application.js?version=3.019"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Restore Sidebar State
+            const appState = localStorage.getItem('erpSidebarState');
+            if (appState === 'collapsed' && window.innerWidth > 768) {
+                document.getElementById('app').classList.add('sidebar-collapsed');
+            }
+
+            // Submenu Logic
+            document.querySelectorAll('.modern-sidebar .has-sub > .menu-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if(this.getAttribute('href') === '#' || this.getAttribute('href') === 'javascript:;') {
+                        e.preventDefault();
+                    }
+                    const parent = this.parentElement;
+                    parent.classList.toggle('expand');
+                });
+            });
+
+            // Auto-Highlight Active Menu
+            const currentPath = window.location.pathname.toLowerCase();
+            if (currentPath && currentPath !== '/') {
+                document.querySelectorAll('.modern-sidebar .menu-link').forEach(link => {
+                    const href = link.getAttribute('href');
+                    if(href && href !== 'javascript:;' && href !== '#') {
+                        if (currentPath === href.toLowerCase() || currentPath.startsWith(href.toLowerCase() + '/')) {
+                            link.parentElement.classList.add('active');
+                            const parentSub = link.closest('.has-sub');
+                            if (parentSub) {
+                                parentSub.classList.add('expand');
+                                parentSub.classList.add('active');
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Mobile Behavior: Close sidebar when clicking a regular menu item
+            document.querySelectorAll('.modern-sidebar .menu-link').forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth <= 768 && !this.parentElement.classList.contains('has-sub')) {
+                        document.getElementById('app').classList.remove('sidebar-open');
+                    }
+                });
+            });
+        });
+
+        function toggleSidebar() {
+            const app = document.getElementById('app');
+            if (window.innerWidth <= 768) {
+                app.classList.toggle('sidebar-open');
+            } else {
+                app.classList.toggle('sidebar-collapsed');
+                localStorage.setItem('erpSidebarState', app.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
+            }
+        }
+
+        // Close sidebar on mobile when clicking overlay
+        document.querySelector('.sidebar-overlay').addEventListener('click', function() {
+            document.getElementById('app').classList.remove('sidebar-open');
+        });
+
+        function ChangePassword ()
+        {
+            $('#con-Password').empty();
+            $("#con-Password").load('/Account/ChangePassword');
+            $("#mod-Password").modal({ backdrop: 'static' }).modal('toggle');
+        }
+    </script>
+</body>
+</html>

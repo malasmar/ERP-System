@@ -1,0 +1,50 @@
+ 
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Platx</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- ================== BEGIN core-css ================== -->
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+    <link href="~/Template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+    <!-- ================== END core-css ================== -->
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+ 
+</head>
+<body>
+	<div id="loader" class="app-loader">
+		<span class="spinner"></span>
+	</div>
+	<div id="app" class="app">
+		<div class="error">
+			<div class="error-code">@ViewBag.Code</div>
+			<div class="error-content">
+				<div class="error-message">We couldn't find it...</div>
+				<div class="error-desc mb-4">
+					The page you're looking for doesn't exist. <br />
+					Perhaps, there pages will help find what you're looking for.
+				</div>
+				<div>
+					<a href="/" class="btn btn-success px-3">Go Home</a>
+				</div>
+			</div>
+		</div>
+		<a href="javascript:;" class="btn btn-icon btn-circle btn-primary btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+	</div>
+
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/demo/login-v2.demo.js?version=3.019"></script>
+ 
+</body>
+</html>

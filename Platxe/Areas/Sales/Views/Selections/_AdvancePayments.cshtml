@@ -1,0 +1,88 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1734","Advance Payment")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Documents.Selections.AdvancePayments>().ID("grd-AdvancePayments")
+            .ShowBorders(true).Width("100%")
+            .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Sales")
+            .Key("RowKey")
+            .LoadAction("AdvanceInvoicePayments").LoadParams(new {Key = ViewBag.Key }).UpdateAction("fackUpdate"))
+            .Editing(ed=>ed.Mode(GridEditMode.Batch).AllowUpdating(true).AllowAdding(false).AllowDeleting(false).RefreshMode(GridEditRefreshMode.Repaint).UseIcons(false))
+            .ColumnAutoWidth(true)
+            .OnRowUpdated("SelectRowAgesInvoice")
+            .Columns(columns =>
+            {
+                columns.AddFor(m => m.VoucherDate).Caption(iT.T(xLan, "1210","Date")).Width(70).Format("dd.MM.yyyy").AllowEditing(false);
+                columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1265","No")).Width(65).AllowEditing(false);
+                columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212","Description")).MinWidth(100).MinWidth(100).CellTemplate(new JS("ct4Description")).AllowEditing(false);
+                columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "1120","Total")).Width(85).Format("0,###.##").AllowEditing(false);
+                columns.AddFor(m => m.xAmount).Caption(iT.T(xLan, "1375","xAmount")).Width(90).Format("0,###.##").CellTemplate(new JS("ct4xAmount"));
+                columns.Add().Name("act").Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4AgesCloseInvoices"));
+            })
+            .Pager(pg =>
+                {
+                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                pg.ShowNavigationButtons(true);
+                pg.ShowPageSizeSelector(true);
+                pg.ShowInfo(true);
+                pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                sp.Width(250);
+                sp.Visible(true);
+                })
+                .Scrolling(s=>s.ScrollByContent(true).ScrollByThumb(true))
+                .Selection(s=>s.Mode(SelectionMode.Multiple).AllowSelectAll(false).Deferred(false))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+            )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+            <button type="button" class="btn btn-yellow" onclick="SaveAdvancePayments()">@iT.T(xLan,"1735","Save Payments")</button>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+$(document).ready(function() {
+    var grdAgesInvoices = $('#grd-AdvancePayments').dxDataGrid("instance");
+    var keys = [];
+    for (const item of AdvancePayments) {
+        keys.push(item.Key);
+    }
+    grdAgesInvoices.selectRows(keys, false).done(function() {
+        for (const item of AdvancePayments) {
+            var selectedRowIndex = grdAgesInvoices.getRowIndexByKey(item.Key);
+            grdAgesInvoices.cellValue(selectedRowIndex, 'xAmount', item.Amount);
+            grdAgesInvoices.selectRows(item.Key, false)
+        }
+        grdAgesInvoices.saveEditData();
+    });
+});
+</script>
+ 

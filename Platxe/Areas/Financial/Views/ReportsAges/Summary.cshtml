@@ -1,0 +1,141 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"2159","Sales Ages")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Reports.Ages.AgesSummary>().ID("grd-AgesSummary")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ireports").Area("Financial")
+                    .Key("Key")
+                    .LoadAction("AgesSummary")
+                    .LoadParams(new
+                    {
+                        DocKind = ViewBag.DocKind
+                    })
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(45).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1274", "Arabic Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
+                        columns.AddFor(m => m.Limit).Caption(iT.T(xLan, "2160", "Limit")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "2161", "Credit")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Delayed).Caption(iT.T(xLan, "2162", "Delayed")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Due).Caption(iT.T(xLan, "2163", "Due")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Due30).Caption(iT.T(xLan, "2164", "Due30")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Due60).Caption(iT.T(xLan, "2165", "Due60")).Width(110).Format("0,###.##");
+                        columns.AddFor(m => m.Due90).Caption(iT.T(xLan, "2166", "Due90")).Width(110).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .RowAlternationEnabled(true)
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2159", "Sales Ages")))
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-Details" class="modal"><div class="modal-dialog modal-lg" id="con-Details"></div></div>
+<script class="append-on-ajax-script">
+    var data;
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'tips' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'tips')
+                        {
+                            data = options.data;
+                            GetStatment(options.data.Key);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-AgesSummary').dxDataGrid("instance").refresh();
+    }
+
+
+
+    function GetStatment (Key)
+    {
+
+        $('#con-Details').empty();
+        $("#con-Details").load('/Financial/ReportsAges/Details?Key=' + Key);
+        $("#mod-Details").modal({ backdrop: 'static' }).modal('toggle');
+    }
+</script>

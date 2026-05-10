@@ -1,0 +1,46 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Purchasing" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1738","Purchasing Operations")</div>
+    <div class="menu-header">@iT.T(xLan,"1244","Accounting Cards")</div>
+    <div class="menu-item">
+        <a href="/Purchasing/Documents/xPurchaseInvoice" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-address-card"></i></div><div class="menu-text">@iT.T(xLan,"1739","Purchase Invoice")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Purchasing/Documents/ReturnInvoice" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-gear"></i></div><div class="menu-text">@iT.T(xLan,"1740","Return Purchasing")</div></a>
+    </div>
+    <div class="menu-item" hidden>
+        <a href="/Purchasing/Documents/xPurchaseInvoice" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-address-card"></i></div><div class="menu-text">x- @iT.T(xLan,"1739","Purchase Invoice")</div></a>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1741","Purchasing List")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Purchasing/Manager/PurchaseInvoices" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1737","Purchase Invoices")</div></a></div>
+            <div class="menu-item"><a href="/Purchasing/Manager/ReturnInvoices" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1391","Return Invoices")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2658","Purchase Reports")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2659","Invoices Details")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Purchasing/Reports/TransactionsDetails" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2660","Purchase Invoices Details")</div></a></div>
+            <div class="menu-item"><a href="/Purchasing/Reports/ReturnDetails" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2661","Return Purchase Details")</div></a></div>
+
+        </div>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">@iT.T(xLan,"1261","Collapse")</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

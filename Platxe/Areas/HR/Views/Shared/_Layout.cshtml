@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<html id="xhtml">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Platxe</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    @* Uncomment to use the HtmlEditor control *@
+    @* <script src="https://unpkg.com/devextreme-quill@21_2/dist/dx-quill.min.js?version=3.019"></script> *@
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    @{
+        if (xLan == "ar")
+        {
+            <link href="~/Template/assets/css/apple/app-rtl.min.css?version=3.019" rel="stylesheet" />
+        }
+        else
+        {
+            <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+        }
+    }
+    <link href="~/Template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <script src="~/shllash/devlanguage.js?version=3.019"></script>
+       <link href="~/shllash/shllash.css?version=3.019" rel="stylesheet" />
+     <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+    <script src="~/shllash/jquery.unobtrusive-ajax.js?version=3.019"></script>
+</head>
+<body style="background-image:url(../../template/assets/img/cover/pattern2.webp);background-size:contain;background-position:center" class="theme-yellow">
+    <div id="loader" class="app-loader">
+        <span class="spinner"></span>
+    </div>
+    <div id="app" class="app app-header-fixed app-sidebar-fixed">
+        <div id="header" class="app-header">
+            <div class="navbar-header">
+                <a href="/" class="navbar-brand"><span class="navbar-logo"><i class="ion-md-apps"></i></span>@iT.T(xLan,"2031","Human Resourcing")</a>
+                <button type="button" class="navbar-mobile-toggler" data-toggle="app-sidebar-mobile">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div>
+                <div class="navbar-nav">
+                    <div class="navbar-item dropdown">
+                        <a href="#" data-bs-toggle="dropdown" class="navbar-link dropdown-toggle">
+                            <i class="fa fa-spinner me-1"></i>
+                            <span>
+                                 <span class="d-none d-md-inline">@iT.T(xLan,"1141","Applications")</span>
+                                <b class="caret"></b>
+                            </span>
+                        </a>
+                        <div class="dropdown-menu media-list dropdown-menu-end">
+                            @{
+                                await Html.RenderPartialAsync("../Home/_Applications");
+                            }
+                        </div>
+                    </div>
+                    <div class="navbar-item divider"></div>
+                    <div class="navbar-item navbar-user dropdown">
+                        <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                            <i class="fa fa-database me-1"></i>
+                            <span>
+                                @{
+                                      if (User.FindFirstValue("aiwLan") == "en")
+                                    {
+                                        <span class="d-none d-md-inline">@User.FindFirstValue("aiwDBD2")</span>
+                                    }
+                                    else
+                                    {
+                                       <span class="d-none d-md-inline">@User.FindFirstValue("aiwDBD1")</span>
+                                    }
+                                }
+                                <b class="caret"></b>
+                            </span>
+                        </a>
+                        <div class="dropdown-menu  me-1" id="dropdown-database" data-key="@User.FindFirstValue("aiwDBKey")"></div>
+                    </div>
+                  <div class="navbar-item navbar-user dropdown">
+                        <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center tag" data-bs-toggle="dropdown">
+                            <i class="fa fa-clock me-1"></i>
+                            <span>
+                                <span class="d-none d-md-inline">@User.FindFirstValue("aiwYear")</span>
+                                <b class="caret"></b>
+                            </span>
+                            <small hidden  class="text-danger tag-fin-year" id="txt-YearStatus"> @iT.T(xLan, "1139","Financially Closed")</small>
+                        </a>
+                       <div class="dropdown-menu  me-1" id="dropdown-year" data-key="@User.FindFirstValue("aiwYear")"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="navbar-nav">
+               <div class="navbar-item navbar-user dropdown">
+                    <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                        <i class="fa fa-globe me-1"></i>
+                        <span>
+                            <span class="d-none d-md-inline">@iT.T(xLan,"1969","Language")</span>
+                            <b class="caret"></b>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu  me-1">
+                        <a href="javascript:;" class="dropdown-item" onclick="ChangeLanguage('ar')"><div class="flag-icon flag-icon-sa me-1" title="Arabic"></div> @iT.T(xLan,"1860","Arabic")</a>
+                        <a href="javascript:;" class="dropdown-item" onclick="ChangeLanguage('en')"><div class="flag-icon flag-icon-gb me-1" title="English"></div> @iT.T(xLan,"1970","English")</a>
+                    </div>
+                </div>
+                <div class="navbar-item navbar-user dropdown">
+                    <a href="#" class="navbar-link dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
+                        <img src="../../Template/assets/img/user/user-12.jpg" alt="" />
+                        <span>
+                            <span class="d-none d-md-inline">@(xLan == "en" ? User.FindFirstValue("eName2") : User.FindFirstValue("eName1"))</span>
+                            <b class="caret"></b>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end me-1">
+                        <a href="javascript:;" class="dropdown-item">User Profile</a>
+                        <a href="javascript:;" class="dropdown-item">Setting</a>
+                        <a href="javascript:;" class="dropdown-item">Change Password</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="javascript:;" class="dropdown-item" onclick="ConfirmLogout()">Log Out</a>
+                    </div>
+                </div>
+            </div>
+            <!-- END header-nav -->
+        </div>
+        <div id="sidebar" class="app-sidebar app-sidebar-transparent">
+            <!-- BEGIN scrollbar -->
+            <div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+                <!-- BEGIN menu -->
+                @{
+                    await Html.RenderPartialAsync("_sidebar");
+                }
+                <!-- END menu -->
+            </div>
+            <!-- END scrollbar -->
+        </div>
+        <div class="app-sidebar-bg"></div>
+        <div class="app-sidebar-mobile-backdrop"><a href="#" data-dismiss="app-sidebar-mobile" class="stretched-link"></a></div>
+        <div id="content" class="app-content">
+            @RenderBody()
+        </div>
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-primary btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+    </div>
+    <!-- ================== BEGIN core-js ================== -->
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <!-- ================== END core-js ================== -->
+       <script src="~/shllash/jquery-confirm.min.js?version=3.019"></script>
+    <script src="~/shllash/application.js?version=3.019"></script>
+    <script>
+        //function ChangeLanguage(value) {
+        //    $.ajax({
+        //        type: "Post",
+        //        url: "/api/iaccount/ChangeLanguage",
+        //        data: { Lan: value },
+        //        dataType: "json",
+        //        success: function(response) {
+        //            if (response == true) {
+        //                document.location.reload();
+        //            }
+        //        },
+        //        failure: function(response) {
+        //            alert(response);
+        //        },
+        //        error: function(response) {
+        //            alert(response.responseText);
+        //        }
+        //    });
+        //}
+    </script>
+</body>
+</html>

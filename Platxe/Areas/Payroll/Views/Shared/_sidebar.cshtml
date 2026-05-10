@@ -1,0 +1,38 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Payroll" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1720","Payroll Operation")</div>
+    <div class="menu-item">
+        <a href="/Payroll/Salaries/CreateSalaries" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1691","Create Salaries")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Payroll/Salaries/UpdateAttendance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1699","Update Attendance")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Payroll/Salaries/UpdateBenefit" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1704","Update Benefit")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Payroll/Salaries/UpdateDeduction" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1714","Update Deduction")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1721","Payroll Sheet")</div>
+    <div class="menu-item">
+        <a href="/Payroll/Salaries/SalariesSheet" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1721","Payroll Sheet")</div></a>
+    </div>
+    <div hidden class="menu-header">@iT.T(xLan,"1722","Payroll Confirmation")</div>
+    <div hidden class="menu-header">@iT.T(xLan,"1723","Bank Files")</div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">@iT.T(xLan,"1261","Collapse")</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

@@ -1,0 +1,334 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"1237","Analytical Trial Balance")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1224","First Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1225","Last Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+            </div>
+            <div class="col-lg-1"></div>
+            <div class="col-lg-5 col-md-6">
+                <div class="card border-0 mb-1 bg-yellow text-dark acc">
+                    <div class="card-body">
+                        <div class="text-grey">
+                            <b>@iT.T(xLan,"1006","Trial Balance")</b>
+                        </div>
+                        <div class="d-flex">
+                            <h2 class="mb-0"><span id="txt-TotalTrial">0.00</span></h2>
+                        </div>
+                        <hr class="bg-white-transparent-2">
+                        <div class="row text-truncate">
+                            <div class="col-4">
+                                <div class="f-s-12 text-grey">@iT.T(xLan,"1007","Opening")</div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
+                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
+                            </div>
+                            <div class="col-4">
+                                <div class="f-s-12 text-grey">@iT.T(xLan, "1011","Transaction") </div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
+                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
+                            </div>
+                            <div class="col-4">
+                                <div class="f-s-12 text-grey">@iT.T(xLan, "1227","Balance") </div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
+                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
+                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.TrialBalance>().ID("grd-TrialBalance")
+                    .ShowBorders(true).Width("100%")
+                    .ColumnAutoWidth(true)
+                    .Columns(c =>
+                    {
+                        c.Add().Caption("Home").AllowExporting(false).Fixed(true).FixedPosition((HorizontalEdge)devFixd).AllowFiltering(false).AllowFixing(true).Columns(columns =>
+                        {
+                            columns.Add().Caption("Action").Width(40).CellTemplate(new JS("ct4Action"));
+                            columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(70).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind"));
+                            columns.AddFor(m => m.T).Caption(iT.T(xLan, "1161", "Trans.")).Width(70).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T"));
+                        });
+                        c.Add().Caption("General Details").Columns(columns =>
+                        {
+                            columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Level")).Width(60);
+                            columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(90);
+                            columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                            columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
+                        });
+                        c.Add().Caption(iT.T(xLan, "1007", "Opening")).Columns(columns =>
+                        {
+                            columns.AddFor(m => m.oDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.oCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
+                        });
+                        c.Add().Caption(iT.T(xLan, "1011", "Transaction")).Columns(columns =>
+                        {
+                            columns.AddFor(m => m.tDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.tCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.tbDebit).Caption(iT.T(xLan, "1052", "Debit Balance")).Width(100).Format("0,###.##").Visible(true);
+                            columns.AddFor(m => m.tbCredit).Caption(iT.T(xLan, "1053", "Credit Balance")).Width(100).Format("0,###.##").Visible(true);
+                        });
+                        c.Add().Caption(iT.T(xLan, "1227", "Balance")).Columns(columns =>
+                        {
+                            columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
+                        });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1237", "Analytical Trial Balance")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-xInteractiveTrial" class="modal"><div class="modal-dialog" id="con-xInteractiveTrial"></div></div>
+<script class="append-on-ajax-script">
+    var TrialBalanceData;
+    var data;
+    $(document).ready(function ()
+    {
+        LoadDash();
+    })
+    async function LoadDash ()
+    {
+        $.ajax({
+            type: "Get",
+            url: "/api/acc/ixreports/TrialBalance",
+            data: { First: getFirst(), Last: getLast() },
+            dataType: "json",
+            success: function (response)
+            {
+                TrialBalanceData = response;
+                var LevelOneTB = response.filter(function (el)
+                {
+                    return el.Level == 1;
+                });
+                $('#grd-TrialBalance').dxDataGrid({
+                    dataSource: LevelOneTB
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+        $.ajax({
+            type: "Get",
+            url: "/api/acc/ireports/BalanceTB",
+            data: { First: getFirst(), Last: getLast() },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-oDebit').text(comma(response.oDebit));
+                $('#txt-oCredit').text(comma(response.oCredit));
+                $('#txt-oBalance').text(comma(response.oDebit - response.oCredit));
+                $('#txt-tDebit').text(comma(response.TDebit));
+                $('#txt-tCredit').text(comma(response.TCredit));
+                $('#txt-tBalance').text(comma(response.TDebit - response.TCredit));
+                $('#txt-bDebit').text(comma(response.oDebit + response.TDebit));
+                $('#txt-bCredit').text(comma(response.oCredit + response.TCredit));
+                $('#txt-bBalance').text(comma((response.oDebit + response.TDebit) - (response.oCredit + response.TCredit)));
+                $('#txt-TotalTrial').text(comma(response.oDebit + response.TDebit));
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'tips' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'tips')
+                        {
+                            data = options.data;
+                            //var xTB = document.createElement('TrialBalance-' + options.data.Code);
+                            //$(xTB).append('<div id="mod-CostCenter" class="modal"><div class="modal-dialog" id="con-CostCenter"></div></div>');
+                            $('#con-xInteractiveTrial').empty();
+                            $("#con-xInteractiveTrial").load('/Accounting/Reports/xInteractiveTrial?Code=' + options.data.Code);
+                            //var LevelOneTB = TrialBalanceData.filter(function (el)
+                            //{
+                            //    return el.Parent == data.Code;
+                            //});
+                            //$('#grd-InteractiveTrial-' + options.data.Code).dxDataGrid({
+                            //    dataSource: TrialBalanceData
+                            //});
+                            $("#mod-xInteractiveTrial").modal({ backdrop: 'static' }).modal('toggle');
+                            // $(xTB).addClass('modal');
+                            // xTB.innerHTML='<div class="modal-dialog" id="con-' + options.data.Code + '"></div>';
+                            // $(xTB).append('<div class="modal-dialog" id="con-' + options.data.Code + '"></div>');
+                            // var xxx = document.createElement('Div-' + options.data.Code);
+                            // $(xxx).load('/Accounting/Reports/xInteractiveTrial?Code=' + options.data.Code);
+                            // $('#con-' + options.data.Code).append($(xTB).load('/Accounting/Reports/xInteractiveTrial?Code=' + options.data.Code));
+                            //data = options.data;
+                            //var xTB = document.createElement('xTB' + options.data.Code);
+                            //$(xTB).addClass('modal');
+                            //$(xTB).load('/Accounting/Reports/xInteractiveTrial?Code=' + options.data.Code);
+                            //$(xTB).modal({ backdrop: 'static' }).modal('toggle');
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        LoadDash();
+        $('#grd-TrialBalance').dxDataGrid("instance").refresh();
+    }
+    function getYear ()
+    {
+        return $('#edYear').dxNumberBox('option', 'value')
+    }
+    function getFirst ()
+    {
+        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        return fd.toLocaleDateString();
+    }
+    function getLast ()
+    {
+        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        return ld.toLocaleDateString();
+    }
+    function ChangeYear ()
+    {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-info text-dark">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 4:
+                str = '<div class="text-center"><span class="badge bg-warning text-dark">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4T (container, options)
+    {
+        var str = '';
+        if (options.data.Level == 1)
+        {
+            str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+            $(str).appendTo(container)
+            return;
+        }
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container);
+    }
+</script>

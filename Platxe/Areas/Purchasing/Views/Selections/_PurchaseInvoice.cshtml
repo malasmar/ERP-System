@@ -1,0 +1,72 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1737","Purchase Invoices")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Documents.Selections.Invoices>().ID("grd-Invoices")
+            .ShowBorders(true).Width("100%")
+            .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Purchasing")
+            .Key("OperationKey")
+            .LoadAction("SelectInvoices").LoadParams(new { DocumentKind = 71 }))
+            .ColumnAutoWidth(true)
+            .Columns(columns =>
+            {
+                columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4SalesInvoice"));
+                columns.AddFor(m => m.Retrned).Caption(iT.T(xLan, "1356","Retrned")).Width(70).Lookup(L=>L.DataSource(iReplacer.invReturnedInvoice(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Retrned"));
+                columns.AddFor(m => m.InvoiceDate).Caption(iT.T(xLan, "1210","Date")).Width(80).Format("dd.MM.yyyy");
+                columns.AddFor(m => m.InvoiceNo).Caption(iT.T(xLan, "1265","No")).Width(70);
+                columns.AddFor(m => m.CurrentKey).Caption(iT.T(xLan, "1355","Client")).Lookup(L=>L.DataSource(CLiFinancial.Selections.Dynamic.UnionSelection(DB,xLan,new PLenums.TransactionAccount[]{ PLenums.TransactionAccount.CurrentAccount})).ValueExpr("Key").DisplayExpr("Display")) ;
+                columns.AddFor(m => m.AccountKind).Caption(iT.T(xLan, "1158","Kind")).Width(60).Lookup(L=>L.DataSource(iReplacer.finTransactionAccByDocument(xLan,80)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4AccountKind"));
+                columns.AddFor(m => m.AccountKey).Caption(iT.T(xLan, "1219","Account")).Lookup(L=>L.DataSource(CLiFinancial.Selections.Dynamic.UnionSelection(DB,xLan, new PLenums.TransactionAccount[]{ PLenums.TransactionAccount.Bank, PLenums.TransactionAccount.CashBox})).ValueExpr("Key").DisplayExpr("Display"));
+                columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120","Total")).Width(85).Format("0,###.##");
+                columns.AddFor(m => m.ClosedAmount).Caption(iT.T(xLan, "1357","Closed")).Width(85).Format("0,###.##");
+                columns.AddFor(m => m.RemAmount).Caption(iT.T(xLan, "1358","Rem.Amount")).Width(85).Format("0,###.##");
+                columns.AddFor(m => m.ReturnedAmount).Caption(iT.T(xLan, "1359","Ret.Amount")).Width(85).Format("0,###.##");
+            })
+            .Pager(pg =>
+                {
+                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                pg.ShowNavigationButtons(true);
+                pg.ShowPageSizeSelector(true);
+                pg.ShowInfo(true);
+                pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                sp.Width(250);
+                sp.Visible(true);
+                })
+                .Scrolling(s=>s.ScrollByContent(true).ScrollByThumb(true))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+            )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+ 

@@ -1,0 +1,468 @@
+@model CLiHR.Cards.Employee
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1496","Employee Card")</h4>
+    </div>
+    <form id="frm-Employee" data-parsley-validate="true">
+        <div class="modal-body" style="min-height:650px">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(m => m.accAccount)
+            @Html.HiddenFor(m => m.accAdvance)
+            @Html.HiddenFor(m => m.accLoan)
+            @Html.HiddenFor(m => m.accVacProvision)
+            @Html.HiddenFor(m => m.accEosProvision)
+
+
+
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <ul class="nav nav-pills mb-2">
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-1" data-bs-toggle="tab" class="nav-link active">
+                        <span class="d-sm-none">@iT.T(xLan,"1308","General")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"1308","General") <span class="text-red float-end">*</span></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-2" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"1497","Salary")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"1497","Salary")</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-3" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"1498","Contract")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"1498","Contract") <span class="text-red float-end">*</span></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-4" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"1499","Advance")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"1499","Advance")</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-5" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"1309","Contact")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"1309","Contact")</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content p-3 rounded-top panel rounded-0 m-0">
+                <div class="tab-pane fade active show" id="nav-pills-tab-1">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1500","Employee Code")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").Width(150).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1274","Arabic Name")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1501","Gender")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Gender).ID("cnt-Gender").DataSource(iReplacer.hrGender(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("Gender")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1502","Nati.Kind")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.NationalityKind).ID("cnt-NationalityKind").DataSource(iReplacer.hrCitizen(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("Nati.Kind")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1503","NationalityID")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.NationalityID).ID("cnt-NationalityID").Width("70%").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1504","Nationality")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Nationality).ID("cnt-Nationality").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1505","MaritalStatus")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.MaritalStatus).ID("cnt-MaritalStatus").DataSource(iReplacer.hrMaritalStatus(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("Marital Status")
+                        </div>
+                    </div>
+                    <div class="form-group row" hidden>
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1506","Child Follower")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.ChildFollower).ID("cnt-ChildFollower").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row" hidden>
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1507","Adult Follower")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AdultFollower).ID("cnt-AdultFollower").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <p class="p-1 m-1">Login Details</p>
+                    <hr class="p-0 m-1" />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1303","Email")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Email).ID("cnt-Email").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1189","Mobile")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Mobile).ID("cnt-Mobile").Width("70%").InputAttr("required", true).Mask("+000000000000").MaskChar("x")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2344","Self Service")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.SelfService).ID("cnt-SelfService").DataSource(iReplacer.hrSelfServiceStatus(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("Self Service")
+                        </div>
+                    </div>
+                    <p class="p-1 m-1">Payment Details</p>
+                    <hr class="p-0 m-1" />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1508","PaymentType")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.PaymentType).ID("cnt-PaymentType").DataSource(iReplacer.hrPaymentType(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("Insurance")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1460","Bank Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Bank).ID("cnt-Bank").DataSource(CLiHR.Selections.Banks.GetList(DB,xLan)).ValueExpr("ID").DisplayExpr("ID").Width(120).Placeholder("Bank ID")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1278","IBAN")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.IBAN).ID("cnt-IBAN").Mask("AA0000000000000000000000").ReadOnly(Model.LockSalary)
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-2">
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1450","Basic Salary")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.BasicSalary).ID("cnt-BasicSalary").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1510","Home Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllHome).ID("cnt-AllHome").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1511","Transportation Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllTransportation).ID("cnt-AllTransportation").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1512","Comunication Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllComunication).ID("cnt-AllComunication").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1513","Food Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllFood).ID("cnt-AllFood").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1514","Other Allowance-1")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllOther1).ID("cnt-AllOther1").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1515","Other Allowance-2")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllOther2).ID("cnt-AllOther2").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1516","Other Allowance-3")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AllOther3).ID("cnt-AllOther3").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <p class="p-1 m-1">Insurance Details</p>
+                    <hr class="p-0 m-1" />
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1517","Insurance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Insurance).ID("cnt-Insurance").DataSource(iReplacer.hrInsurance(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder(iT.T(xLan,"1517","Insurance"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1518","Insurance No")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.InsuranceNo).ID("cnt-InsuranceNo").Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1519","Insurance Salary")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.InsuranceSalary).ID("cnt-InsuranceSalary").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1520","Ins.Home Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.InsuranceHome).ID("cnt-InsuranceHome").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1521","Ins.Other Allowance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.InsuranceOther).ID("cnt-InsuranceOther").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1522","Insurance Kind")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.InsuranceKind).ID("cnt-InsuranceKind").DataSource(iReplacer.hrInsuranceKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("InsuranceKind")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1523","Ins. Value")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.InsuranceValue).ID("cnt-InsuranceValue").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-3">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1524","Join Date")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().DateBoxFor(m => m.StartDate).ID("cnt-StartDate").DisplayFormat("dd.MM.yyyy").Width(120).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1186","End Date")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().DateBoxFor(m => m.EndDate).ID("cnt-EndDate").DisplayFormat("dd.MM.yyyy").Width(120).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1525","JobK ind")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.JobKind).ID("cnt-JobKind").DataSource(iReplacer.hrJobKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder(iT.T(xLan,"1526","Job Kind"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1472","Job Title")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.JobTitle).ID("cnt-JobTitle").DataSource(CLiHR.Selections.JobTitle.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"1472","Job Title"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1445","Department")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Department).ID("cnt-Department").DataSource(CLiHR.Selections.Department.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"1445","Department"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1444","Structure")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Structure).ID("cnt-Structure").DataSource(CLiHR.Selections.Structure.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"1444","Structure")).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <p class="p-1 m-1">Vacation Details</p>
+                    <hr class="p-0 m-1" />
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1527","Annual Due Months")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.VacationKind).ID("cnt-VacationKind").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1528","Annual Vac.Days")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AnnualDays).ID("cnt-AnnualDays").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1985","TicketKind")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.TicketKind).ID("cnt-TicketKind").DataSource(iReplacer.hrTicketKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120).Placeholder("TicketKind")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1986","TicketCount")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.TicketCount).ID("cnt-TicketCount").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1531","Balance Date")<span class="text-red float-end">*</span></label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().DateBoxFor(m => m.LastReturn).ID("cnt-LastReturn").DisplayFormat("dd.MM.yyyy").Width(120).InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1532","Days Balance")</label>
+                        <div class="col-lg-8 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.AnnualBalance).ID("cnt-AnnualBalance").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <p class="p-1 m-1">Attendance Details</p>
+                    <hr class="p-0 m-1" />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1533","Daily hours")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.DailyHour).ID("cnt-DailyHour").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1534","Shift")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Shift).ID("cnt-Shift").DataSource(CLiHR.Selections.Shift.GetList(DB,xLan)).ValueExpr("Code").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"1534","Shift"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1535","Biometric")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Biometric).ID("cnt-Biometric").DataSource(CLiHR.Selections.Biometric.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"1535","Biometric"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1536","Enroll ID")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.EnrollID).ID("cnt-EnrollID").ShowSpinButtons(true).Width(120)
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-4">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2730","Salaries Integration")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.accIntegration).ID("cnt-accIntegration").DataSource(CLiFinancial.Selections.Groups.SalariesIntegration(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"2730","Salaries Integration"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2345","Branch")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("cnt-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"2345","Branch"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2346","Cost Center")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.CostCenter).ID("cnt-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"2346","Cost Center"))
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2335","Project")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Project).ID("cnt-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Width("70%").Placeholder(iT.T(xLan,"2335","Project"))
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-5">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1190","Phone")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Phone).ID("cnt-Phone").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1537","Other Email")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.xEmail).ID("cnt-xEmail").Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1206","Address")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextAreaFor(m => m.Address).ID("cnt-Address").Height(80).Width("70%")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1538","Mother Country")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextAreaFor(m => m.xAddress).ID("cnt-xAddress").Height(80).Width("70%")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group sticky-bottom">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-Employee").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount ()
+    {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Employee').serialize();
+        $.ajax({
+            type: "post",
+            url: "/api/hr/icards/UpdateEmployee",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                if (response != true)
+                {
+                    exErrorMessage(response);
+                    return;
+                }
+                $("#mod-Employee").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

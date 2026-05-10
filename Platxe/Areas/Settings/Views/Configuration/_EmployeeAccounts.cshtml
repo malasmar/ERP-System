@@ -1,0 +1,119 @@
+@model CLiCore.Configuration.EmployeeAccounts
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2400","Employee Accounts")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-EmployeeAccounts" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2402","Accrual Account")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Account).ID("cnt-Account").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1014","Advance Account")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Advance).ID("cnt-Advance").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2403","Loan Account")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Loan).ID("cnt-Loan").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2404","Vacation Provision")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.VacProvision).ID("cnt-VacProvision").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2405","End Service Provision")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.EosProvision).ID("cnt-EosProvision").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2406","Advance Int Method")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.DetAdvance).ID("cnt-DetAdvance").Width(120).DataSource(iReplacer.fxdDetailsMethod(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2407","Loan Int Method")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.DetLoan).ID("cnt-DetLoan").Width(120).DataSource(iReplacer.fxdDetailsMethod(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2408","Vacation Int Method")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.DetVacProvision).ID("cnt-DetVacProvision").Width(120).DataSource(iReplacer.fxdDetailsMethod(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2409","End Service Int Method")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.DetEosProvision).ID("cnt-DetEosProvision").Width(120).DataSource(iReplacer.fxdDetailsMethod(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-EmployeeAccounts").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount ()
+    {
+     
+        var data = $('#frm-EmployeeAccounts').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/Settings/iconfiguration/UpdateEmployeeAccounts",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-EmployeeAccounts").modal('toggle');
+              
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

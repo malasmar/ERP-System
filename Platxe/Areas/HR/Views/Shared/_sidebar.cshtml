@@ -1,0 +1,76 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/HR" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1539","HR Main Operation")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1444","Structure")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Structure/Index" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1444","Structure")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1540","Employee Cards")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Cards/Employee" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1541","Employee")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1542","Employee Edit") </div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/BulkEdit/General" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1273","General Details")</div></a></div>
+            <div class="menu-item"><a href="/HR/BulkEdit/Salaries" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1449","Salaries Details")</div></a></div>
+            <div class="menu-item"><a href="/HR/BulkEdit/Insurance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1448","Insurance Details")</div></a></div>
+            <div class="menu-item"><a href="/HR/BulkEdit/Contract" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1447","Contract Details")</div></a></div>
+            <div class="menu-item"><a href="/HR/BulkEdit/Attendance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1543","Attendance Details")</div></a></div>
+            <div class="menu-item"><a href="/HR/BulkEdit/Contact" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1446","Contact Details") </div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1544","HR Configuration")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1545","General Cards")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Cards/Department" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1445","Department")</div></a></div>
+            <div class="menu-item"><a href="/HR/Cards/JobTitle" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1546","Job Titles")</div></a></div>
+            <div class="menu-item"><a href="/HR/Cards/BankNames" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1547","Bank Names")</div></a></div>
+        </div>
+    </div>
+     <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1548","Attendance Config")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Cards/Biometric" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1549","Biometric Device")</div></a></div>
+            <div class="menu-item"><a href="/HR/Cards/Shift" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1550","Attendance Shift")</div></a></div>
+            <div class="menu-item"><a href="/HR/Cards/Location" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2358","Location")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2359","Request Config")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Categories/CatRequest" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2360","Request Categories")</div></a></div>
+            <div class="menu-item"><a href="/HR/Categories/Penalty" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2361","Penalty Categories")</div></a></div>
+            <div class="menu-item"><a href="/HR/Categories/Reward" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2362","Reward Categories")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"2631","Self Service Audit")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2632","Review Request")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/HR/Request/Advance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2633","Advance Requests")</div></a></div>
+ 
+        </div>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">@iT.T(xLan,"1261","Collapse")</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

@@ -1,0 +1,251 @@
+@model CLiHR.Cards.Shift
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<h1 class="page-header">@iT.T(xLan,"1473","Shift Card")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <form id="frm-Shift" data-parsley-validate="true">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1474","Shift Code")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().TextBoxFor(m => m.SC_Code).ID("edsCode").InputAttr("required", true)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1229","Name (Arabic )")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().TextBoxFor(m => m.SC_arName).ID("edsName1").InputAttr("required", true)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1230","Name (English)")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().TextBoxFor(m => m.SC_enName).ID("edsName2").InputAttr("required", true)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1475","Start Time")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().DateBoxFor(m => m.SC_ST).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1476","Next Day")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().CheckBoxFor(m => m.SC_ND)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan, "1477","End Time")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    @Html.DevExtreme().DateBoxFor(m => m.SC_ET).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-lg-6 col-md-12">@iT.T(xLan, "1478","Start Allwoed Min")</label>
+                                <div class="col-lg-6 col-md-12">
+                                    @Html.DevExtreme().NumberBoxFor(m => m.SC_AllEnter).ShowSpinButtons(true).Width(100)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-6 col-md-12">@iT.T(xLan, "1479","Exit Allwoed Min")</label>
+                                <div class="col-lg-6 col-md-12">
+                                    @Html.DevExtreme().NumberBoxFor(m => m.SC_AllExit).ShowSpinButtons(true).Width(100)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <table class="table table-responsive-sm table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>@iT.T(xLan, "1480","Day Name")</th>
+                                        <th>@iT.T(xLan, "1481","Week End")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1482","Start")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1483","N.D")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1484","End")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1482","Start")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1483","N.D")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1484","End")</th>
+                                        <th style="width:100px">@iT.T(xLan, "1485","Breack")</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1486","Saturday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_0)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_0).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_0)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_0).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_0).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_0)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_0).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_0)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1487","Sunday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_1)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_1).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_1)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_1).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_1).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_1)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_1).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_1)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1488","Monday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_2)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_2).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_2)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_2).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_2).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_2)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_2).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_2)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1489","Tuesday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_3)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_3).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_3)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_3).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_3).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_3)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_3).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_3)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1490","Wednesday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_4)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_4).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_4)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_4).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_4).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_4)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_4).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_4)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1491","Thursday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_5)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_5).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_5)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_5).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_5).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_5)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_5).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_5)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>@iT.T(xLan, "1492","Friday")</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_DayIsWeekEnd_6)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1StartTime_6).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S1InNextDay_6)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S1EndTime_6).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2StartTime_6).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().CheckBoxFor(m => m.SC_S2InNextDay_6)</td>
+                                        <td>@Html.DevExtreme().DateBoxFor(m => m.SC_S2EndTime_6).Type(DateBoxType.Time).DisplayFormat("HH:mm").Width(120)</td>
+                                        <td>@Html.DevExtreme().NumberBoxFor(m => m.SC_DailyBreak_6)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <button class="btn btn-danger btn-sm" type="submit">@iT.T(xLan, "1197","Save Change")</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-Shift").submit(function (event)
+        {
+            event.preventDefault();
+            SaveConfirm();
+        });
+    })
+    function SaveConfirm ()
+    {
+        if ($('#edsCode').dxTextBox('option', 'text') == '')
+        {
+            $.alert({
+                title: ishlll.AlertStop,
+                content: ishlll.msgCode
+            });
+            return;
+        }
+        if ($('#edsName1').dxTextBox('option', 'text') == '')
+        {
+            $.alert({
+                title: ishlll.AlertStop,
+                content: ishlll.msgName
+            });
+            return;
+        }
+        if ($('#edsName2').dxTextBox('option', 'text') == '')
+        {
+            $.alert({
+                title: ishlll.AlertStop,
+                content: ishlll.msgName
+            });
+            return;
+        }
+        $.confirm({
+            title: 'Confirm!',
+            content: 'Are you sure to update shift?',
+            buttons: {
+                Update: function ()
+                {
+                    SaveAccount();
+                },
+                cancel: function ()
+                {
+                    return;
+                }
+            }
+        });
+    }
+    function SaveAccount ()
+    {
+        var data = $('#frm-Shift').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/hr/icards/SaveShift",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $.alert({
+                    title: 'Info',
+                    content: 'Operation Complete',
+                });
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

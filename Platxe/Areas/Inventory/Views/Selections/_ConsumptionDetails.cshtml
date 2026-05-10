@@ -1,0 +1,70 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1640","Consumption Items Details")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Documents.Selections.InvoiceDetails>().ID("grd-InvoiceDetails")
+            .ShowBorders(true).Width("100%")
+            .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Inventory")
+            .Key("RecNo")
+            .LoadAction("InvoiceDetails").LoadParams(new { Key = ViewBag.Key }))
+            .ColumnAutoWidth(true)
+            .Columns(columns =>
+            {
+            columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4InvoiceDetails"));
+            columns.AddFor(m => m.ItemKind).Caption(iT.T(xLan, "1158","Kind")).Width(60).Lookup(L=>L.DataSource(iReplacer.finAccountsFull(xLan)).ValueExpr("Value").DisplayExpr("Display"));
+            columns.AddFor(m => m.ItemKey).Caption(iT.T(xLan, "1607","Item")).Lookup(L=>L.DataSource(CLiFinancial.Selections.Dynamic.UnionSelection(DB,xLan, new PLenums.TransactionAccount[]{ PLenums.TransactionAccount.Stock, PLenums.TransactionAccount.Revenue})).ValueExpr("Key").DisplayExpr("Display"));
+            columns.AddFor(m => m.Unit).Caption(iT.T(xLan, "1587","Unit")).Width(65);
+            columns.AddFor(m => m.UnitPrice).Caption(iT.T(xLan, "1187","Price")).Width(65).Format("0,###.##");
+            columns.AddFor(m => m.Quantity).Caption(iT.T(xLan, "1076","Quantity")).Width(65).Format("0,###.##");
+            columns.AddFor(m => m.vatRate).Caption(iT.T(xLan, "1990","vatRate")).Width(65).Format("0,###.##");
+            columns.AddFor(m => m.vatAmount).Caption(iT.T(xLan, "1991","vatAmount")).Width(65).Format("0,###.##");
+            columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120","Total")).Width(80).Format("0,###.##");
+            columns.AddFor(m => m.ReturnedAmount).Caption(iT.T(xLan, "1367","Returned")).Width(80).Format("0,###.##");
+            })
+            .Pager(pg =>
+            {
+            pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+            pg.ShowNavigationButtons(true);
+            pg.ShowPageSizeSelector(true);
+            pg.ShowInfo(true);
+            pg.InfoText("{0} of {1} | {2} Rows");
+            })
+            .Paging(p => { p.PageSize(50); })
+            .HeaderFilter(f => f.Visible(true))
+            .SearchPanel(sp =>
+            {
+            sp.Width(250);
+            sp.Visible(true);
+            })
+            .Scrolling(s=>s.ScrollByContent(true).ScrollByThumb(true))
+            .RowAlternationEnabled(true)
+            .RtlEnabled(devRtl)
+            )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>

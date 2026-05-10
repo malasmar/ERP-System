@@ -1,0 +1,113 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    bool showMonthlyNo = xConfig.ShowMonthlyNo(DB);
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<script class="append-on-ajax-script">
+    function RefreshGrid ()
+    {
+        $('#grd-Transactions').dxDataGrid("instance").refresh();
+    }
+    function GetYear ()
+    {
+        return $('#num-Year').dxNumberBox('option', 'value');
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+</script>
+
+ 
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2471","Journal Vouchers")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("num-Year").ShowSpinButtons(true).Width(90).Value(Year)
+                            <span class="input-group-append">
+                                <button type="button" class="btn btn-default btn-white" onclick="RefreshGrid()" title="@iT.T(xLan,"1156","Refresh")" style="height:36px"><i class="fa fa-sync-alt" style="width:15px;min-width:15px"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Documents.Manager.Transactions>().ID("grd-Transactions")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("idocuments").Area("Financial")
+                    .Key("OperationKey")
+                    .LoadAction("Transactions").LoadParams(new { Year = new JS("GetYear"), DocumentKind = ViewBag.DocumentKind }))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4Copy"));
+                        columns.AddFor(m => m.VoucherDate).Caption(iT.T(xLan, "1210", "Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1265", "No")).Width(80);
+                        columns.AddFor(m => m.strMonthlyNo).Caption(iT.T(xLan, "2332", "Monthly No")).Width(90).CellTemplate(new JS("ctBold")).Visible(showMonthlyNo);
+                        columns.AddFor(m => m.Category).Caption(iT.T(xLan, "1162", "Category")).Lookup(L => L.DataSource(CLiFinancial.Selections.Groups.JVCategories(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")).Visible(false);
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).Width("100%").MinWidth(180).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Subtotal).Caption(iT.T(xLan, "1347", "Subtotal")).Width(90).Format("0,###.##");
+                        columns.AddFor(m => m.vatAmount).Caption(iT.T(xLan, "1345", "VAT")).Width(90).Format("0,###.##");
+                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(90).Format("0,###.##").CellTemplate(new JS("ctRedBold"));
+                        columns.AddFor(m => m.Rows).Caption(iT.T(xLan, "1272", "Rows")).Width(65);
+
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+

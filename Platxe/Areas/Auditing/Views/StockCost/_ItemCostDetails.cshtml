@@ -1,0 +1,72 @@
+@model CLiInventory.JsonData.jnStockItem
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2461","Item Cost Details")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="me-2">
+            <table class="table-sm">
+                <thead>
+                    <tr>
+                        <th style="width:auto"></th>
+                        <th style="width:auto"></th>
+                    </tr>
+                </thead>
+                <tbody class="f-s-10 f-w-600">
+                    <tr><td>@iT.T(xLan,"1611","Item Code") </td><td><span id="txtCode">@Model.Code</span></td></tr>
+                    <tr><td>@iT.T(xLan,"1612","Item Name (ar)") </td><td><span id="txtName1">@Model.Name1</span></td></tr>
+                    <tr><td>@iT.T(xLan,"1613","Item Name (en)") </td><td><span id="txtName2">@Model.Name2</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Audit.Cost.ItemCostDetails>().ID("grd-ItemCostDetails")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("icore").Area("Auditing")
+                .Key("RecNo")
+                .LoadAction("ItemCostDetails").LoadParams(new { Key = Model.Key }))
+                .ColumnAutoWidth(true)
+                .FocusedRowEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.InvoiceNo).Caption(iT.T(xLan, "2462", "Invoice No"));
+                    columns.AddFor(m => m.InvoiceDate).Caption(iT.T(xLan, "2463", "Invoice Date")).Format("dd.MM.yyyy HH:mm").Width(100);
+                    columns.AddFor(m => m.Balance).Caption(iT.T(xLan, "2427", "Balance")).Format("0,###.##");
+                    columns.AddFor(m => m.Quantity).Caption(iT.T(xLan, "2464", "Quantity")).Format("0,###.##");
+                    columns.AddFor(m => m.UnitPrice).Caption(iT.T(xLan, "2465", "Unit Price")).Format("0,###.##");
+                    columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "2466", "Amount")).Format("0,###.##");
+                    columns.AddFor(m => m.LastCost).Caption(iT.T(xLan, "2467", "Last Cost")).Format("0,###.##");
+                    columns.AddFor(m => m.UnitCost).Caption(iT.T(xLan, "2468", "Unit Cost")).Format("0,###.##");
+                    columns.AddFor(m => m.Additional).Caption(iT.T(xLan, "2469", "Additional Cost")).Format("0,###.##");
+                })
+                     .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+ 

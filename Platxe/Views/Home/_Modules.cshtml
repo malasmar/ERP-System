@@ -1,0 +1,382 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+
+<style>
+    .dashboard-container {
+        width: 100%;
+        padding: 12px 16px 10px 16px;
+        font-family: "Inter", "Segoe UI", sans-serif;
+    }
+    
+    .module-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-auto-rows: 1fr;
+        gap: 10px;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .module-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 16px;
+        text-decoration: none;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        border: 1px solid #E2E8F0;
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+        color: #0F172A;
+        height: 100%;
+    }
+
+    html[dir="rtl"] .module-card {
+        text-align: right;
+    }
+
+    .module-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: var(--primary-color, #3b82f6);
+        transform: scaleX(0);
+        transition: transform 0.2s ease;
+        transform-origin: left;
+    }
+
+    html[dir="rtl"] .module-card::before {
+        transform-origin: right;
+    }
+
+    .module-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        border-color: transparent;
+        text-decoration: none;
+        color: #0F172A;
+    }
+
+    .module-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .module-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color, #3b82f6);
+        transition: all 0.2s ease;
+    }
+
+    .module-card:hover .module-icon {
+        transform: scale(1.05);
+    }
+
+    .module-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .module-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        color: #0F172A;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+    }
+
+    .module-desc {
+        font-size: 0.8125rem;
+        color: #475569;
+        margin: 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .module-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-color, #3b82f6);
+        transition: all 0.2s ease;
+        opacity: 0.8;
+    }
+
+    .module-card:hover .module-badge {
+        opacity: 1;
+    }
+
+    html[dir="rtl"] .module-badge {
+        right: auto;
+        left: 12px;
+    }
+    
+    /* Specific Icon Colors - Premium Palette */
+    .mc-financial .module-icon { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+    .mc-financial::before { background: #10b981; }
+    .mc-financial:hover .module-icon { background: #10b981; color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+    .mc-financial .module-badge { background: rgba(16, 185, 129, 0.12); color: #10b981; }
+
+    .mc-assets .module-icon { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+    .mc-assets::before { background: #f59e0b; }
+    .mc-assets:hover .module-icon { background: #f59e0b; color: #fff; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+    .mc-assets .module-badge { background: rgba(245, 158, 11, 0.12); color: #f59e0b; }
+    
+    .mc-dashboard .module-icon { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+    .mc-dashboard::before { background: #ef4444; }
+    .mc-dashboard:hover .module-icon { background: #ef4444; color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    .mc-dashboard .module-badge { background: rgba(239, 68, 68, 0.12); color: #ef4444; }
+
+    .mc-reports .module-icon { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+    .mc-reports::before { background: #6366f1; }
+    .mc-reports:hover .module-icon { background: #6366f1; color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+    .mc-reports .module-badge { background: rgba(99, 102, 241, 0.12); color: #6366f1; }
+
+    .mc-accounting .module-icon { background: rgba(14, 165, 233, 0.12); color: #0ea5e9; }
+    .mc-accounting::before { background: #0ea5e9; }
+    .mc-accounting:hover .module-icon { background: #0ea5e9; color: #fff; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+    .mc-accounting .module-badge { background: rgba(14, 165, 233, 0.12); color: #0ea5e9; }
+
+    .mc-inventory .module-icon { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
+    .mc-inventory::before { background: #a855f7; }
+    .mc-inventory:hover .module-icon { background: #a855f7; color: #fff; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); }
+    .mc-inventory .module-badge { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
+
+    .mc-purchasing .module-icon { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+    .mc-purchasing::before { background: #f97316; }
+    .mc-purchasing:hover .module-icon { background: #f97316; color: #fff; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+    .mc-purchasing .module-badge { background: rgba(249, 115, 22, 0.12); color: #f97316; }
+
+    .mc-sales .module-icon { background: rgba(20, 184, 166, 0.12); color: #14b8a6; }
+    .mc-sales::before { background: #14b8a6; }
+    .mc-sales:hover .module-icon { background: #14b8a6; color: #fff; box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3); }
+    .mc-sales .module-badge { background: rgba(20, 184, 166, 0.12); color: #14b8a6; }
+
+    .mc-hr .module-icon { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
+    .mc-hr::before { background: #ec4899; }
+    .mc-hr:hover .module-icon { background: #ec4899; color: #fff; box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
+    .mc-hr .module-badge { background: rgba(236, 72, 153, 0.12); color: #ec4899; }
+
+    .mc-payroll .module-icon { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; }
+    .mc-payroll::before { background: #8b5cf6; }
+    .mc-payroll:hover .module-icon { background: #8b5cf6; color: #fff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); }
+    .mc-payroll .module-badge { background: rgba(139, 92, 246, 0.12); color: #8b5cf6; }
+
+    .mc-admin .module-icon { background: rgba(71, 85, 105, 0.12); color: #475569; }
+    .mc-admin::before { background: #475569; }
+    .mc-admin:hover .module-icon { background: #475569; color: #fff; box-shadow: 0 4px 12px rgba(71, 85, 105, 0.3); }
+    .mc-admin .module-badge { background: rgba(71, 85, 105, 0.12); color: #475569; }
+
+    .mc-settings .module-icon { background: rgba(100, 116, 139, 0.12); color: #64748b; }
+    .mc-settings::before { background: #64748b; }
+    .mc-settings:hover .module-icon { background: #64748b; color: #fff; box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3); }
+    .mc-settings .module-badge { background: rgba(100, 116, 139, 0.12); color: #64748b; }
+
+    .mc-auditing .module-icon { background: rgba(225, 29, 72, 0.12); color: #e11d48; }
+    .mc-auditing::before { background: #e11d48; }
+    .mc-auditing:hover .module-icon { background: #e11d48; color: #fff; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3); }
+    .mc-auditing .module-badge { background: rgba(225, 29, 72, 0.12); color: #e11d48; }
+</style>
+
+<div class="dashboard-container">
+    <div class="module-grid">
+        @if (User.IsInRole("OMEs-Financial") && User.IsInRole("PL-Financial"))
+        {
+            <a href="/Financial" class="module-card mc-financial">
+                <div class="module-icon">
+                    <i class='bx bx-line-chart'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1144","Financial Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "2000","Manage Cash Bank VAT and Expenses")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1160","Financial")</span>
+            </a>
+        }
+        @if (User.IsInRole("OMEs-FixedAssets") && User.IsInRole("PL-FixedAssets"))
+        {
+            <a href="/FixedAssets" class="module-card mc-assets">
+                <div class="module-icon">
+                    <i class='bx bx-buildings'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1908","Fixed Assets Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1909","Fixed Assets and Depreciation")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1071","Fixed Assets")</span>
+            </a>
+        }
+
+        @if (User.IsInRole("OMEs-Dashboard") && User.IsInRole("PL-Dashboard"))
+        {
+            <a href="/Dashboard" class="module-card mc-dashboard">
+                <div class="module-icon">
+                    <i class='bx bx-pie-chart-alt-2'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1143","Dashboard")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1916","System management dashboard")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1143","Dashboard")</span>
+            </a>
+        }
+        @if (User.IsInRole("PL-Reports"))
+        {
+            <a href="/Reports" class="module-card mc-reports">
+                <div class="module-icon">
+                    <i class='bx bx-file'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "2689","Reports")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1916","System management dashboard")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "2689","Reports")</span>
+            </a>
+        }
+ 
+        @if (User.IsInRole("OMEs-Accounting") && User.IsInRole("PL-Accounting"))
+        {
+            <a href="/Accounting" class="module-card mc-accounting">
+                <div class="module-icon">
+                    <i class='bx bx-calculator'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1918","Accountant Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1919","Trial balance and financial statements")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1917","Accountant")</span>
+            </a>
+        }
+
+        @if (User.IsInRole("OMEs-Inventory") && User.IsInRole("PL-Inventory"))
+        {
+            <a href="/Inventory" class="module-card mc-inventory">
+                <div class="module-icon">
+                    <i class='bx bx-package'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1923","Warehouse Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1957","Inventory Stock and barcode management")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1625","Warehouse")</span>
+            </a>
+        }
+        @if (User.IsInRole("OMEs-Purchasing") && User.IsInRole("PL-Purchasing"))
+        {
+            <a href="/Purchasing" class="module-card mc-purchasing">
+                <div class="module-icon">
+                    <i class='bx bx-cart'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1146","Purchase Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1924","Purchase invoices and orders")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1062","Purchase")</span>
+            </a>
+        }
+ 
+        @if (User.IsInRole("OMEs-Sales") && User.IsInRole("PL-Sales"))
+        {
+            <a href="/Sales" class="module-card mc-sales">
+                <div class="module-icon">
+                    <i class='bx bx-store'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1145","Sales Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1925","Sales invoices and quotations")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1061","Sales")</span>
+            </a>
+        }
+
+        @if (User.IsInRole("OMEs-HR") && User.IsInRole("PL-HR"))
+        {
+            <a href="/HR" class="module-card mc-hr">
+                <div class="module-icon">
+                    <i class='bx bx-group'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1560","Human Resourcing")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1934","Employees and contracts")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1933","HR")</span>
+            </a>
+        }
+        @if (User.IsInRole("OMEs-Payroll") && User.IsInRole("PL-Payroll"))
+        {
+            <a href="/Payroll" class="module-card mc-payroll">
+                <div class="module-icon">
+                    <i class='bx bx-money'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1966","Pyroll Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "2001","salaries advances loans and allowances")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1935","Payroll")</span>
+            </a>
+        }
+
+        @if (User.IsInRole("PL-Admin"))
+        {
+            <a href="/Manager" class="module-card mc-admin">
+                <div class="module-icon">
+                    <i class='bx bx-shield-quarter'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1914","Administrator")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1915","System and application users and privilege")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1913","Manager")</span>
+            </a>
+        }
+        @if (User.IsInRole("PL-Settings"))
+        {
+            <a href="/Settings" class="module-card mc-settings">
+                <div class="module-icon">
+                    <i class='bx bx-cog'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1921","System Settings")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1922","System and company settings and configuration")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1920","Settings")</span>
+            </a>
+        }
+        @if (User.IsInRole("OMEs-Auditing") && User.IsInRole("PL-Auditing"))
+        {
+            <a href="/Auditing" class="module-card mc-auditing">
+                <div class="module-icon">
+                    <i class='bx bx-check-shield'></i>
+                </div>
+                <div class="module-content">
+                    <h4 class="module-title">@iT.T(xLan, "1911","Auditing Management")</h4>
+                    <p class="module-desc">@iT.T(xLan, "1912","Audit of financial operations and warehouses")</p>
+                </div>
+                <span class="module-badge">@iT.T(xLan, "1910","Auditing")</span>
+            </a>
+        }
+    </div>
+</div>

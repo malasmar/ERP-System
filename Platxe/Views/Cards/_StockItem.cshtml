@@ -1,0 +1,314 @@
+@model CLiInventory.Cards.StockItem
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+  <style>
+      .checkbold{
+          font-weight:600;
+      }
+  </style>
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2299","Stock Item Details")</h4>
+    </div>
+    <form id="frm-StockItem" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                            <div class="xkey text-gray">@iT.T(xLan,"2263","Key"): @Model.Key</div>
+                }
+            }
+            <ul class="nav nav-pills mb-2">
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-1" data-bs-toggle="tab" class="nav-link active">
+                        <span class="d-sm-none">General</span>
+                        <span class="d-sm-block d-none">General</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-2" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">Price</span>
+                        <span class="d-sm-block d-none">Price</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-3" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">Properties</span>
+                        <span class="d-sm-block d-none">Properties</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content p-3 rounded-top panel rounded-0 m-0">
+                <div class="tab-pane fade active show" id="nav-pills-tab-1">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2300","Category")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Category).ID("cnt-Category").InputAttr("required", true).DataSource(CLiInventory.Selections.Categories.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2188","Code")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2265","Account Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2266","English Name")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2301","Unit")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.Unit).ID("cnt-Unit").Width(120).InputAttr("required", true).DataSource(CLiInventory.Selections.Unit.GetList(DB,xLan)).ValueExpr("Code").DisplayExpr("Code")
+                            <div class="me-3 mt-2">
+                                <div class="form-group row">
+                                    <div class="col-lg-9 col-sm-12">
+                                        @Html.DevExtreme().CheckBoxFor(m => m.EnablePart).ID("cnt-EnablePart").Text("Enable Part")
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2302","Part Name")</label>
+                                    <div class="col-lg-9 col-sm-12">
+                                        @Html.DevExtreme().TextBoxFor(m => m.PartName).ID("cnt-PartName").Width(120)
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2303","Part Rate")</label>
+                                    <div class="col-lg-9 col-sm-12">
+                                        @Html.DevExtreme().NumberBoxFor(m => m.PartRate).ID("cnt-PartRate").Width(120).Format("0,###.##")
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2304","Part Price")</label>
+                                    <div class="col-lg-9 col-sm-12">
+                                        @Html.DevExtreme().NumberBoxFor(m => m.PartPrice).ID("cnt-PartPrice").Width(120).Format("0,###.##")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2305","Barcode")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().TextBoxFor(m => m.Barcode).ID("cnt-Barcode")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2306","Main Supplier")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Supplier).ID("cnt-Supplier").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, PLenums.TransactionAccount.CurrentAccount, PLenums.CurrentAccountKind.Supplier)).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.Favorite).ID("cnt-Favorite").Text("Favorite")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnableBatch).ID("cnt-EnableBatch").Text("Enable Batch")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnableColor).ID("cnt-EnableColor").Text("Enable Color")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnableSize).ID("cnt-EnableSize").Text("Enable Size")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnablePkg).ID("cnt-EnablePkg").Text("EnablePkg")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnableSerial).ID("cnt-EnableSerial").Text("EnableSerial")
+                        </div>
+                    </div>
+                          <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12"></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().CheckBoxFor(m => m.EnableApplication).ID("cnt-EnableApplication").Text("Open Application Sales").ElementAttr("class","checkbold")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-lg-3 col-sm-12 mt-1">@iT.T(xLan,"2278","Status")</div>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-2">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2307","Standard Cost")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Cost).ID("cnt-Cost").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                            <div class="alert alert-yellow mt-1  mb-2 p-1 rounded-1">
+                                Please add the correct cost for the item because it is used in calculating the cost in sales invoices
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2295","Sales Price")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Price).ID("cnt-Price").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2296","vatKey")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBoxFor(m => m.vatKey).ID("cnt-vatKey").Width(140).DataSource(CLiFinancial.Selections.vatRate.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2297","Sales Total")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            <div class="input-group">
+                                @Html.DevExtreme().NumberBoxFor(m => m.Total).ID("cnt-Total").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                                <button type="button" class="btn btn-white f-s-10" onclick="RefelectAmount()">@iT.T(xLan, "2298","Reflect Amount")</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="m-2 p-0" />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2308","Max Level")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Max).ID("cnt-Max").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2309","Min Level")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Min).ID("cnt-Min").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2310","Target Level")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Target).ID("cnt-Target").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row mt-2">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2311","Weight")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Weight).ID("cnt-Weight").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2312","Width")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Width).ID("cnt-Width").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2313","Thickness")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().NumberBoxFor(m => m.Thickness).ID("cnt-Thickness").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-3">
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"2279","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"2280","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-StockItem").submit(function(event) {
+            event.preventDefault();
+            SaveAccount();
+        });
+        $('#cnt-Category').dxLookup({
+            onValueChanged: function(e) {
+                var selectedAccount = $("#cnt-Category").dxLookup('instance').option('selectedItem');
+           
+                if ($('#Key').val() == 'null')
+                {
+                    ParentDetails(e.value, selectedAccount.Prefix);
+                }
+            }
+        });
+    });
+    function SaveAccount() {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-StockItem').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/inv/icards/UpdateStockItem",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                EndSaveAccount(response);
+                $("#mod-Card").modal('toggle');
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ParentDetails(Key, Prefix) {
+        $.ajax({
+            type: "get",
+            url: "/api/inv/icards/ItemCode",
+            data: { Key: Key, Prefix: Prefix },
+            dataType: "json",
+            success: function(res) {
+                $('#cnt-Code').dxTextBox('option', 'value', res);
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function RefelectAmount() {
+        var vatrates = $("#cnt-vatKey").dxSelectBox('instance').option('selectedItem');
+        var Price = 0;
+        var vatRate = 0;
+        var Total = 0;
+        Total = $('#cnt-Total').dxNumberBox('option', 'value');
+        vatRate = vatrates.Rate;
+        Price = Number(Number((Total * 100) / (100 + vatRate)).toFixed(4));
+        $('#cnt-Price').dxNumberBox('option', 'value', Price);
+    }
+</script>

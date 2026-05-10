@@ -1,0 +1,115 @@
+@model CLiInventory.Cards.Stock.ItemBatch
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1656","Item Batch")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-ItemBatch" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(m => m.Item)
+            <div class="xkey">
+                <div class="text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                <div class="text-gray">@iT.T(xLan,"1607","Item"): @Model.Item</div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12 ">@iT.T(xLan,"1631","Batch Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Batch).ID("cntsb-Batch").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12 ">@iT.T(xLan,"1657","Lot No")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Lot).ID("cntsb-Lot")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12 ">@iT.T(xLan,"1628","Expiry")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().DateBoxFor(m => m.Expiry).ID("cntsb-Expiry").Width(140).DisplayFormat("dd.MM.yyyy").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1324","Sales Price")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Price).ID("cntsb-Price").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1977","vatKey")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.vatKey).ID("cntsb-vatKey").Width(140).DataSource(CLiFinancial.Selections.vatRate.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1103","Sales Total")</label>
+                <div class="col-lg-9 col-sm-12">
+                    <div class="input-group">
+                        @Html.DevExtreme().NumberBoxFor(m => m.Total).ID("cntsb-Total").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                        <button type="button" class="btn btn-white f-s-10" onclick="RefelectAmount()">@iT.T(xLan, "1326","Reflect Amount")</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1590","Part Rate")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.PartRate).ID("cntsb-PartRate").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                </div>
+            </div>
+            <div class="form-group row mb-4">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1591","Part Price")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.PartPrice).ID("cntsb-PartPrice").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-ItemBatch").submit(function(event) {
+            event.preventDefault();
+            UpdateItemBatch();
+        });
+    });
+    function UpdateItemBatch() {
+        var data = $('#frm-ItemBatch').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/inv/icards/UpdateItemBatch",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-ItemBatch").modal('toggle');
+                RefreshGrid_Batches();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function RefelectAmount() {
+        var vatrates = $("#cntsb-vatKey").dxSelectBox('instance').option('selectedItem');
+        var Price = 0;
+        var vatRate = 0;
+        var Total = 0;
+        Total = $('#cntsb-Total').dxNumberBox('option', 'value');
+        vatRate = vatrates.Rate;
+        Price = Number(Number((Total * 100) / (100 + vatRate)).toFixed(4));
+        $('#cntsb-Price').dxNumberBox('option', 'value', Price);
+    }
+</script>

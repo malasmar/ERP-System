@@ -1,0 +1,82 @@
+@model CLiInventory.JsonData.jnStockItem
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1655","Item Batches")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="me-2">
+            <table class="table-sm">
+                <thead>
+                    <tr>
+                        <th style="width:auto"></th>
+                        <th style="width:auto"></th>
+                    </tr>
+                </thead>
+                <tbody class="f-s-10 f-w-600">
+                    <tr><td>@iT.T(xLan,"1611","Item Code") </td><td><span id="txtCode">@Model.Code</span></td></tr>
+                    <tr><td>@iT.T(xLan,"1612","Item Name (ar)") </td><td><span id="txtName1">@Model.Name1</span></td></tr>
+                    <tr><td>@iT.T(xLan,"1613","Item Name (en)") </td><td><span id="txtName2">@Model.Name2</span></td></tr>
+                </tbody>
+            </table>
+            <div class="btn-group mt-2">
+                <button type="button" class="btn btn-danger btn-sm" onclick="AddNewUnit(null,'@Model.Key')">@iT.T(xLan,"1658","Add Batch")</button>
+            </div>
+        </div>
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Cards.Stock.ItemBatch>().ID("grd-Batches")
+            .ShowBorders(true).Width("100%")
+            .DataSource(d => d.WebApi()
+                .Controller("icards").Area("Inventory")
+            .Key("Key")
+            .LoadAction("ItemBatches").LoadParams(new { Key = Model.Key })
+            .DeleteAction("DeleteItemUnit"))
+            .Editing(ed =>
+            {
+            ed.AllowAdding(false);
+            ed.AllowUpdating(false);
+            ed.AllowDeleting(true);
+            ed.UseIcons(true);
+            })
+            .ColumnAutoWidth(true)
+            .Columns(columns =>
+            {
+            columns.Add().Name("act").Caption(iT.T(xLan,"1263","Action")).Width(45).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4SUAction"));
+            columns.AddFor(m => m.Batch).Caption(iT.T(xLan,"1417","Batch"));
+            columns.AddFor(m => m.Lot).Caption(iT.T(xLan,"1659","Lot"));
+            columns.AddFor(m => m.Price).Caption(iT.T(xLan, "1187","Price")).Width(85).Format("0,###.##");;
+            columns.AddFor(m => m.vatKey).Caption(iT.T(xLan, "1297","vat Rate")).Width(100).Lookup(L=>L.DataSource(CLiFinancial.Selections.vatRate.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display"));
+            columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120","Total")).Width(85).Format("0,###.##");;
+            })
+            .RowAlternationEnabled(true)
+            .RtlEnabled(devRtl)
+            )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    function RefreshGrid_Batches() {
+        $('#grd-Batches').dxDataGrid("instance").refresh();
+    }
+</script>

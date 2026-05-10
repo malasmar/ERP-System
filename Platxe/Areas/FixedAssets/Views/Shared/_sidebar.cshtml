@@ -1,0 +1,59 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/FixedAssets" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1435","Fixed Assets Cards")</div>
+    <div class="menu-item">
+        <a href="/FixedAssets/Cards/Categories?fastlink=1" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-address-card"></i></div><div class="menu-text">@iT.T(xLan,"1436","Categories")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/FixedAssets/Cards/Fixture?fastlink=1" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-icon"><i class="fa-solid fa-gear"></i></div><div class="menu-text">@iT.T(xLan,"1422","Fixture Cards")</div></a>
+    </div>
+    <div hidden class="menu-header">@iT.T(xLan,"1437","Fixed Assets Definitions")</div>
+    <div hidden class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1422","Fixture Cards")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/FixedAssets/Cards/Categories" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1408","Fixture Categories")</div></a></div>
+            <div class="menu-item"><a href="/FixedAssets/Cards/Fixture" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1422","Fixture Cards")</div></a></div>
+        </div>
+    </div>
+          <div class="menu-header">@iT.T(xLan,"2212","Operations")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2213","Fixture Operations")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/FixedAssets/Operations/BookValues" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2214","Fixture BookValues")</div></a></div>
+      
+        </div>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1438","Reports")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"1439","Fixture Reports")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/FixedAssets/Reports/FixureStatment" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1440","Fixture Statment")</div></a></div>
+            <div class="menu-item"><a href="/FixedAssets/Reports/FixtureBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1441","Fixture Balance")</div></a></div>
+            <div class="menu-item"><a href="/FixedAssets/Reports/AmortizationBalance" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"1432","Amortization Balance")</div></a></div>
+        </div>
+    </div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">@iT.T(xLan,"2490","Fixture Sheets")</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/FixedAssets/Reports/DetailsSheet" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2491","Details Sheet")</div></a></div>
+            <div class="menu-item"><a href="/FixedAssets/Reports/SummarySheet" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))"><div class="menu-text">@iT.T(xLan,"2492","Summary Sheet")</div></a></div>
+ 
+        </div>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">@iT.T(xLan,"1261","Collapse")</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

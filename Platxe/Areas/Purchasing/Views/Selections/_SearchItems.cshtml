@@ -1,0 +1,74 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2393","Search Items")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiInventory.Selections.SearchItems>().ID("grd-SearchItems")
+                .ShowBorders(true).Width("100%")
+                .ColumnAutoWidth(true)
+                .Columns(columns =>
+                {
+                    columns.Add().Name("act").Fixed(true).FixedPosition((HorizontalEdge)devFixd).Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4SearchItems"));
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                    columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
+                    columns.AddFor(m => m.Barcode).Caption(iT.T(xLan, "1423", "Barcode")).Width(100);
+                    columns.AddFor(m => m.Cost).Caption(iT.T(xLan, "1576", "Cost")).Width(85).Format("0,###.##");
+                    columns.AddFor(m => m.Price).Caption(iT.T(xLan, "1187", "Price")).Width(85).Format("0,###.##"); ;
+                    columns.AddFor(m => m.vatKey).Caption(iT.T(xLan, "1297", "vat Rate")).Width(100).Lookup(L => L.DataSource(CLiFinancial.Selections.vatRate.vatRates(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                    columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(85).Format("0,###.##"); ;
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                })
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function ()
+    {
+        $('#grd-SearchItems').dxDataGrid({
+            dataSource: searchData
+        });
+    })
+</script>

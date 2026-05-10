@@ -1,0 +1,132 @@
+@model CLiAccounting.Cards.Project
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1203","Project Card")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Project" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1183","Project Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1184","Contract Date")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().DateBoxFor(m => m.ContractDate).Width(120).ID("cnt-ContractDate").DisplayFormat("dd.MM.yyyy")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1185","Start Date")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().DateBoxFor(m => m.StartDate).Width(120).ID("cnt-StartDate").DisplayFormat("dd.MM.yyyy")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1186","End Date")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().DateBoxFor(m => m.EndDate).Width(120).ID("cnt-EndDate").DisplayFormat("dd.MM.yyyy")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1187","Price")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Price).Width(120).ID("cnt-Price").ShowSpinButtons(true).Value(0).Min(0)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1204","Note")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextAreaFor(m => m.Note).ID("cnt-Note").Height(80)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1973","ContactPerson")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.ContactPerson).ID("cnt-ContactPerson")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1189","Mobile")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Mobile).ID("cnt-Mobile")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1190","Phone")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Phone).ID("cnt-Phone")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1206","Address")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextAreaFor(m => m.Address).ID("cnt-Address").Height(80)
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Project").submit(function(event) {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+function Submitfrm() {
+    $('#frm-Project').submit();
+}
+    function SaveAccount() {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Project').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/acc/icards/UpdateProject",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Project").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

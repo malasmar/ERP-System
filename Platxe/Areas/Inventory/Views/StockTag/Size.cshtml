@@ -1,0 +1,158 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"1664","Size Cards")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                    <button type="button" class="btn btn-yellow text-dark" onclick="GetDetails(null)">@iT.T(xLan, "1665","New Size")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiInventory.Cards.Tag.Size>().ID("grd-Size")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                    .Controller("icards").Area("Inventory")
+                .Key("Key")
+                .LoadAction("Size"))
+                .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                .Columns(columns =>
+                {
+                columns.Add().Name("act").Caption(iT.T(xLan,  "","#")).Width(70).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                columns.AddFor(m => m.No).Caption(iT.T(xLan, "1265","No")).Width(70);
+                columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1274","Arabic Name"));
+                columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name"));
+                columns.AddFor(m => m.Disable).Caption(iT.T(xLan, "1282","Status")).Width(75).Lookup(L=>L.DataSource(iReplacer.CardStatus(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Disable"));
+                })
+                .Pager(pg =>
+                {
+                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                pg.ShowNavigationButtons(true);
+                pg.ShowPageSizeSelector(true);
+                pg.ShowInfo(true);
+                pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                sp.Width(250);
+                sp.Visible(true);
+                })
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-Size" class="modal"><div class="modal-dialog" id="con-Size"></div></div>
+<script class="append-on-ajax-script">
+    function ct4Action(container, options) {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'edit' },
+                { icon: 'trash' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function(e) {
+                switch (e.itemIndex) {
+                    case 0:
+                        if (e.itemData.icon == 'edit') {
+                            GetDetails(options.data.Key);
+                        }
+                        break;
+                    case 1:
+                        if (e.itemData.icon == 'trash') {
+                            DeleteRow(options.data.Key, options.data.Name1);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid() {
+        $('#grd-Size').dxDataGrid("instance").refresh();
+    }
+    function GetDetails(Key) {
+        $('#con-Size').empty();
+        $("#con-Size").load('/Inventory/StockTag/SizeDetails?Key=' + Key);
+        $("#mod-Size").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function DeleteRow(Key, Display) {
+        $.confirm({
+            title: 'Confirm',
+            content: 'Are you sure to delete CostCenter: ' + Display,
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Delete',
+                    btnClass: 'btn-red',
+                    action: function() {
+                        $.ajax({
+                            type: "Delete",
+                            url: "/api/inv/icards/DeleteSize",
+                            data: { Key: Key },
+                            dataType: "json",
+                            success: function(response) {
+                                if (response == 0) {
+                                    $.alert({
+                                        title: 'Stop',
+                                        content: "Cannot delete Category,It is have a child's",
+                                    });
+                                } else {
+                                    RefreshGrid();
+                                }
+                            },
+                            failure: function(response) {
+                                alert(response);
+                            },
+                            error: function(response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function() {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+    function ct4Disable(container, options) {
+        var str = '';
+        switch (options.value) {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+</script>

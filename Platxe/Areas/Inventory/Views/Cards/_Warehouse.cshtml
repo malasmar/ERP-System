@@ -1,0 +1,177 @@
+@model CLiInventory.Cards.Warehouse
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1617","Warehouse Card")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-Warehouse" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+              
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1158","Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Kind).ID("cnt-Kind").Width(120).DataSource(iReplacer.invWarehouseKind(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1265","No")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.No).ID("cnt-No").Width(120).InputAttr("required", true).ReadOnly(Model.Key==null?false:true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1618","Warehouse Sales(Revenue)")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.accSales).Width("100%").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Revenue)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1619","Sales Cost(Expensess)")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.accCost).Width("100%").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12">@iT.T(xLan,"2596","Integration Account")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.accPurchase).ID("cnt-accPurchase").InputAttr("required", true).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-4 col-sm-12">@iT.T(xLan, "1199","Cost Center")</label>
+                <div class="col-lg-8 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Costcenter).Width("100%").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1190","Phone")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Phone).ID("cnt-Phone").Width("70%")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1189","Mobile")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Mobile).ID("cnt-Mobile").Width("70%")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1303","Email")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Email).ID("cnt-Email").Width("70%")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1317","Fax")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Fax).ID("cnt-Fax").Width("70%")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1206","Address")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Address).ID("cnt-Address").Width("70%")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1604","Width")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Width).ID("cnt-Width").Width(120)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1620","Height")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Height).ID("cnt-Height").Width(120)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1621","Length")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Length).ID("cnt-Length").Width(120)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(65).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-Warehouse").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount ()
+    {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Warehouse').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/inv/icards/UpdateWarehouse",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-Warehouse").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

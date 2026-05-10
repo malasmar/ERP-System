@@ -1,0 +1,285 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Platxe | OTP</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- ================== BEGIN core-css ================== -->
+    <link href="~/Template/assets/css/vendor.min.css?version=3.019" rel="stylesheet" />
+    <link href="~/Template/assets/css/apple/app.min.css?version=3.019" rel="stylesheet" />
+    <link href="~/Template/assets/plugins/ionicons/css/ionicons.min.css?version=3.019" rel="stylesheet" />
+    <!-- ================== END core-css ================== -->
+    <link rel="stylesheet" href="~/css/vendor.css?version=3.019" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Site.css?version=3.019" />
+    <script src="~/js/vendor.js?version=3.019" asp-append-version="true"></script>
+    <link href="~/shllash/jquery-confirm.min.css?version=3.019" rel="stylesheet" />
+
+    <script src="~/shllash/jquery-backward-timer.min.js?version=3.019"></script>
+    <script src="~/shllash/jquery-backward-timer.src.js?version=3.019"></script>
+    <style>
+        .login .login-v2 .login-container {
+            margin-top: -50px
+        }
+    </style>
+</head>
+<body class="pace-top">
+    <div id="loader" class="app-loader">
+        <span class="spinner"></span>
+    </div>
+    <div id="app" class="app">
+        <div class="login login-v1" style="background-image:none;">
+            <div class="login-container" style="margin-top:-250px">
+                <div class="login-header">
+                    <div class="brand">
+                        <div class="d-flex align-items-center">
+                            <span class="logo"><i class="ion-ios-cloud"></i></span> <b> PLATX </b> ERP
+                        </div>
+                        <small>Platx ERP OTP Confirmation Login</small>
+                    </div>
+                    <div class="icon">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                </div>
+                <div class="login-body" style="background:none!important;">
+                    <div class="login-content fs-13px" style="color:#595656">
+                        <form id="frmLogin">
+                            <div class="desc mb-2">
+                                We are send to your whatsapp and email confirmation code <b>OTP</b><br> Please get it to login your platx account <b></b>.
+                            </div>
+                            <p class="f-s-10 text-gray">Please enter code already send to your Whatsapp.</p>
+                            <div class="input-group input-group-lg mx-auto mb-1">
+                                <span class="input-group-text border-0 bg-light"><i class="fa fa-envelope"></i></span>
+                                <input onkeyup="ClearError()" id="txt-Code" maxlength="4" type="text" class="form-control fs-13px border-0 shadow-none ps-0 bg-light text-gray" placeholder="Confirmation Code" required>
+                                <button id="btn-Login" type="submit" class="btn fs-13px btn-dark" onclick="Login()">Sign in</button>
+                            </div>
+                            <p hidden class="f-s-10 text-red" id="txt-Error">You enter invalid code,Please check code and enter valid code!</p>
+                        </form>
+                        <div class="p-1">
+                            <span id="timer_default" class="timer" style="font-size:16px;font-weight:600;">00:00:00</span>
+                            <p id="txt-TimeOut" hidden class="f-s-10 text-red">Time is out didn't enter valid code.</p>
+                            <div id="btn-SendCode" hidden>
+                                <button class="btn btn-danger" type="button" onclick="ResendOTP()">Send New Code</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="javascript:;" class="btn btn-icon btn-circle btn-primary btn-scroll-to-top" data-toggle="scroll-to-top"><i class="fa fa-angle-up"></i></a>
+
+    </div>
+
+    <script src="~/Template/assets/js/vendor.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/app.min.js?version=3.019"></script>
+    <script src="~/Template/assets/js/demo/login-v2.demo.js?version=3.019"></script>
+
+
+    <script class="append-on-ajax-script">
+        var PLBrowserName = "";
+        var PLOS = "";
+        var Key = null;
+
+        $(document).ready(function ()
+        {
+            Key = '@ViewBag.Key';
+            // $('#timer_default').backward_timer();
+
+            $('#timer_default').backward_timer({
+                seconds: 150,
+                on_exhausted: function (timer)
+                {
+
+                    $('#btn-SendCode').prop('hidden', false);
+                    $('#txt-TimeOut').prop('hidden', false);
+                    $('#txt-Code').prop('disabled', true);
+                    $('#btn-Login').prop('disabled', true);
+
+                }
+            })
+            $('#timer_default').backward_timer('start');
+
+
+            $("#frmLogin").submit(function (event)
+            {
+                event.preventDefault();
+            });
+
+            $("#xhtml").attr("dir", "ltr");
+            $("html").attr("dir", "ltr");
+            $("body").removeClass("rtl-mode");
+            $("body").toggleClass("dx-rtl", false);
+            GetBrowserDetails();
+        });
+        function ClearError ()
+        {
+            $('#txt-Error').prop('hidden', true);
+        }
+        function Login ()
+        {
+            $('#txt-Error').prop('hidden', true);
+
+            var code = '';
+            code = $('#txt-Code').val();
+            if (code == '')
+                return;
+
+            $.ajax({
+                type: "Post",
+                url: "/api/apiaccount/Login",
+                data: {
+                    Key: Key,
+                    Code: code,
+                    OS: PLOS,
+                    Browser: PLBrowserName
+                },
+                dataType: "json",
+                success: function (response)
+                {
+                    switch (response)
+                    {
+                        case "InvalidCode":
+                            $('#txt-Error').prop('hidden', false);
+                            break;
+                        case "Ok":
+                            window.location.replace('/');
+                            break;
+                        case "Password":
+                            $('#txt-Error').prop('hidden', false);
+                            $('#txt-Error').text('Password no matching');
+                            break;
+                        case "Expiry":
+                            $('#txt-Error').prop('hidden', false);
+                            $('#txt-Error').text('Expiry subscribe');
+                            break;
+                        case "NoSubscribe":
+                            $('#txt-Error').prop('hidden', false);
+                            $('#txt-Error').text('There is no Client');
+                            break;
+                        case "NoUser":
+                            $('#txt-Error').prop('hidden', false);
+                            $('#txt-Error').text('There is no user');
+                            break;
+
+                    }
+                },
+                failure: function (response)
+                {
+                    alert(response);
+                },
+                error: function (response)
+                {
+                    alert(response.responseText);
+                }
+            });
+        }
+        function ResendOTP ()
+        {
+            $('#txt-Error').prop('hidden', true);
+ 
+            $.ajax({
+                type: "Post",
+                url: "/api/apiaccount/ResendOTP",
+                data: {
+                    Key: Key
+                },
+                dataType: "json",
+                success: function (response)
+                {
+                    if (response == 'Ok')
+                    {
+
+                        $('#btn-SendCode').prop('hidden', true);
+                        $('#txt-TimeOut').prop('hidden', true);
+                        $('#txt-Code').prop('disabled', false);
+                        $('#btn-Login').prop('disabled', false);
+
+
+                        $('#timer_default').backward_timer({
+                            seconds: 150,
+                            on_exhausted: function (timer)
+                            {
+
+                                $('#btn-SendCode').prop('hidden', false);
+                                $('#txt-TimeOut').prop('hidden', false);
+                                $('#txt-Code').prop('disabled', true);
+                                $('#btn-Login').prop('disabled', true);
+
+                            }
+                        })
+                        $('#timer_default').backward_timer('start');
+
+                    } else
+                    {
+                        $('#txt-Error').prop('hidden', false);
+                        $('#txt-Error').text('There is somethings error, Please reload page and try again!');
+                    }
+                },
+                failure: function (response)
+                {
+                    alert(response);
+                },
+                error: function (response)
+                {
+                    alert(response.responseText);
+                }
+            });
+        }
+        function GetBrowserDetails ()
+        {
+            PLBrowserName = (function (agent)
+            {
+                switch (true)
+                {
+                    case agent.indexOf("edge") > -1: return "MS Edge";
+                    case agent.indexOf("edg/") > -1: return "Edge ( chromium based)";
+                    case agent.indexOf("opr") > -1 && !!window.opr: return "Opera";
+                    case agent.indexOf("chrome") > -1 && !!window.chrome: return "Chrome";
+                    case agent.indexOf("trident") > -1: return "MS IE";
+                    case agent.indexOf("firefox") > -1: return "Mozilla Firefox";
+                    case agent.indexOf("safari") > -1: return "Safari";
+                    default: return "other";
+                }
+            })(window.navigator.userAgent.toLowerCase());
+
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            //Check mobile device is Android
+            if (/android/i.test(userAgent))
+            {
+                //Add your Code here
+                PLOS = 'Android';
+            }
+
+            //Check mobile device is IOS
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream)
+            {
+                //Add your Code here
+                PLOS = 'IOS';
+            }
+
+            //Check device os is Windows (For Laptop and PC)
+            if (navigator.appVersion.indexOf("Win") != -1)
+            {
+                //Add your Code here
+                PLOS = 'Windows';
+            }
+
+            //Check device os is MAC (For Laptop and PC)
+            if (navigator.appVersion.indexOf("Mac") != -1)
+            {
+                //Add your Code here
+                PLOS = 'Mac';
+            }
+        }
+    </script>
+
+
+
+</body>
+</html>

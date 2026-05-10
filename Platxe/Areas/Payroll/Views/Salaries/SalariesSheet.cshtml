@@ -1,0 +1,215 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"1067","Salaries")<small> @iT.T(xLan,"1693","Salaries Sheet")</small></h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-4 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("ctr-Year").ShowSpinButtons(true).Width(130).Value(Year)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1690","Month")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().SelectBox().ID("ctr-Month").Width(130).DataSource(iReplacer.MonthList(xLan)).ValueExpr("Value").DisplayExpr("Display").Value(DateTime.Now.Month)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1335","Payment Kind")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().TagBox().ID("ctr-PaymentKind").Width(350).DataSource(iReplacer.hrPaymentType(xLan)).ValueExpr("Value").DisplayExpr("Display").ShowSelectionControls(true).ShowClearButton(true)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="DeleteSelectedRows()">@iT.T(xLan, "2746","Delete Selected")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiHR.Salaries.SalariesSheet>().ID("grd-SalariesSheet")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("iSalaries").Area("Payroll")
+                    .Key("Key")
+                    .LoadAction("SalariesSheet")
+                    .LoadParams(new
+                    {
+                        Year = new JS("GetYear"),
+                        Month = new JS("GetMonth"),
+                        PaymentKind = new JS("GetPaymentKind")
+                    })
+                    )
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(85);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1443", "Employee Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
+                        columns.AddFor(m => m.Structure).Caption(iT.T(xLan, "1444", "Structure")).Lookup(L => L.DataSource(CLiHR.Selections.Structure.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")).Visible(false);
+                        columns.AddFor(m => m.Department).Caption(iT.T(xLan, "1445", "Department")).Lookup(L => L.DataSource(CLiHR.Selections.Department.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Branch).Caption(iT.T(xLan, "1281", "Branch")).Lookup(L => L.DataSource(CLiFinancial.Selections.Branches.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display"));
+                        columns.AddFor(m => m.CostCenter).Caption(iT.T(xLan, "1681", "CostCenter")).Lookup(L => L.DataSource(CLiAccounting.Selections.CostCenter.FullList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display")).Visible(false);
+                        columns.AddFor(m => m.BasicSalary).Caption(iT.T(xLan, "1450", "Basic Salary")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Allowances).Caption(iT.T(xLan, "1692", "Allowances")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Benefit).Caption(iT.T(xLan, "1694", "Benefit")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.BenefitTotal).Caption(iT.T(xLan, "1695", "Ben.Total")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Deduction).Caption(iT.T(xLan, "1696", "Deduction")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Advance).Caption(iT.T(xLan, "1499", "Advance")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.Insurance).Caption(iT.T(xLan, "1517", "Insurance")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.DeductionTotal).Caption(iT.T(xLan, "1697", "Ded.Total")).Width(85).Format("0,###.##");
+                        columns.AddFor(m => m.NetSalary).Caption(iT.T(xLan, "1698", "Net Salary")).Width(85).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.BasicSalary).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Allowances).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Benefit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.BenefitTotal).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Deduction).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Advance).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.DeductionTotal).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.NetSalary).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Insurance).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Selection(s => s.Mode(SelectionMode.Multiple).AllowSelectAll(true).SelectAllMode(SelectAllMode.AllPages).ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    function RefreshGrid ()
+    {
+        $('#grd-SalariesSheet').dxDataGrid("instance").refresh();
+    }
+    function GetYear ()
+    {
+        return $('#ctr-Year').dxNumberBox('option', 'value');
+    }
+    function GetMonth ()
+    {
+        return $('#ctr-Month').dxSelectBox('option', 'value');
+    }
+    function GetPaymentKind ()
+    {
+        return $('#ctr-PaymentKind').dxTagBox('option', 'value');
+    }
+ 
+    function DeleteSelectedRows ()
+    {
+        var values = $('#grd-SalariesSheet').dxDataGrid("instance").getSelectedRowKeys();
+        if (values.length == 0)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'There is no selected row/s...',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return;
+        }
+        $.confirm({
+            title: 'Confirm',
+            content: 'Are you sure to delete row?',
+            type: 'red',
+            buttons: {
+                Create: {
+                    text: 'Create Salaries',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/Payroll/iSalaries/DeleteSalaries",
+                            data: {Values: JSON.stringify(values) },
+                            dataType: "json",
+                            success: function (response)
+                            {
+                                RefreshGrid();
+                            },
+                            failure: function (response)
+                            {
+                                alert(response);
+                            },
+                            error: function (response)
+                            {
+                                alert(response.responseText);
+                            }
+                        });
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+</script>

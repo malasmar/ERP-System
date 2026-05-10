@@ -1,0 +1,7 @@
+@{
+    bool isAjaxRequest = Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+    if (isAjaxRequest == false)
+        Layout = "_Layout";
+    else
+        Layout = null;
+}

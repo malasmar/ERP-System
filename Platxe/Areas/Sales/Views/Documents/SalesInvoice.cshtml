@@ -1,0 +1,2460 @@
+@model CLiInventory.Documents.Transaction
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string Currency = CLiCore.VoucherOperation.DefaultCurrency(DB);
+
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    //CLiCore.Shared.UserDefaultData defaultData = CLiCore.Shared.UserDefaultData.GetItem(UserKey);
+
+    bool ClosePrefix = xConfig.UserPrefixFilter(UserKey);
+
+
+    string ExpiryHidden = "hidden";
+    if (xConfig.ExpiryDateStatus(DB) == true)
+    {
+        ExpiryHidden = "";
+    }
+}
+<style>
+    .shl-invoice-header > span {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+
+    .xd > tr:hover {
+        cursor: pointer;
+    }
+         .xd .ccp {
+        display: block !important;
+    }
+    .shl-invoice-header > p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    .wd70 {
+        width: 65px !important;
+        min-width: 65px !important;
+        max-width: 65px !important;
+    }
+
+    .badg-plx {
+        width: 55px !important;
+        min-width: 55px !important;
+        max-width: 55px !important;
+        line-height: 22px !important;
+        font-size: 10px;
+    }
+
+    .width-20 {
+        width: 20px !important;
+        min-width: 20px !important;
+    }
+
+    .table-sm .xprince > * {
+        padding: 0.1rem 0.1rem !important;
+    }
+
+</style>
+<div class="invoice">
+    <div class="invoice-company">
+        <div class="float-end hidden-print">
+            <div class="btn-group">
+                <button type="button" class="btn btn-yellow mb-10px PLSave" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"1622","Save Update")</button>
+                <button type="button" onclick="PrintDocument()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+            </div>
+        </div>
+        <div class="float-end hidden-print me-1">
+            <div class="btn-group">
+                <button type="button" class="btn btn-gray mb-10px" onclick="ViewGeneralLedger('@Model.OperationKey')">GL</button>
+            </div>
+        </div>
+        <div class="shl-invoice-header">
+            @CLiCore.iCore.DocumentsName(xLan,Model.DocumentKind) <span id="inf-Status" class="badge bg-info text-dark"><small class="f-s-9 me-1">@iT.T(xLan,"2141","Status")</small><span id="txt-Status" class="me-1">Update</span></span><span id="txt-VoucherNo" class="text-danger"># @Model.InvoiceNo </span><small class="f-s-11 me-1">@iT.T(xLan,"2140","Monthly No")<span id="txt-MonthlyNo"> @Model.MonthlyNo</span></small>
+
+            @{
+                if (Model.OperationKey != null)
+                {
+                    <p class="f-s-10 mt-1"><i class="fa fa-exclamation-circle text-danger"></i> @iT.T(xLan,"2230","Not allowed to edit invoice").</p>
+                }
+            }
+            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+        </div>
+    </div>
+    <form id="frm-Voucher">
+        @Html.HiddenFor(m=>m.DocumentKind)
+        @Html.HiddenFor(m=>m.OperationKey)
+        @Html.HiddenFor(m=>m.InvoiceNo)
+        @Html.HiddenFor(m=>m.MonthlyNo)
+        @Html.HiddenFor(m=>m.CreateUser)
+        @Html.HiddenFor(m=>m.CreateDate)
+        @Html.HiddenFor(m=>m.OriginalInvoice)
+        <div class="invoice-header">
+            <div class="invoice-from">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1624","Invoice Date")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().DateBoxFor(m => m.InvoiceDate).ID("frm-InvoiceDate").Width(125).DisplayFormat("dd.MM.yyyy").Min(new DateTime(xYear,1,1)).Max(DateTime.UtcNow.AddMinutes(180)).OnValueChanged("GetMonthlyNo")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1992","AccountKind")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.AccountKind).ID("frm-AccountKind").Width(125).DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(iReplacer.finTransactionAccByDocument(xLan,Model.DocumentKind)).ValueExpr("Value").DisplayExpr("Display").OnValueChanged("ChangefrmAccountKind")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1219","Account")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m => m.AccountKey).ID("frm-AccountKey").DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, Model.AccountKind,UserKey:UserKey)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("ChangeAccountKey")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1355","Client")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().LookupFor(m => m.CurrentKey).ID("frm-CurrentKey").Width("88%").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, PLenums.TransactionAccount.CurrentAccount, PLenums.CurrentAccountKind.Client)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true).OnValueChanged("ChangeCurrentAccount")
+                                    <button id="btn-frmAdd" type="button" class="btn btn-white f-s-10" onclick="AddfrmCurrent()" style="max-width:35px"><i class="fas fa-plus"></i></button>
+                                    <button hidden id="btn-frmEdit" type="button" class="btn btn-white f-s-10" onclick="AddfrmCurrent()" style="max-width:35px"><i class="fas fa-pen"></i></button>
+                                </div>
+                                <div class="me-2 mt-1">
+                                    <small class="bg-purple-transparent-2">@iT.T(xLan, "1227","Balance") <span id="txtMainAccountBalance">0.00</span></small>
+                                </div>
+                                <div class="alert  alert-yellow  m-1 p-1  ">
+                                    Integration Payments: <b id="txt-AdvancePayments">0.00</b> <a href="javascript:;" class="alert-link" onclick="ShowSelectAdvancePayments()">Select Payments</a>
+                                    @*<small>You can select advance payment only</small>*@
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1212","Description")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().TextAreaFor(m => m.Description).ID("frm-Description").Height(60)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1152","Quotation")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().NumberBoxFor(m=>m.Quotation).ID("frm-Quotation").Width(125).ReadOnly(true)
+                                    <button type="button" class="btn btn-white f-s-10" style="max-width:35px" onclick="ShowSelectQuotations()"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1744","Proforma")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().NumberBoxFor(m=>m.Proforma).ID("frm-Proforma").Width(125).ReadOnly(true)
+                                    <button type="button" class="btn btn-white f-s-10" style="max-width:35px" onclick="ShowSelectProforma()"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1498","Contract")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().NumberBoxFor(m=>m.Contract).ID("frm-Contract").Width(125).ReadOnly(true)
+                                    <button type="button" class="btn btn-white f-s-10" style="max-width:35px" onclick="ShowSelectContracts()"><i class="fas fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1625","Warehouse")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.SourceWarehouse).ID("frm-SourceWarehouse").DataSource(CLiInventory.Selections.Warehouse.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1373","Due Date")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().NumberBox().ID("frm-DueDays").Width(65).OnValueChanged("ChangeDueDays").ShowSpinButtons(true)
+                                    @Html.DevExtreme().DateBoxFor(m => m.DueDate).ID("frm-DueDate").Width(110).DisplayFormat("dd.MM.yyyy")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1220","Project")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m=>m.Project).ID("frm-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-4 col-sm-12">@iT.T(xLan,"1332","Cst.Center")</label>
+                            <div class="col-lg-8 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m=>m.CostCenter).ID("frm-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1636","Invoice No")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().TextBoxFor(m => m.ReferenceNo).ID("frm-ReferenceNo").Width(110)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1344","Currency")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Currency).ID("frm-Currency").Width(110).DataSource(CLiFinancial.Selections.Currency.GetList(DB)).ValueExpr("Code").DisplayExpr("Code").Value(Currency)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1728","Importation")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.InvoiceKind).ID("frm-InvoiceKind").Width(110).DataSource(iReplacer.invImportationInvoice(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1729","Imp. File")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.ImportationKey).ID("frm-ImportationKey").ValueExpr("Value").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1328","Prefix")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Prefix).ID("frm-Prefix").DataSource(CLiFinancial.Selections.Prefix.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ReadOnly(ClosePrefix)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1281","Branch")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("frm-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1731","Person")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.SalesPerson).ID("frm-SalesPerson").DataSource(CLiHR.Selections.Employees.GetList(DB,xLan,2)).ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1287","Source")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.SalesHand).ID("frm-SalesHand").ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="card border-0 text-truncate mb-3 text-dark">
+                            <!-- BEGIN card-body -->
+                            <div class="card-body">
+                                <!-- BEGIN title -->
+                                <div class="mb-2">
+                                    <b class="mb-1">Invoice Total</b>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <h2 class="mb-0"><span>@Model.Total.ToString("n2")</span></h2>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"1347","Subtotal")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.SubTotal.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"2153","Discount")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Discount.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"2146","VAT")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.vatAmount.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-1">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"1120","Total")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Total.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2 mt-2">
+                                    <div class="d-block ">
+                                        @iT.T(xLan,"2155","Create User")
+                                    </div>
+                                    <div class="d-block  ms-auto">
+                                        <div class="ps-2 f-s-10"><span>@Model.CreateUserInfo.Display</span></div>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-block ">
+                                        @iT.T(xLan,"2156","Create Date")
+                                    </div>
+                                    <div class="d-block  ms-auto">
+                                        <div class="ps-2 f-s-10" style="direction:ltr">@(Model.CreateDate.HasValue == true ? Model.CreateDate.Value.ToString("dd.MM.yyyy hh:mm tt") : "")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="invoice-content mt-3">
+            <div class="sticky">
+                <button type="button" id="btn-add" class="btn btn-yellow btn-sm text-dark" onclick="AddNewRow()">@iT.T(xLan,"1214","Add New Row")</button>
+                <button hidden type="button" id="btn-add" class="btn btn-yellow btn-sm text-dark" onclick="AddNewSubscribe()">@iT.T(xLan,"2516","Add Subscribe")</button>
+                <button hidden type="button" id="btn-InvoicedQuotation" class="btn btn-danger btn-sm" onclick="LoadIntegrationDetails()">@iT.T(xLan,"1745","Invoices All Items")</button>
+                <button type="button" id="btn-CopyInvoice" class="btn btn-white btn-sm" onclick="ShowCopyInvoice()" title="@iT.T(xLan,"2231","Copy from previous invoice")"><i class="fa fa-clone"></i></button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-invoice table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width:100px;max-width:100px">@iT.T(xLan,"1215","Actions")</th>
+                            <th style="width:65px;min-width:65px;max-width:65px">@iT.T(xLan,"1158","Kind")</th>
+                            <th style="width:100px;min-width:100px;max-width:120px">@iT.T(xLan,"1164","Code")</th>
+                            <th style="width:100%;min-width:150px">@iT.T(xLan,"1586","Item Name")</th>
+                            <th @ExpiryHidden style="width:70px;min-width:70px;max-width:70px">@iT.T(xLan,"1628","Expiry")</th>
+                            <th style="width:120px;min-width:120px;max-width:120px">@iT.T(xLan,"1076","Quantity")</th>
+                            <th style="width:70px;min-width:70px;max-width:70px">@iT.T(xLan,"1639","Bonus")</th>
+                            <th style="width:80px;min-width:80px;max-width:80px">@iT.T(xLan,"1629","Unit Price") </th>
+                            <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1077","Amount")</th>
+                            <th style="width:80px;min-width:80px;max-width:80px">@iT.T(xLan,"1097","Discount")</th>
+                            @*  <th style="width:80px;min-width:80px;max-width:80px"><small class="f-s-9">@iT.T(xLan,"1345","VAT")</small> @iT.T(xLan,"1346","Rate")</th>*@
+                            <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1345","VAT")</th>
+                            <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1120","Total")</th>
+                        </tr>
+                    </thead>
+                    <tbody class="xd" id="tb-rows">
+                    </tbody>
+                </table>
+            </div>
+          
+                <div class="row p-2 me-2" style="background-color:#f4f4f4">
+                    <div class="col-6">
+                          <div class="invoice-price">
+                        <table class="table-sm">
+                            <thead>
+                                <tr>
+                                    <th style="width:100%;min-width:130px"></th>
+                                    <th style="width:auto"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="f-s-12 f-w-600" style="padding:0.15rem 0.15rem;">
+                                 <tr><td>@iT.T(xLan,"","Quantity")</td><td><span id="txt-Quantity">0.00</span></td></tr>
+                                <tr><td>@iT.T(xLan,"1347","Subtotal")</td><td><span id="txt-Amount">0.00</span></td></tr>
+                                <tr><td>@iT.T(xLan,"2153","Discount")</td><td><span id="txt-Discount">0.00</span></td></tr>
+                                <tr><td>@iT.T(xLan,"1350","VAT Amount")</td><td><span id="txt-vatAmount">0.00</span></td></tr>
+                                <tr><td>@iT.T(xLan,"2517","Retention Less")</td><td>@Html.DevExtreme().NumberBoxFor(m=>m.RetentionLess).ID("frm-RetentionLess").ShowSpinButtons(true).Width(125).Min(0).Format("0,###.##").OnValueChanged("CalcAmount") </td></tr>
+                                <tr><td>@iT.T(xLan,"2518","Payment Discount")</td><td>@Html.DevExtreme().NumberBoxFor(m=>m.PaymentDiscount).ID("frm-PaymentDiscount").ShowSpinButtons(true).Width(125).Min(0).Format("0,###.##").OnValueChanged("CalcAmount") </td></tr>
+                                <tr><td>@iT.T(xLan,"1120","Total")</td><td><span id="txt-Total">0.00</span></td></tr>
+                            </tbody>
+                        </table>
+                   </div>
+                   
+                    </div>
+
+                           <div class="col-6">
+                               @{
+                                   if(Model.OperationKey!=null){
+                                <div class="float-end" id="qrcode"></div>
+                                   }
+                               }
+                           
+                        </div>
+                </div>
+         
+        </div>
+    </form>
+
+    <div class="invoice-note">
+        <hr>
+        <div class="text-left">
+            <div class="btn-group">
+                <button type="button" class="btn btn-yellow mb-10px PLSave" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"1622","Save Update")</button>
+                <button type="button" onclick="PrintDocument()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-Row" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@iT.T(xLan,"1218","Row Details")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1333","Account Kind")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        @Html.DevExtreme().SelectBox().ID("row-ItemKind").DataSource(iReplacer.invSalesItems(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150).Value(8).OnValueChanged("ChangeItemKind")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"","Item/Account")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="input-group">
+                            @Html.DevExtreme().Lookup().ID("row-Account").DataSourceOptions(x=>x.Paginate(true).PageSize(50)).ValueExpr("Key").DisplayExpr("Display").Width("90%").ShowClearButton(true).OnValueChanged("SelectedItemChanged")
+                            <button hidden id="btn-rowSearch" type="button" class="btn btn-white f-s-10" onclick="SearchCloseingDetails()" style="max-width:35px"><i class="fas fa-search"></i></button>
+                            <button id="btn-rowAdd" type="button" class="btn btn-white f-s-10" onclick="AddRowAccount()" style="max-width:35px"><i class="fas fa-plus"></i></button>
+                            <button hidden id="btn-rowEdit" type="button" class="btn btn-white f-s-10" onclick="AddRowAccount()" style="max-width:35px"><i class="fas fa-pen"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div id="div-Unit" class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1587","Unit")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        @Html.DevExtreme().SelectBox().ID("row-Unit").ValueExpr("Code").DisplayExpr("Code").Width(150)
+                    </div>
+                </div>
+                <div id="div-AvilableQty" class="form-group row">
+                    <label class="col-lg-3 col-sm-12"></label>
+                    <div class="col-lg-9 col-sm-12">
+                        <div class="alert alert-yellow  m-1 p-2 rounded-1">
+                            @iT.T(xLan,"2585","Avilable Quantity"): <b id="txt-AvilableQty"></b>
+                        </div>
+                    </div>
+                </div>
+                <div id="div-Batch" hidden>
+                    <div id="item-expiry" class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan, "1630","Expiry Date")</label>
+                        <div class="col-9">
+                            @Html.DevExtreme().DateBox().ID("row-ExpDate").Width(132).DisplayFormat("dd.MM.yyyy").ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan,"1631","Batch Code")</label>
+                        <div class="col-9">
+                            <div class="input-group">
+                                @Html.DevExtreme().TextBox().ID("row-Batch").Width("90%").ElementAttr("class", "plxenter")
+                                <button type="button" class="btn btn-white btn-xs" onclick="SearchBatchLot()"><i class="fa fa-search width-20"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan,"1632","Lot No.")</label>
+                        <div class="col-9">
+                            <div class="input-group">
+                                @Html.DevExtreme().TextBox().ID("row-Lot").Width("90%").ElementAttr("class", "plxenter")
+                                <button type="button" class="btn btn-white btn-xs" onclick="SearchBatchLot()"><i class="fa fa-search width-20"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan,"1324","Sales Price")</label>
+                        <div class="col-9">
+                            @Html.DevExtreme().NumberBox().ID("row-SalesPrice").ShowSpinButtons(true).Width(132).Format("0,###.####").ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan,"1590","Part Rate")</label>
+                        <div class="col-9">
+                            @Html.DevExtreme().NumberBox().ID("row-PartRate").ShowSpinButtons(true).Width(132).Value(0).ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-3  ">@iT.T(xLan,"1591","Part Price")</label>
+                        <div class="col-9">
+                            @Html.DevExtreme().NumberBox().ID("row-PartPrice").ShowSpinButtons(true).Width(132).Value(0).ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div id="div-color" class="form-group row" hidden>
+                        <label class="col-lg-3 col-sm-12  ">Item Color <span class="text-red right">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBox().ID("row-Color").Width(132).DataSource(CLiInventory.Selections.Properties.Colors(DB, xLan)).ValueExpr("No").DisplayExpr("Display").ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                    <div id="div-size" class="form-group row" hidden>
+                        <label class="col-lg-3 col-sm-12  ">Item Size<span class="text-red right">*</span></label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().SelectBox().ID("row-Size").Width(132).DataSource(CLiInventory.Selections.Properties.Sizes(DB, xLan)).ValueExpr("No").DisplayExpr("Display").ElementAttr("class", "plxenter")
+                        </div>
+                    </div>
+                </div>
+                <hr class="p-0 m-2" />
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1076","Quantity")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-Quantity").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div id="div-Bonus" class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1639","Bonus")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-Bonus").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1989","UnitPrice")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-UnitPrice").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.####").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1077","Amount")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-Amount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.####").ReadOnly(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1097","Discount")</label>
+                    <div class="col-9">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("row-Discount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").OnValueChanged("EditAmount")
+                            <button type="button" class="btn btn-white btn-xs" onclick="SearchBatchLot()"><i class="fa fa-percent width-20"></i></button>
+                        </div>
+                        <p class="text-dark f-s-10 m-0 p-0 mt-1 mb-1 me-1">@iT.T(xLan,"2232","Amount after discount")<b id="txt-AmountAfterDiscount" class="me-2"></b></p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1977","vatKey")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        @Html.DevExtreme().SelectBox().ID("row-vatKey").Width(132).DataSource(CLiFinancial.Selections.vatRate.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1350","vat Amount")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-vatAmount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").ReadOnly(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1120","Total")</label>
+                    <div class="col-9">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("row-Total").Width(130).ShowSpinButtons(true).Format("0,###.####")
+                            <button type="button" class="btn btn-white f-s-10" onclick="RefelectAmount()">@iT.T(xLan, "1326","Reflect Amount")</button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="p-0 m-2" />
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1212","Description")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().TextBox().ID("row-Description")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1199","Cost Center")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().Lookup().ID("row-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1220","Project")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().Lookup().ID("row-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sticky-bottom">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-yellow text-dark" onclick="SaveRowChange()">@iT.T(xLan,"1197","Save Change")</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="mod-Subscribe" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@iT.T(xLan,"1218","Row Details")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2519","Service")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        @Html.DevExtreme().Lookup().ID("row-sub-Service").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan,PLenums.TransactionAccount.Revenue)).DataSourceOptions(x=>x.Paginate(true).PageSize(50)).ValueExpr("Key").DisplayExpr("Display").Width("100%").ShowClearButton(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3  ">@iT.T(xLan, "2520","Start Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("row-sub-StartDate").Width(132).DisplayFormat("dd.MM.yyyy").ElementAttr("class", "plxenter")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"2484","Qty")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-sub-Qty").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"2521","Months")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-sub-Months").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"2522","Month Price")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-sub-Price").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.####").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1077","Amount")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-sub-Amount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.####").ReadOnly(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1097","Discount")</label>
+                    <div class="col-9">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("row-sub-Discount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").OnValueChanged("EditAmount")
+                            <button type="button" class="btn btn-white btn-xs" onclick="SearchBatchLot()"><i class="fa fa-percent width-20"></i></button>
+                        </div>
+                        <p class="text-dark f-s-10 m-0 p-0 mt-1 mb-1 me-1">@iT.T(xLan,"2232","Amount after discount")<b id="txt-AmountAfterDiscount" class="me-2"></b></p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1977","vatKey")</label>
+                    <div class="col-lg-9 col-sm-12">
+                        @Html.DevExtreme().SelectBox().ID("row-sub-vatKey").Width(132).DataSource(CLiFinancial.Selections.vatRate.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("EditAmount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1350","vat Amount")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("row-sub-vatAmount").ShowSpinButtons(true).Width(132).Min(0).Format("0,###.##").ReadOnly(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1120","Total")</label>
+                    <div class="col-9">
+                        <div class="input-group">
+                            @Html.DevExtreme().NumberBox().ID("row-sub-Total").Width(130).ShowSpinButtons(true).Format("0,###.####")
+                            <button type="button" class="btn btn-white f-s-10" onclick="RefelectAmount()">@iT.T(xLan, "1326","Reflect Amount")</button>
+                        </div>
+                    </div>
+                </div>
+                <hr class="p-0 m-2" />
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1212","Description")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().TextBox().ID("row-sub-Description")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1199","Cost Center")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().Lookup().ID("row-sub-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3">@iT.T(xLan,"1220","Project")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().Lookup().ID("row-sub-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer sticky-bottom">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-yellow text-dark" onclick="SaveRowChange()">@iT.T(xLan,"1197","Save Change")</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="mod-Integration" class="modal"><div class="modal-dialog modal-lg" id="con-Integration"></div></div>
+<div id="mod-IntegrationDetails" class="modal"><div class="modal-dialog modal-lg" id="con-IntegrationDetails"></div></div>
+<div id="mod-AdvancePayments" class="modal"><div class="modal-dialog modal-lg" id="con-AdvancePayments"></div></div>
+<div id="mod-Card" class="modal"><div class="modal-dialog modal-x2" id="con-Card"></div></div>
+<div id="mod-CopyInvoice" class="modal"><div class="modal-dialog modal-lg" id="con-CopyInvoice"></div></div>
+<script class="append-on-ajax-script">
+    var clcDebitCredit = 0;
+    var isNewRow;
+    var currentRow;
+    var opk = null;
+    var VoucherStatus = false;
+    var Currency;
+    var rowCurrentItemKey = null;
+    var RowKey = null;
+    var RowItemDetails;
+    var IsLoading;
+    var DiscountKind = false;
+    var AdvancePayments = [];
+    var ModalShowKind = 0;
+    var CloseRowKey = null;
+    var InvoiceStatus = 0;
+
+    var conHiddenExpiry = '';
+
+     var InPosting=false;
+     
+    $(document).ready(function ()
+    {
+        Currency = '@Currency';
+        conHiddenExpiry = '@ExpiryHidden';
+        if ('@ViewBag.Status' == 'True')
+        {
+            opk = '@Model.OperationKey';
+            InvoiceStatus = Number('@Model.Status');
+            VoucherStatus = false;
+            $('#inf-Status').removeClass('bg-info');
+            $('#inf-Status').addClass('bg-danger');
+            $('#txt-Status').text(iShll.update);
+            LoadData(opk);
+            updateQRCode('@Model.QR');
+        } else
+        {
+            $('#inf-Status').addClass('bg-info');
+            $('#inf-Status').removeClass('bg-danger');
+            $('#txt-Status').text(iShll.new);
+            VoucherStatus = true;
+        }
+
+        $('#tb-rows').on('click', '#btn-edit', 'tr', function ()
+        {
+            IsLoading = 1;
+            $('#tb-rows').find('[id="tr-' + $(this).data('key') + '"]').each(function ()
+            {
+                RowKey = $(this).find('[id="td-Key"]').data('value');
+                rowCurrentItemKey = $(this).find('[id="td-ItemKey"]').data('value');
+                CloseRowKey = $(this).find('[id="td-CloseRowKey"]').data('value');
+                $('#row-ItemKind').dxSelectBox('option', 'value', $(this).find('[id="td-ItemKind"]').data('value'));
+                $('#row-Account').dxLookup('option', 'value', $(this).find('[id="td-ItemKey"]').data('value'));
+                $('#row-Unit').dxSelectBox('option', 'value', $(this).find('[id="td-Unit"]').data('value'));
+                $('#row-ExpDate').dxDateBox('option', 'value', $(this).find('[id="td-ExpDate"]').data('value'));
+                $('#row-Color').dxSelectBox('option', 'value', $(this).find('[id="td-Color"]').data('value'));
+                $('#row-Size').dxSelectBox('option', 'value', $(this).find('[id="td-Size"]').data('value'));
+                $('#row-Quantity').dxNumberBox('option', 'value', $(this).find('[id="td-Quantity"]').data('value'));
+                $('#row-Bonus').dxNumberBox('option', 'value', $(this).find('[id="td-Bonus"]').data('value'));
+                $('#row-UnitPrice').dxNumberBox('option', 'value', $(this).find('[id="td-UnitPrice"]').data('value'));
+                $('#row-Amount').dxNumberBox('option', 'value', $(this).find('[id="td-Amount"]').data('value'));
+                $('#row-Discount').dxNumberBox('option', 'value', $(this).find('[id="td-Discount"]').data('value'));
+                $('#row-vatKey').dxSelectBox('option', 'value', $(this).find('[id="td-vatKey"]').data('value'));
+                $('#row-vatAmount').dxNumberBox('option', 'value', $(this).find('[id="td-vatAmount"]').data('value'));
+                $('#row-Total').dxNumberBox('option', 'value', $(this).find('[id="td-Total"]').data('value'));
+                $('#row-Description').dxTextBox('option', 'value', $(this).find('[id="td-Description"]').data('value'));
+                $('#row-CostCenter').dxLookup('option', 'value', $(this).find('[id="td-CostCenter"]').data('value'));
+                $('#row-Project').dxLookup('option', 'value', $(this).find('[id="td-Project"]').data('value'));
+            });
+            currentRow = $(this).data('key');
+            isNewRow = false;
+            IsLoading = 0;
+            $("#mod-Row").modal({ backdrop: 'static' }).modal('toggle');
+        });
+
+        $('#tb-rows').on('dblclick', 'tr', function ()
+        {
+            IsLoading = 1;
+            RowKey = $(this).find('[id="td-Key"]').data('value');
+            rowCurrentItemKey = $(this).find('[id="td-ItemKey"]').data('value');
+            CloseRowKey = $(this).find('[id="td-CloseRowKey"]').data('value');
+            $('#row-ItemKind').dxSelectBox('option', 'value', $(this).find('[id="td-ItemKind"]').data('value'));
+            $('#row-Account').dxLookup('option', 'value', $(this).find('[id="td-ItemKey"]').data('value'));
+            $('#row-Unit').dxSelectBox('option', 'value', $(this).find('[id="td-Unit"]').data('value'));
+            $('#row-ExpDate').dxDateBox('option', 'value', $(this).find('[id="td-ExpDate"]').data('value'));
+            $('#row-Color').dxSelectBox('option', 'value', $(this).find('[id="td-Color"]').data('value'));
+            $('#row-Size').dxSelectBox('option', 'value', $(this).find('[id="td-Size"]').data('value'));
+            $('#row-Quantity').dxNumberBox('option', 'value', $(this).find('[id="td-Quantity"]').data('value'));
+            $('#row-Bonus').dxNumberBox('option', 'value', $(this).find('[id="td-Bonus"]').data('value'));
+            $('#row-UnitPrice').dxNumberBox('option', 'value', $(this).find('[id="td-UnitPrice"]').data('value'));
+            $('#row-Amount').dxNumberBox('option', 'value', $(this).find('[id="td-Amount"]').data('value'));
+            $('#row-Discount').dxNumberBox('option', 'value', $(this).find('[id="td-Discount"]').data('value'));
+            $('#row-vatKey').dxSelectBox('option', 'value', $(this).find('[id="td-vatKey"]').data('value'));
+            $('#row-vatAmount').dxNumberBox('option', 'value', $(this).find('[id="td-vatAmount"]').data('value'));
+            $('#row-Total').dxNumberBox('option', 'value', $(this).find('[id="td-Total"]').data('value'));
+            $('#row-Description').dxTextBox('option', 'value', $(this).find('[id="td-Description"]').data('value'));
+            $('#row-CostCenter').dxLookup('option', 'value', $(this).find('[id="td-CostCenter"]').data('value'));
+            $('#row-Project').dxLookup('option', 'value', $(this).find('[id="td-Project"]').data('value'));
+            currentRow = $(this).data('key');
+            isNewRow = false;
+            IsLoading = 0;
+            $("#mod-Row").modal({ backdrop: 'static' }).modal('toggle');
+        });
+
+
+        inChangeItemKind = 1;
+        $("#row-Account").dxLookup({
+                  dataSource: new DevExpress.data.DataSource({
+                loadMode: "raw",
+                load: function ()
+                {
+                    return $.getJSON( '/api/icore/LoadAccounts?Kind=8');
+                },
+                paginate: true,
+                pageSize: 50
+            })
+ 
+        });
+        $('#row-Account').dxLookup('reset');
+        $("#row-Account").dxLookup("getDataSource").load();
+        inChangeItemKind = 0;
+        $('#tb-rows').on('click', '#btn-delete', function ()
+        {
+            DeleteRow($(this).data('key'));
+        });
+    });
+    function ChangefrmAccountKind (e)
+    {
+        $("#frm-AccountKey").dxLookup({
+               dataSource: new DevExpress.data.DataSource({
+                loadMode: "raw",
+                load: function ()
+                {
+                    return $.getJSON( '/api/icore/LoadAccounts?Kind=' + e.value);
+                },
+                paginate: true,
+                pageSize: 50
+            })
+        });
+        $('#frm-AccountKey').dxLookup('reset');
+    }
+    //Start Operation
+    var inChangeItemKind = 0;
+
+    function ChangeItemKind (e)
+    {
+        if (inChangeItemKind == 1)
+            return;
+
+        inChangeItemKind = 1;
+        $('#row-Account').dxLookup('reset');
+        $("#row-Account").dxLookup({
+                dataSource: new DevExpress.data.DataSource({
+                loadMode: "raw",
+                load: function ()
+                {
+                    return $.getJSON('/api/icore/LoadAccounts?Kind=' + e.value);
+                },
+                paginate: true,
+                pageSize: 50
+            })
+          
+        });
+        if (rowCurrentItemKey != null)
+        {
+            $('#row-Account').dxLookup('option', 'value', rowCurrentItemKey);
+        }
+        switch (e.value)
+        {
+            case 8:
+                $('#div-AvilableQty').prop('hidden', false);
+                $('#div-Unit').prop('hidden', false);
+                break;
+            case 5:
+            case 6:
+            case 4:
+                $('#div-AvilableQty').prop('hidden', true);
+                $('#div-Unit').prop('hidden', true);
+                $('#div-Bonus').prop('hidden', true);
+                break;
+        }
+
+
+        inChangeItemKind = 0;
+    }
+    //End Start Operation
+    //Stock
+    function SelectedItemChanged (e)
+    {
+        if ($('#OriginalInvoice').val() == null || $('#OriginalInvoice').val() == '')
+        {
+            if (e.value == null)
+            {
+                $('#btn-rowEdit').prop('hidden', true);
+                $('#btn-rowAdd').prop('hidden', false);
+            } else
+            {
+                $('#btn-rowEdit').prop('hidden', false);
+                $('#btn-rowAdd').prop('hidden', true);
+            }
+        }
+        var acckind = $('#row-ItemKind').dxSelectBox('option', 'value');
+        switch (acckind)
+        {
+            case 8:
+                $("#row-Unit").dxSelectBox("reset");
+                $("#row-Unit").dxSelectBox({
+                    dataSource: '/api/inv/icore/ItemUnits?Key=' + e.value
+                });
+                $("#row-Unit").dxSelectBox("getDataSource").load().done(function (data)
+                {
+                    if (data.length > 0)
+                    {
+                        $("#row-Unit").dxSelectBox("option", "value", data[ 0 ].Code);
+                    }
+                });
+                $.ajax({
+                    type: "get",
+                    url: "/api/inv/icore/InvoiceItemDetails",
+                    data: { Key: e.value },
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        RowItemDetails = response;
+                        $('#div-Batch').prop('hidden', response.EnableBatch == false ? true : false);
+                        $('#div-Color').prop('hidden', response.EnableColor == false ? true : false);
+                        $('#div-Size').prop('hidden', response.EnableSize == false ? true : false);
+                        if (response.EnableBatch == true)
+                        {
+                            $('#row-PartPrice').dxNumberBox('option', 'value', response.PartPrice);
+                            $('#row-PartRate').dxNumberBox('option', 'value', response.PartRate);
+                        }
+                        if (response.vatKey == null)
+                        {
+                            var selectedvat = $("#row-vatKey").dxSelectBox('instance');
+                            selectedvat.getDataSource().load().done(function (res)
+                            {
+                                $('#row-vatKey').dxSelectBox('option', 'value', res[ 0 ].Key);
+                            });
+                        } else
+                        {
+                            $('#row-vatKey').dxSelectBox('option', 'value', response.vatKey);
+                        }
+                        if (isNewRow == true)
+                        {
+                            if ($('#OriginalInvoice').val() == null || $('#OriginalInvoice').val() == '')
+                            {
+                                $('#row-UnitPrice').dxNumberBox('option', 'value', response.Price);
+                            }
+                        }
+
+                        var d = new Date($('#frm-InvoiceDate').dxDateBox('option', 'value'));
+
+                        $.ajax({
+                            type: "get",
+                            url: "/api/icore/ItemBalanceMainUnit",
+                            data: { Key: e.value, Warehouse: $('#frm-SourceWarehouse').dxSelectBox('option', 'value'), Date: d.toLocaleDateString() },
+                            dataType: "json",
+                            success: function (response)
+                            {
+                                $('#txt-AvilableQty').text(comma(response) + ' ' + $('#row-Unit').dxSelectBox('option', 'text'));
+                            },
+                            failure: function (response)
+                            {
+                                alert(response);
+                            },
+                            error: function (response)
+                            {
+                                alert(response.responseText);
+                            }
+                        });
+
+                    },
+                    failure: function (response)
+                    {
+                        alert(response);
+                    },
+                    error: function (response)
+                    {
+                        alert(response.responseText);
+                    }
+                });
+                break;
+            case 6:
+                $.ajax({
+            type: "get",
+            url: "/api/icore/GetServiceVATKey",
+            data: { Key:  e.value },
+            dataType: "json",
+            success: function (response)
+            {
+                    if (response == null)
+                        {
+                            var selectedvat = $("#row-vatKey").dxSelectBox('instance');
+                            selectedvat.getDataSource().load().done(function (res)
+                            {
+                                $('#row-vatKey').dxSelectBox('option', 'value', res[ 0 ].Key);
+                            });
+                        } else
+                        {
+                            $('#row-vatKey').dxSelectBox('option', 'value', response);
+                        }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+            break;
+            default:
+                $('#div-Batch').prop('hidden', true);
+                $('#div-Color').prop('hidden', true);
+                $('#div-Size').prop('hidden', true);
+                 
+                break;
+        }
+    }
+    function EditAmount ()
+    {
+        if (IsLoading == 1)
+            return;
+        var selectedvat = $("#row-vatKey").dxSelectBox('instance').option('selectedItem');
+        var vatRate = 0;
+        if (selectedvat.Key == null)
+        {
+            vatRate = 0;
+        } else
+        {
+            vatRate = selectedvat.Rate;
+        }
+        var UnitPrice = $('#row-UnitPrice').dxNumberBox('option', 'value');
+        var Quantity = $('#row-Quantity').dxNumberBox('option', 'value');
+        var Amount = UnitPrice * Quantity;
+        var Discount = 0;
+        if (DiscountKind == false)
+        {
+            Discount = $('#row-Discount').dxNumberBox('option', 'value');
+        } else
+        {
+            Discount = Numbert(Number($('#row-Discount').dxNumberBox('option', 'value') * (UnitPrice * Quantity) / 100).toFixed(4));
+        }
+        var vatAmount = 0;
+        vatAmount = Number(Number(((Amount - Discount) * vatRate) / 100).toFixed(4));
+        var Total = 0;
+        Total = Number(Number((Amount - Discount) + vatAmount).toFixed(4));
+        //$("#edADis").dxNumberBox("option", "value", Number(Number(discount).toFixed(4)));
+        $('#txt-AmountAfterDiscount').text(comma(Amount - Discount));
+        $('#row-Amount').dxNumberBox('option', 'value', Number(Amount.toFixed(4)));
+        $('#row-vatAmount').dxNumberBox('option', 'value', Number(vatAmount.toFixed(4)));
+        $('#row-Total').dxNumberBox('option', 'value', Number(Total.toFixed(4)));
+    }
+    function RefelectAmount ()
+    {
+        var vatRate = 0;
+        var selectedvat = $('#row-vatKey').dxSelectBox('instance').option('selectedItem');
+        if (selectedvat.Key == null)
+        {
+            vatRate = 0;
+        } else
+        {
+            vatRate = selectedvat.Rate;
+        }
+        var Quantity = 0;
+        var Total = 0;
+        var UnitPrice = 0;
+        Quantity = $('#row-Quantity').dxNumberBox('option', 'value');
+        Total = $('#row-Total').dxNumberBox('option', 'value');
+        UnitPrice = ((100 * Total) / Quantity) / (100 + vatRate);
+        var Amount = UnitPrice * Quantity;
+        var Discount = 0;
+        if (DiscountKind == false)
+        {
+            Discount = $('#row-Discount').dxNumberBox('option', 'value');
+        } else
+        {
+            Discount = Number(Number($('#row-Discount').dxNumberBox('option', 'value') * (UnitPrice * Quantity) / 100).toFixed(4));
+        }
+        var vatAmount = 0;
+        vatAmount = Number(Number(((Amount - Discount) * vatRate) / 100).toFixed(4));
+        $('#txt-AmountAfterDiscount').text(comma(Amount - Discount));
+        $('#row-UnitPrice').dxNumberBox('option', 'value', Number(Number(UnitPrice).toFixed(4)));
+        $('#row-Discount').dxNumberBox('option', 'value', Number(Number(Discount).toFixed(4)));
+        $('#row-Amount').dxNumberBox('option', 'value', Number(Number(Amount).toFixed(4)));
+        $('#row-vatAmount').dxNumberBox('option', 'value', Number(Number(vatAmount).toFixed(4)));
+    }
+    function AddNewRow ()
+    {
+        isNewRow = true;
+        RowKey = GeneratGuid();
+        $('#row-ItemKind').dxSelectBox('option', 'value', 8);
+        //$('#row-AccountType').dxSelectBox('option', 'value', 0);
+        $('#row-Account').dxLookup('reset');
+        //$('#row-Currency').dxSelectBox('option', 'value', Currency);
+        //$('#row-Amount').dxNumberBox('option', 'value', 0);
+        //$('#row-Total').dxNumberBox('option', 'value', 0);
+        //$('#row-vatAmount').dxNumberBox('option', 'value', 0);
+        var selectedvat = $("#row-vatKey").dxSelectBox('instance');
+        selectedvat.getDataSource().load().done(function (res)
+        {
+            $('#row-vatKey').dxSelectBox('option', 'value', res[ 0 ].Key);
+        });
+        $('#row-Unit').dxSelectBox('reset');
+        $('#row-Quantity').dxNumberBox('option', 'value', 0);
+        $('#row-Bonus').dxNumberBox('option', 'value', 0);
+        $('#row-UnitPrice').dxNumberBox('option', 'value', 0);
+        $('#row-Discount').dxNumberBox('option', 'value', 0);
+        $('#row-vatAmount').dxNumberBox('option', 'value', 0);
+        $('#row-Total').dxNumberBox('option', 'value', 0);
+        $('#row-Description').dxTextBox('reset');
+        $('#row-CostCenter').dxLookup('reset');
+        $('#row-Project').dxLookup('reset');
+        $('#row-CostCenter').dxLookup('option', 'value', $('#frm-CostCenter').dxLookup('option', 'value'));
+        $('#row-Project').dxLookup('option', 'value', $('#frm-Project').dxLookup('option', 'value'));
+        $('#row-Color').dxSelectBox('option', 'value', 0);
+        $('#row-Size').dxSelectBox('option', 'value', 0);
+        $('#div-Batch').prop('hidden', true);
+        $('#div-Color').prop('hidden', true);
+        $('#div-Size').prop('hidden', true);
+        $('#txt-AmountAfterDiscount').text('0.00');
+        $("#mod-Row").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function SaveRowChange ()
+    {
+        if ($('#row-Account').dxLookup('option', 'value') == null)
+        {
+            $.alert({
+                title: 'Stop',
+                content: "Please select account.",
+            });
+            $('#row-Account').dxLookup('focus');
+            return;
+        }
+        if ($('#row-Quantity').dxNumberBox('option', 'value') == 0)
+        {
+            $.alert({
+                title: 'Stop',
+                content: "Please enter quantity.",
+            });
+            $('#row-Quantity').dxNumberBox('focus');
+            return;
+        }
+        if (isNewRow == true)
+        {
+            InsertNewRow();
+        } else
+        {
+            SaveRowEdit();
+        }
+    }
+    function AddNewSubscribe ()
+    {
+        isNewRow = true;
+        RowKey = GeneratGuid();
+
+        $("#mod-Subscribe").modal({ backdrop: 'static' }).modal('toggle');
+    }
+       function getDescriptionStyle (xx)
+    {
+        if (xx.length == 0)
+        {
+            return '';
+        }
+        if (xx.length > 0 && xx.length < 250)
+        {
+            return 'height:65px;';
+        }
+        if (xx.length > 500)
+        {
+            return 'height:75px;';
+        }
+    }
+         function getDescriptionCaption (xx)
+    {
+        if (xx.length == 0)
+        {
+            return '';
+        }  else{
+               return 'Description:';
+        }
+    }
+    function InsertNewRow ()
+    {
+        var selectedAccount = $("#row-Account").dxLookup('instance').option('selectedItem');
+        var selectedvat = $("#row-vatKey").dxSelectBox('instance').option('selectedItem');
+        var count = $('#tb-rows tr').length + 1;
+        var str = '';
+        str += '  <tr id="tr-' + count + '" data-key="' + count + '" style="' + getDescriptionStyle($('#row-Description').dxTextBox('option', 'text')) + '">'
+        str += '      <td>'
+        str += '          <div class="d-flex align-items-center">'
+        str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+        str += '              <div class="btn-group">'
+        str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+        str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+        str += '              </div>'
+        str += '          </div>'
+        str += '          <div class="ccp position-absolute d-none mt-1">'
+        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption($('#row-Description').dxTextBox('option', 'text')) + ' </b>' + $('#row-Description').dxTextBox('option', 'text') + '</p>'
+        str += '          </div>'
+        str += '      </td>'
+        str += '      <td>' + GetItemKind($('#row-ItemKind').dxSelectBox('option', 'value')) + '</td>'
+        str += '      <td><span class="text-dark">' + selectedAccount.Code + '</span></td>'
+        str += '      <td>'
+        str += '          <span class="text-dark">' + selectedAccount.xName + '</span>'
+        str += '      </td>'
+        str += '      <td ' + conHiddenExpiry + ' >' + $('#row-ExpDate').dxDateBox('option', 'text') + '</td>'
+        str += '      <td>' + comma($('#row-Quantity').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Bonus').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-UnitPrice').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Amount').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Discount').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-vatAmount').dxNumberBox('option', 'value')) + '<small class="me-1 f-s-9 text-mute">' + selectedvat.Rate + '%</small></td>'
+        str += '      <td>' + comma($('#row-Total').dxNumberBox('option', 'value')) + '</td>'
+        str += '<td hidden id="td-Key" data-value="' + RowKey + '"></td>'
+        str += '<td hidden id="td-CloseRowKey" data-value="' + CloseRowKey + '"></td>'
+        str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+        str += '<td hidden id="td-ItemKind" data-value="' + $('#row-ItemKind').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-ItemKey" data-value="' + selectedAccount.Key + '"></td>'
+        str += '<td hidden id="td-Code" data-value="' + selectedAccount.Code + '"></td>'
+        str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-ExpDate" data-value="' + $('#row-ExpDate').dxDateBox('option', 'text') + '"></td>'
+        str += '<td hidden id="td-Color" data-value="' + $('#row-Color').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Size" data-value="' + $('#row-Size').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Unit" data-value="' + $('#row-Unit').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-UnitPrice" data-value="' + $('#row-UnitPrice').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Quantity" data-value="' + $('#row-Quantity').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Bonus" data-value="' + $('#row-Bonus').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Amount" data-value="' + $('#row-Amount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Discount" data-value="' + $('#row-Discount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-vatAmount" data-value="' + $('#row-vatAmount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-UnitCost" data-value="' + selectedAccount.Cost + '"></td>'
+        str += '<td hidden id="td-vatKey" data-value="' + selectedvat.Key + '"></td>'
+        str += '<td hidden id="td-vatRate" data-value="' + selectedvat.Rate + '"></td>'
+        str += '<td hidden id="td-Total" data-value="' + $('#row-Total').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-Description" data-value="' + $('#row-Description').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-CostCenter" data-value="' + $('#row-CostCenter').dxLookup('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Project" data-value="' + $('#row-Project').dxLookup('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Batch" data-value="' + $('#row-Batch').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Lot" data-value="' + $('#row-Lot').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-PartRate" data-value="' + $('#row-PartRate').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-PartPrice" data-value="' + $('#row-PartPrice').dxNumberBox('option', 'value') + '"></td>'
+        str += '  </tr>'
+        $("#tb-rows").append(str);
+        $("#mod-Row").modal('toggle');
+        CalcAmount();
+    }
+    function SaveRowEdit ()
+    {
+        var selectedAccount = $("#row-Account").dxLookup('instance').option('selectedItem');
+        var selectedvat = $("#row-vatKey").dxSelectBox('instance').option('selectedItem');
+        $('#tr-' + currentRow).empty();
+        var str = '';
+        str += '      <td>'
+        str += '          <div class="d-flex align-items-center">'
+        str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + currentRow + '</small>'
+        str += '              <div class="btn-group">'
+        str += '                  <button id="btn-edit" data-key="' + currentRow + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+        str += '                  <button id="btn-delete" data-key="' + currentRow + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+        str += '              </div>'
+        str += '          </div>'
+        str += '          <div class="ccp position-absolute d-none mt-1">'
+        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption($('#row-Description').dxTextBox('option', 'text')) + ' </b>' + $('#row-Description').dxTextBox('option', 'text') + '</p>'
+        str += '          </div>'
+        str += '      </td>'
+        str += '      <td>' + GetItemKind($('#row-ItemKind').dxSelectBox('option', 'value')) + '</td>'
+        str += '      <td><span class="text-dark">' + selectedAccount.Code + '</span></td>'
+        str += '      <td>'
+        str += '          <span class="text-dark">' + selectedAccount.xName + '</span>'
+        str += '      </td>'
+        str += '      <td  ' + conHiddenExpiry + '>' + $('#row-ExpDate').dxDateBox('option', 'text') + '</td>'
+        str += '      <td>' + comma($('#row-Quantity').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Bonus').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-UnitPrice').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Amount').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-Discount').dxNumberBox('option', 'value')) + '</td>'
+        str += '      <td>' + comma($('#row-vatAmount').dxNumberBox('option', 'value')) + '<small class="me-1 f-s-9 text-mute">' + selectedvat.Rate + '%</small></td>'
+        str += '      <td>' + comma($('#row-Total').dxNumberBox('option', 'value')) + '</td>'
+        str += '<td hidden id="td-Key" data-value="' + RowKey + '"></td>'
+        str += '<td hidden id="td-CloseRowKey" data-value="' + CloseRowKey + '"></td>'
+        str += '<td hidden id="td-Index" data-value="' + currentRow + '"></td>'
+        str += '<td hidden id="td-ItemKind" data-value="' + $('#row-ItemKind').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-ItemKey" data-value="' + selectedAccount.Key + '"></td>'
+        str += '<td hidden id="td-Code" data-value="' + selectedAccount.Code + '"></td>'
+        str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-ExpDate" data-value="' + $('#row-ExpDate').dxDateBox('option', 'text') + '"></td>'
+        str += '<td hidden id="td-Color" data-value="' + $('#row-Color').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Size" data-value="' + $('#row-Size').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Unit" data-value="' + $('#row-Unit').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-UnitPrice" data-value="' + $('#row-UnitPrice').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Quantity" data-value="' + $('#row-Quantity').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Bonus" data-value="' + $('#row-Bonus').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Amount" data-value="' + $('#row-Amount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Discount" data-value="' + $('#row-Discount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-vatAmount" data-value="' + $('#row-vatAmount').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-UnitCost" data-value="' + selectedAccount.Cost + '"></td>'
+        str += '<td hidden id="td-vatKey" data-value="' + selectedvat.Key + '"></td>'
+        str += '<td hidden id="td-vatRate" data-value="' + selectedvat.Rate + '"></td>'
+        str += '<td hidden id="td-Total" data-value="' + $('#row-Total').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Batch" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-Description" data-value="' + $('#row-Description').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-CostCenter" data-value="' + $('#row-CostCenter').dxLookup('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Project" data-value="' + $('#row-Project').dxLookup('option', 'value') + '"></td>'
+        $('#tr-' + currentRow).append(str);
+        $("#mod-Row").modal('toggle');
+        CalcAmount();
+    }
+    function LoadData (key)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Sales/idocuments/TransactionDetails",
+            data: { key: key },
+            dataType: "json",
+            success: function (response)
+            {
+                $("#tb-rows").empty();
+                var count = 1;
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '" data-key="' + count + '"  style="' + getDescriptionStyle(item.Description) + '">'
+                    str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '              <div class="btn-group">'
+                    str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+                    str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+                    str += '              </div>'
+                    str += '          </div>'
+                    str += '          <div class="ccp position-absolute d-none mt-1">'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption(item.Description) + ' </b>' + item.Description + '</p>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetItemKind(item.ItemKind) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td  ' + conHiddenExpiry + '>' + item.strExpDate + '</td>'
+                    str += '      <td>' + comma(item.Quantity) + '</td>'
+                    str += '      <td>' + comma(item.Bonus) + '</td>'
+                    str += '      <td>' + comma(item.UnitPrice) + '</td>'
+                    str += '      <td>' + comma(item.Amount) + '</td>'
+                    str += '      <td>' + comma(item.Discount) + '</td>'
+                    //str += '      <td><small class="f-s-9">' + item.jnvatDetails.Display + '</small></td>'
+                    str += '      <td>' + comma(item.vatAmount) + '<small class="me-1 f-s-9 text-mute">' + item.vatRate + '%</small></td>'
+                    str += '      <td>' + comma(item.Total) + '</td>'
+                    str += '<td hidden id="td-Key" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-CloseRowKey" data-value="' + item.CloseRowKey + '"></td>'
+                    str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+                    str += '<td hidden id="td-ItemKind" data-value="' + item.ItemKind + '"></td>'
+                    str += '<td hidden id="td-ItemKey" data-value="' + item.ItemKey + '"></td>'
+                    str += '<td hidden id="td-Code" data-value="' + item.jnAccount.Code + '"></td>'
+                    str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-ExpDate" data-value="' + item.ExpDate + '"></td>'
+                    str += '<td hidden id="td-Color" data-value="' + item.Color + '"></td>'
+                    str += '<td hidden id="td-Size" data-value="' + item.Size + '"></td>'
+                    str += '<td hidden id="td-Unit" data-value="' + item.Unit + '"></td>'
+                    str += '<td hidden id="td-UnitPrice" data-value="' + item.UnitPrice + '"></td>'
+                    str += '<td hidden id="td-Quantity" data-value="' + item.Quantity + '"></td>'
+                    str += '<td hidden id="td-Bonus" data-value="' + item.Bonus + '"></td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-Discount" data-value="' + item.Discount + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-UnitCost" data-value="' + item.UnitCost + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
+                    str += '<td hidden id="td-CostCenter" data-value="' + item.CostCenter + '"></td>'
+                    str += '<td hidden id="td-Project" data-value="' + item.Project + '"></td>'
+                    str += '<td hidden id="td-Batch" data-value="' + item.BatchDetails.Batch + '"></td>'
+                    str += '<td hidden id="td-Lot" data-value="' + item.BatchDetails.Lot + '"></td>'
+                    str += '<td hidden id="td-PartRate" data-value="' + item.BatchDetails.PartRate + '"></td>'
+                    str += '<td hidden id="td-PartPrice" data-value="' + item.BatchDetails.PartPrice + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-rows").append(str);
+                    CalcAmount();
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function DeleteRow (key)
+    {
+        $.confirm({
+            title: 'Confirm',
+            content: 'Are you sure to delete row?',
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Delete',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        $('#tr-' + key).remove();
+                        CalcAmount();
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+    function CalcAmount ()
+    {
+        var amount = 0;
+        var vat = 0;
+        var total = 0;
+        var qty=0;
+        $('#tb-rows').find('tr').each(function ()
+        {
+            amount += $(this).find('[id="td-Amount"]').data('value');
+            vat += $(this).find('[id="td-vatAmount"]').data('value');
+            total += $(this).find('[id="td-Total"]').data('value');
+              qty += $(this).find('[id="td-Quantity"]').data('value');
+        });
+        $('#txt-Quantity').text(comma(qty));
+        $('#txt-Amount').text(comma(amount));
+        $('#txt-vatAmount').text(comma(vat));
+        var Retention = 0;
+        var PaymentDiscount = 0;
+        Retention = $('#frm-RetentionLess').dxNumberBox('option', 'value');
+        PaymentDiscount = $('#frm-PaymentDiscount').dxNumberBox('option', 'value');
+
+        $('#txt-Total').text(comma(total - Retention - PaymentDiscount));
+        $('#txt-xTotal').text(comma(total - Retention - PaymentDiscount));
+
+
+    }
+    function GetItemKind (kind, Type)
+    {
+        var strKind = '';
+        switch (kind)
+        {
+            case 0:
+                strKind = '<span  class="badge bg-yellow text-dark badg-plx me-1">' + 'C/A' + '</span>';
+                break;
+            case 1:
+                strKind = '<span  class="badge bg-danger text-dark badg-plx me-1">' + 'Employee' + '</span>';
+                break;
+            case 2:
+                strKind = '<span  class="badge bg-info text-dark badg-plx me-1">' + 'Cash' + '</span>';
+                break;
+            case 3:
+                strKind = '<span  class="badge bg-success text-dark badg-plx me-1">' + 'Bank' + '</span>';
+                break;
+            case 4:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Fixture' + '</span>';
+                break;
+            case 6:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Revenue' + '</span>';
+                break;
+            case 5:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Expenses' + '</span>';
+                break;
+            case 7:
+                strKind = '<span  class="badge bg-warning text-dark badg-plx me-1">' + 'Account' + '</span>';
+                break;
+            case 8:
+                strKind = '<span  class="badge bg-yellow text-dark badg-plx me-1">' + 'Stock' + '</span>';
+                break;
+        }
+        return '<div class="d-flex">' + strKind + '</div>'
+    }
+    function ValidateSave ()
+    {
+        //if (VoucherStatus == false)
+        //{
+        //    $.alert({
+        //        title: 'Stop',
+        //        icon: 'fa fa-warning',
+        //        type: 'red',
+        //        content: 'Not allowed to edit sales invoice',
+        //        buttons: {
+        //            Ok: {
+        //                text: 'ok'
+        //            }
+        //        }
+        //    });
+        //    return false;
+        //}
+            if (VoucherStatus == false)
+        {
+            if (InvoiceStatus != 3)
+            {
+                $.alert({
+                    title: 'Stop',
+                    icon: 'fa fa-warning',
+                    type: 'red',
+                    content: 'Not allowed to edit sales invoice',
+                    buttons: {
+                        Ok: {
+                            text: 'ok'
+                        }
+                    }
+                });
+                return false;
+            }
+        }
+        var rowscount = $('#tb-rows tr').length;
+        if (rowscount == 0)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'There is no data in General Ledger!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        if ($('#frm-AccountKey').dxLookup('option', 'value') == null)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Please select master account!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        if ($('#frm-SourceWarehouse').dxSelectBox('option', 'value') == null || $('#frm-SourceWarehouse').dxSelectBox('option', 'text') == '')
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Please select warehouse!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        return true;
+    }
+    function SaveGeneralLedger ()
+    {
+        if (ValidateSave() == false)
+        {
+            return;
+        }
+        
+        if(InPosting==true) {
+            return;
+        }
+      
+        $.confirm({
+            title: 'Confirm',
+            content: 'Save/update Transaction confirmation?',
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Save/Update',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        if (InPosting == true)
+                            return;
+
+                          InPosting=true;
+                          $('.PLSave').prop('disabled',true);
+
+                        //Start Update
+                        var values = [];
+                        $('#tb-rows').find('tr').each(function ()
+                        {
+                            var d = new Date($(this).find('[id="td-ExpDate"]').data('value'));
+                            //d.setDate(d.getDate() + 1);
+                            if (d.getFullYear() < 2000)
+                            {
+                                d = null;
+                            }
+                            values.push({
+                                Key: $(this).find('[id="td-Key"]').data('value'),
+                                CloseRowKey: $(this).find('[id="td-CloseRowKey"]').data('value'),
+                                Index: $(this).find('[id="td-Index"]').data('value'),
+                                ItemKind: $(this).find('[id="td-ItemKind"]').data('value'),
+                                ItemKey: $(this).find('[id="td-ItemKey"]').data('value'),
+                                ProDate: null,
+                                ExpDate: d,
+                                Color: $(this).find('[id="td-Color"]').data('value'),
+                                Size: $(this).find('[id="td-Size"]').data('value'),
+                                Unit: $(this).find('[id="td-Unit"]').data('value'),
+                                UnitPrice: $(this).find('[id="td-UnitPrice"]').data('value'),
+                                Quantity: $(this).find('[id="td-Quantity"]').data('value'),
+                                Bonus: $(this).find('[id="td-Bonus"]').data('value'),
+                                Amount: $(this).find('[id="td-Amount"]').data('value'),
+                                Discount: $(this).find('[id="td-Discount"]').data('value'),
+                                vatAmount: $(this).find('[id="td-vatAmount"]').data('value'),
+                                UnitCost: $(this).find('[id="td-UnitCost"]').data('value'),
+                                vatKey: $(this).find('[id="td-vatKey"]').data('value'),
+                                vatRate: $(this).find('[id="td-vatRate"]').data('value'),
+                                Total: $(this).find('[id="td-Total"]').data('value'),
+                                Batch: $(this).find('[id="td-BatchKey"]').data('value'),
+                                ConsumptionKind: $(this).find('[id="td-ConsumptionKind"]').data('value'),
+                                Status: $(this).find('[id="td-Status"]').data('value'),
+                                Description: $(this).find('[id="td-Description"]').data('value'),
+                                CostCenter: $(this).find('[id="td-CostCenter"]').data('value'),
+                                jnAccount:{
+                                    Code: $(this).find('[id="td-Code"]').data('value')
+                                },
+                                BatchDetails: {
+                                    Batch: $(this).find('[id="td-Batch"]').data('value'),
+                                    Lot: $(this).find('[id="td-Lot"]').data('value'),
+                                    PartRate: $(this).find('[id="td-PartRate"]').data('value'),
+                                    PartPrice: $(this).find('[id="td-PartPrice"]').data('value')
+                                }
+                            });
+                        });
+                        var voucher = $('#frm-Voucher').serialize();
+                        $.ajax({
+                            type: "post",
+                            url: "/api/Sales/idocuments/UpdateSalesInvoice",
+                            data: voucher + '&Data=' + JSON.stringify(values) + '&isNew=' + VoucherStatus + '&AdvancePayments=' + JSON.stringify(AdvancePayments),
+                            dataType: "json",
+                            success: function (response)
+                            {
+                                if (response.Status == true)
+                                {
+                                    exDocumentError(response);
+                                    return;
+                                }
+                                $('#No').text(response.VoucherNo);
+                                $('#OperationKey').val(response.OperationKey);
+                                $('#inf-Status').removeClass('bg-info');
+                                $('#inf-Status').addClass('bg-danger');
+                                $('#txt-Status').text(iShll.update);
+                                opk = response.OperationKey;
+                                InvoiceStatus=0;
+                                VoucherStatus = false;
+                                     InPosting = false;
+                                $('.PLSave').prop('disabled', false);
+                                PrintDocument();
+                            },
+                            failure: function (response)
+                            {
+                                alert(response);
+                            },
+                            error: function (response)
+                            {
+                                alert(response.responseText);
+                            }
+                        });
+                        //End Update
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        $('.PLSave').prop('disabled',false);
+                        return;
+                    }
+                }
+            }
+        });
+    }
+    //Other Details show or hid
+    function ChangeChkImportation (e)
+    {
+        if (e.value == false)
+        {
+            $('#div-Importation').prop('hidden', true);
+        } else
+        {
+            $('#div-Importation').prop('hidden', false);
+        }
+    }
+    function ChangeChkPerson (e)
+    {
+        if (e.value == false)
+        {
+            $('#div-Person').prop('hidden', true);
+        } else
+        {
+            $('#div-Person').prop('hidden', false);
+        }
+    }
+    function ChangeChkClient (e)
+    {
+        if (e.value == false)
+        {
+            $('#div-Client').prop('hidden', true);
+        } else
+        {
+            $('#div-Client').prop('hidden', false);
+        }
+    }
+    function ChangeDueDays (e)
+    {
+        var vd = new Date();
+        vd = $('#frm-InvoiceDate').dxDateBox('option', 'value');
+        var due = new Date();
+        $('#frm-DueDate').dxDateBox('option', 'value', due.setDate(vd.getDate() + e.value));
+    }
+    //Advance Payments
+    function cta4AgesCloseInvoices (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                var grdAgesInvoices = $('#grd-AdvancePayments').dxDataGrid("instance");
+                grdAgesInvoices.cellValue(options.rowIndex, 'xAmount', options.data.Amount);
+                grdAgesInvoices.saveEditData();
+            },
+        });
+    }
+    function ct4xAmount (element, info)
+    {
+        element.append('<div>' + info.text + '</div>').css('background-color', '#F2D498');
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+    function SelectRowAgesInvoice (e)
+    {
+        var grd = $('#grd-AdvancePayments').dxDataGrid("instance");
+        grd.selectRows(e.key, true);
+    }
+    function ShowSelectAdvancePayments ()
+    {
+        if ($('#frm-CurrentKey').dxLookup('option', 'value') == null)
+            return;
+        $('#con-AdvancePayments').empty();
+        $("#con-AdvancePayments").load('/Sales/Selections/AdvancePayments?Key=' + $("#frm-CurrentKey").dxLookup('option', 'value'));
+        $("#mod-AdvancePayments").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function SaveAdvancePayments ()
+    {
+        AdvancePayments = [];
+        AdvancePayments.splice(0, AdvancePayments.length);
+        var amount = 0;
+        var clsRows = 0;
+        var grdAgesInvoices = $('#grd-AdvancePayments').dxDataGrid("instance");
+        grdAgesInvoices.selectRows(grdAgesInvoices.getSelectedRowKeys(), true).done(function ()
+        {
+            grdAgesInvoices.saveEditData().done(function ()
+            {
+                var selectedRowsData = grdAgesInvoices.getSelectedRowsData();
+                for (const item of selectedRowsData)
+                {
+                    if (item.xAmount > 0)
+                    {
+                        AdvancePayments.push({
+                            Key: item.RowKey,
+                            OperationKey: item.OperationKey,
+                            Amount: item.xAmount
+                        });
+                        amount += item.xAmount;
+                        clsRows += 1;
+                    }
+                }
+            });
+        })
+        $('#txt-AdvancePayments').text(comma(amount));
+        $("#mod-AdvancePayments").modal('toggle');
+    }
+    function ChangeCurrentAccount (e)
+    {
+        if (e.value == null)
+        {
+            $('#btn-frmEdit').prop('hidden', true);
+            $('#btn-frmAdd').prop('hidden', false);
+        } else
+        {
+            $('#btn-frmEdit').prop('hidden', false);
+            $('#btn-frmAdd').prop('hidden', true);
+        }
+        AdvancePayments = [];
+        AdvancePayments.splice(0, AdvancePayments.length);
+        $('#txt-AdvancePayments').text('0.00');
+    }
+    function GetMonthlyNo ()
+    {
+        var d = new Date();
+        d = $('#frm-InvoiceDate').dxDateBox('option', 'value');
+        $.ajax({
+            type: "get",
+            url: "/api/icore/MaxMonthlyInvoice",
+            data: { DocumentKind: 80, Year: d.getFullYear(), Month: d.getMonth() + 1 },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txt-MonthlyNo').text(response);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    //**Add Short Account*/
+    function AddRowAccount ()
+    {
+        ModalShowKind = 1;
+        $('#con-Card').empty();
+        $("#con-Card").load('/Cards/Account?Key=' + $('#row-Account').dxLookup('option', 'value') + '&Kind=' + $('#row-ItemKind').dxSelectBox('option', 'value'));
+        $("#mod-Card").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function EndSaveAccount (xAccountKey)
+    {
+        if (ModalShowKind == 1)
+        {
+            $('#row-Account').dxLookup('reset');
+            $("#row-Account").dxLookup("getDataSource").reload().done(function ()
+            {
+                $('#row-Account').dxLookup('option', 'value', xAccountKey);
+            });
+        } else
+        {
+            $('#frm-CurrentKey').dxLookup('reset');
+            $("#frm-CurrentKey").dxLookup({
+                dataSource: '/api/icore/LoadAccounts?Kind=0&CurrentKind=2'
+            });
+            $('#frm-CurrentKey').dxLookup('option', 'value', xAccountKey);
+            if($('#frm-AccountKind').dxSelectBox('option', 'value')==0){
+            $('#frm-AccountKey').dxLookup('reset');
+                $("#frm-AccountKey").dxLookup({
+                dataSource: '/api/icore/LoadAccounts?Kind=0&CurrentKind=2'
+            });
+                $('#frm-AccountKey').dxLookup('option', 'value', xAccountKey);
+            }
+            //$("#frm-CurrentKey").dxLookup("getDataSource").reload().done(function ()
+            //{
+            //    $('#frm-CurrentKey').dxLookup('option', 'value', xAccountKey);
+            //});
+        }
+    }
+    function AddfrmCurrent ()
+    {
+        ModalShowKind = 0;
+        $('#con-Card').empty();
+        $("#con-Card").load('/Cards/Account?Key=' + $('#frm-CurrentKey').dxLookup('option', 'value') + '&Kind=0');
+        $("#mod-Card").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    //**End Short Account*/
+    //**Quotation */
+    function LoadIntegrationDetails ()
+    {
+        if ($('#OriginalInvoice').val() == null || $('#OriginalInvoice').val() == '')
+        {
+            alert('Please select source Data!');
+            return;
+        }
+        if ($('#frm-Quotation').dxNumberBox('option', 'value') > 0)
+        {
+            LoadQuotationDetails();
+        }
+        if ($('#frm-Proforma').dxNumberBox('option', 'value') > 0)
+        {
+            LoadProformaDetails();
+        }
+        if ($('#frm-Contract').dxNumberBox('option', 'value') > 0)
+        {
+            LoadContractDetails();
+        }
+    }
+    function ct4Invoiced (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-gray">' + 'Invoice' + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-danger">' + 'Returned' + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function SearchCloseingDetails ()
+    {
+        if ($('#OriginalInvoice').val() == null || $('#OriginalInvoice').val() == '')
+        {
+            alert('Please select source Data!');
+            return;
+        }
+        if ($('#frm-Quotation').dxNumberBox('option', 'value') > 0)
+        {
+            $('#con-IntegrationDetails').empty();
+            $("#con-IntegrationDetails").load('/Sales/Selections/QuotationDetails?Key=' + $('#OriginalInvoice').val());
+            $("#mod-IntegrationDetails").modal({ backdrop: 'static' }).modal('toggle');
+        }
+        if ($('#frm-Proforma').dxNumberBox('option', 'value') > 0)
+        {
+            $('#con-IntegrationDetails').empty();
+            $("#con-IntegrationDetails").load('/Sales/Selections/ProformaDetails?Key=' + $('#OriginalInvoice').val());
+            $("#mod-IntegrationDetails").modal({ backdrop: 'static' }).modal('toggle');
+        }
+        if ($('#frm-Contract').dxNumberBox('option', 'value') > 0)
+        {
+            $('#con-IntegrationDetails').empty();
+            $("#con-IntegrationDetails").load('/Sales/Selections/ContractDetails?Key=' + $('#OriginalInvoice').val());
+            $("#mod-IntegrationDetails").modal({ backdrop: 'static' }).modal('toggle');
+        }
+    }
+    function ShowSelectQuotations ()
+    {
+        $('#con-Integration').empty();
+        $("#con-Integration").load('/Sales/Selections/Quotations');
+        $("#mod-Integration").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function cta4SelectQuotation (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                $('#frm-Quotation').dxNumberBox('option', 'value', options.data.InvoiceNo);
+                $('#OriginalInvoice').val(options.data.Key);
+                $('#frm-ReferenceNo').dxTextBox('option', 'value', options.data.InvoiceNo);
+                $('#frm-CurrentKey').dxLookup('option', 'value', options.data.Client);
+                if($('#frm-AccountKind').dxSelectBox('option','value')==0){
+                      $('#frm-AccountKey').dxLookup('option', 'value', options.data.Client);
+                }
+               
+                $('#frm-Description').dxTextArea('option', 'value', options.data.Description);
+                $('#frm-Prefix').dxSelectBox('option', 'value', options.data.Prefix);
+                $('#frm-Branch').dxSelectBox('option', 'value', options.data.Branch);
+                $('#frm-SalesPerson').dxSelectBox('option', 'value', options.data.SalesPerson);
+                $('#frm-SalesHand').dxSelectBox('option', 'value', options.data.SalesHand);
+                $('#btn-InvoicedQuotation').prop('hidden', false);
+                $('#row-Account').dxLookup('option', 'readOnly', true);
+                $('#row-ItemKind').dxSelectBox('option', 'readOnly', true);
+                $('#btn-rowSearch').prop('hidden', false);
+                $('#btn-rowAdd').prop('hidden', true);
+                $("#mod-Integration").modal('toggle');
+                LoadQuotationDetails();
+            },
+        });
+    }
+    function cta4QuotationDetails (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                rowCurrentItemKey = options.data.ItemKey;
+                CloseRowKey = options.data.Key;
+                //  RowUnitCost = options.data.UnitCost;
+                $('#row-ItemKind').dxSelectBox('option', 'value', options.data.ItemKind);
+                $('#row-Account').dxLookup('option', 'value', options.data.ItemKey);
+                $('#row-Unit').dxSelectBox('option', 'value', options.data.Unit);
+                $('#row-Quantity').dxNumberBox('option', 'value', options.data.Quantity);
+                $('#row-Bonus').dxNumberBox('option', 'value', options.data.Bonus);
+                $('#row-UnitPrice').dxNumberBox('option', 'value', options.data.UnitPrice);
+                $('#row-Amount').dxNumberBox('option', 'value', options.data.Amount);
+                $('#row-Discount').dxNumberBox('option', 'value', options.data.Discount);
+                $('#row-vatKey').dxSelectBox('option', 'value', options.data.vatKey);
+                $('#row-vatAmount').dxNumberBox('option', 'value', options.data.vatAmount);
+                $('#row-Total').dxNumberBox('option', 'value', options.data.Total);
+                //$('#row-CostCenter').dxLookup('option', 'value', options.data.CostCenter);
+                //$('#row-Project').dxLookup('option', 'value', options.data.Project);
+                $('#row-vatKey').dxSelectBox('option', 'readOnly', true);
+                $('#row-Total').dxNumberBox('option', 'readOnly', true);
+                $('#row-Bonus').dxNumberBox('option', 'readOnly', true);
+                if (options.data.ItemKind == 8)
+                {
+                    $('#row-Unit').dxSelectBox('option', 'readOnly', true);
+                    $('#row-UnitPrice').dxNumberBox('option', 'readOnly', true);
+                    $('#row-Discount').dxNumberBox('option', 'readOnly', true);
+                }
+                EditAmount();
+                $("#mod-IntegrationDetails").modal('toggle');
+            },
+        });
+    }
+    function LoadQuotationDetails ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Sales/idocuments/QutationDetails",
+            data: { key: $('#OriginalInvoice').val() },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '" style="' + getDescriptionStyle(item.Description) + '">'
+                          str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '              <div class="btn-group">'
+                    str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+                    str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+                    str += '              </div>'
+                    str += '          </div>'
+                    str += '          <div class="ccp position-absolute d-none mt-1">'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption(item.Description) + ' </b>' + item.Description + '</p>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetItemKind(item.ItemKind) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td  ' + conHiddenExpiry + '>' + item.strExpDate + '</td>'
+                    str += '      <td>' + comma(item.Quantity) + '</td>'
+                    str += '      <td>' + comma(item.Bonus) + '</td>'
+                    str += '      <td>' + comma(item.UnitPrice) + '</td>'
+                    str += '      <td>' + comma(item.Amount) + '</td>'
+                    str += '      <td>' + comma(item.Discount) + '</td>'
+                    //str += '      <td><small class="f-s-9">' + item.jnvatDetails.Display + '</small></td>'
+                    str += '      <td>' + comma(item.vatAmount) + '<small class="me-1 f-s-9 text-mute">' + item.vatRate + '%</small></td>'
+                    str += '      <td>' + comma(item.Total) + '</td>'
+                    str += '<td hidden id="td-Key" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-CloseRowKey" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+                    str += '<td hidden id="td-ItemKind" data-value="' + item.ItemKind + '"></td>'
+                    str += '<td hidden id="td-ItemKey" data-value="' + item.ItemKey + '"></td>'
+                    str += '<td hidden id="td-Code" data-value="' + item.jnAccount.Code + '"></td>'
+                    str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-ExpDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Color" data-value="' + item.Color + '"></td>'
+                    str += '<td hidden id="td-Size" data-value="' + item.Size + '"></td>'
+                    str += '<td hidden id="td-Unit" data-value="' + item.Unit + '"></td>'
+                    str += '<td hidden id="td-UnitPrice" data-value="' + item.UnitPrice + '"></td>'
+                    str += '<td hidden id="td-Quantity" data-value="' + item.Quantity + '"></td>'
+                    str += '<td hidden id="td-Bonus" data-value="' + item.Bonus + '"></td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-Discount" data-value="' + item.Discount + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-UnitCost" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
+                    str += '<td hidden id="td-CostCenter" data-value="' + $('#frm-CostCenter').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Project" data-value="' + $('#frm-Project').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Batch" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-Lot" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-PartRate" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-PartPrice" data-value="' + 0 + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-rows").append(str);
+                    CalcAmount();
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    //** End Close Quotation*/
+    //**Proforma Invoice*/
+    function ShowSelectProforma ()
+    {
+        $('#con-Integration').empty();
+        $("#con-Integration").load('/Sales/Selections/Proforma');
+        $("#mod-Integration").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function cta4SelectProforma (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                $('#frm-Proforma').dxNumberBox('option', 'value', options.data.InvoiceNo);
+                $('#OriginalInvoice').val(options.data.Key);
+                $('#frm-ReferenceNo').dxTextBox('option', 'value', options.data.InvoiceNo);
+                $('#frm-CurrentKey').dxLookup('option', 'value', options.data.Client);
+                   if($('#frm-AccountKind').dxSelectBox('option','value')==0){
+                      $('#frm-AccountKey').dxLookup('option', 'value', options.data.Client);
+                }
+                $('#frm-Description').dxTextArea('option', 'value', options.data.Description);
+                $('#frm-Prefix').dxSelectBox('option', 'value', options.data.Prefix);
+                $('#frm-Branch').dxSelectBox('option', 'value', options.data.Branch);
+                $('#frm-SalesPerson').dxSelectBox('option', 'value', options.data.SalesPerson);
+                $('#frm-SalesHand').dxSelectBox('option', 'value', options.data.SalesHand);
+                $('#btn-InvoicedQuotation').prop('hidden', false);
+                $('#row-Account').dxLookup('option', 'readOnly', true);
+                $('#row-ItemKind').dxSelectBox('option', 'readOnly', true);
+                $('#btn-rowSearch').prop('hidden', false);
+                $('#btn-rowAdd').prop('hidden', true);
+                $("#mod-Integration").modal('toggle');
+                LoadProformaDetails();
+
+            },
+        });
+    }
+    function cta4ProformaDetails (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                rowCurrentItemKey = options.data.ItemKey;
+                CloseRowKey = options.data.Key;
+                //  RowUnitCost = options.data.UnitCost;
+                $('#row-ItemKind').dxSelectBox('option', 'value', options.data.ItemKind);
+                $('#row-Account').dxLookup('option', 'value', options.data.ItemKey);
+                $('#row-Unit').dxSelectBox('option', 'value', options.data.Unit);
+                $('#row-Quantity').dxNumberBox('option', 'value', options.data.Quantity);
+                $('#row-Bonus').dxNumberBox('option', 'value', options.data.Bonus);
+                $('#row-UnitPrice').dxNumberBox('option', 'value', options.data.UnitPrice);
+                $('#row-Amount').dxNumberBox('option', 'value', options.data.Amount);
+                $('#row-Discount').dxNumberBox('option', 'value', options.data.Discount);
+                $('#row-vatKey').dxSelectBox('option', 'value', options.data.vatKey);
+                $('#row-vatAmount').dxNumberBox('option', 'value', options.data.vatAmount);
+                $('#row-Total').dxNumberBox('option', 'value', options.data.Total);
+                //$('#row-CostCenter').dxLookup('option', 'value', options.data.CostCenter);
+                //$('#row-Project').dxLookup('option', 'value', options.data.Project);
+                $('#row-vatKey').dxSelectBox('option', 'readOnly', true);
+                $('#row-Total').dxNumberBox('option', 'readOnly', true);
+                $('#row-Bonus').dxNumberBox('option', 'readOnly', true);
+                if (options.data.ItemKind == 8)
+                {
+                    $('#row-Unit').dxSelectBox('option', 'readOnly', true);
+                    $('#row-UnitPrice').dxNumberBox('option', 'readOnly', true);
+                    $('#row-Discount').dxNumberBox('option', 'readOnly', true);
+                }
+                EditAmount();
+                $("#mod-IntegrationDetails").modal('toggle');
+            },
+        });
+    }
+    function LoadProformaDetails ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Sales/idocuments/ProformaInvoiceDetails",
+            data: { key: $('#OriginalInvoice').val() },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '" style="' + getDescriptionStyle(item.Description) + '">'
+                    str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '              <div class="btn-group">'
+                    str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+                    str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+                    str += '              </div>'
+                    str += '          </div>'
+                    str += '          <div class="ccp position-absolute d-none mt-1">'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption(item.Description) + ' </b>' + item.Description + '</p>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetItemKind(item.ItemKind) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td  ' + conHiddenExpiry + '>' + item.strExpDate + '</td>'
+                    str += '      <td>' + comma(item.Quantity) + '</td>'
+                    str += '      <td>' + comma(item.Bonus) + '</td>'
+                    str += '      <td>' + comma(item.UnitPrice) + '</td>'
+                    str += '      <td>' + comma(item.Amount) + '</td>'
+                    str += '      <td>' + comma(item.Discount) + '</td>'
+                    //str += '      <td><small class="f-s-9">' + item.jnvatDetails.Display + '</small></td>'
+                    str += '      <td>' + comma(item.vatAmount) + '<small class="me-1 f-s-9 text-mute">' + item.vatRate + '%</small></td>'
+                    str += '      <td>' + comma(item.Total) + '</td>'
+                    str += '<td hidden id="td-Key" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-CloseRowKey" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+                    str += '<td hidden id="td-ItemKind" data-value="' + item.ItemKind + '"></td>'
+                    str += '<td hidden id="td-ItemKey" data-value="' + item.ItemKey + '"></td>'
+                    str += '<td hidden id="td-Code" data-value="' + item.jnAccount.Code + '"></td>'
+                    str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-ExpDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Color" data-value="' + item.Color + '"></td>'
+                    str += '<td hidden id="td-Size" data-value="' + item.Size + '"></td>'
+                    str += '<td hidden id="td-Unit" data-value="' + item.Unit + '"></td>'
+                    str += '<td hidden id="td-UnitPrice" data-value="' + item.UnitPrice + '"></td>'
+                    str += '<td hidden id="td-Quantity" data-value="' + item.Quantity + '"></td>'
+                    str += '<td hidden id="td-Bonus" data-value="' + item.Bonus + '"></td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-Discount" data-value="' + item.Discount + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-UnitCost" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
+                    str += '<td hidden id="td-CostCenter" data-value="' + $('#frm-CostCenter').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Project" data-value="' + $('#frm-Project').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Batch" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-Lot" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-PartRate" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-PartPrice" data-value="' + 0 + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-rows").append(str);
+                    CalcAmount();
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    //**End Proforma Invoice*/
+    //**Closing Contract*/
+    function ShowSelectContracts ()
+    {
+        $('#con-Integration').empty();
+        $("#con-Integration").load('/Sales/Selections/Contracts');
+        $("#mod-Integration").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function cta4SelectContract (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                $('#frm-Contract').dxNumberBox('option', 'value', options.data.InvoiceNo);
+                $('#OriginalInvoice').val(options.data.Key);
+                $('#frm-ReferenceNo').dxTextBox('option', 'value', options.data.InvoiceNo);
+                $('#frm-CurrentKey').dxLookup('option', 'value', options.data.Client);
+                $('#btn-InvoicedQuotation').prop('hidden', false);
+                $('#row-Account').dxLookup('option', 'readOnly', true);
+                $('#row-ItemKind').dxSelectBox('option', 'readOnly', true);
+                $('#btn-rowSearch').prop('hidden', false);
+                $('#btn-rowAdd').prop('hidden', true);
+                $("#mod-Integration").modal('toggle');
+            },
+        });
+    }
+    function cta4ContractDetails (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                rowCurrentItemKey = options.data.ItemKey;
+                CloseRowKey = options.data.Key;
+                //  RowUnitCost = options.data.UnitCost;
+                $('#row-ItemKind').dxSelectBox('option', 'value', options.data.ItemKind);
+                $('#row-Account').dxLookup('option', 'value', options.data.ItemKey);
+                $('#row-Unit').dxSelectBox('option', 'value', options.data.Unit);
+                $('#row-Quantity').dxNumberBox('option', 'value', options.data.Quantity);
+                $('#row-UnitPrice').dxNumberBox('option', 'value', options.data.UnitPrice);
+                $('#row-Amount').dxNumberBox('option', 'value', options.data.Amount);
+                $('#row-Discount').dxNumberBox('option', 'value', options.data.Discount);
+                $('#row-vatKey').dxSelectBox('option', 'value', options.data.vatKey);
+                $('#row-vatAmount').dxNumberBox('option', 'value', options.data.vatAmount);
+                $('#row-Total').dxNumberBox('option', 'value', options.data.Total);
+                //$('#row-CostCenter').dxLookup('option', 'value', options.data.CostCenter);
+                //$('#row-Project').dxLookup('option', 'value', options.data.Project);
+                $('#row-vatKey').dxSelectBox('option', 'readOnly', true);
+                $('#row-Total').dxNumberBox('option', 'readOnly', true);
+                if (options.data.ItemKind == 8)
+                {
+                    $('#row-Unit').dxSelectBox('option', 'readOnly', true);
+                    $('#row-UnitPrice').dxNumberBox('option', 'readOnly', true);
+                    $('#row-Discount').dxNumberBox('option', 'readOnly', true);
+                }
+                EditAmount();
+                $("#mod-IntegrationDetails").modal('toggle');
+            },
+        });
+    }
+    function LoadContractDetails ()
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Sales/idocuments/ContractDetails",
+            data: { key: $('#OriginalInvoice').val() },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '" style="' + getDescriptionStyle(item.Description) + '">'
+                    str += '      <td>'
+                    str += '          <div class="d-flex align-items-center">'
+                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
+                    str += '              <div class="btn-group">'
+                    str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
+                    str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+                    str += '              </div>'
+                    str += '          </div>'
+                    str += '          <div class="ccp position-absolute d-none mt-1">'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">' + getDescriptionCaption(item.Description) + ' </b>' + item.Description + '</p>'
+                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Project:</b>' + $('#frm-Project').dxLookup('option', 'text') + '</p>'
+                    str += '          </div>'
+                    str += '      </td>'
+                    str += '      <td>' + GetItemKind(item.ItemKind) + '</td>'
+                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
+                    str += '      <td>'
+                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
+                    str += '      </td>'
+                    str += '      <td>' + '' + '</td>'
+                    str += '      <td>' + comma(item.Quantity) + '</td>'
+                    str += '      <td>' + comma(0) + '</td>'
+                    str += '      <td>' + comma(item.UnitPrice) + '</td>'
+                    str += '      <td>' + comma(item.Amount) + '</td>'
+                    str += '      <td>' + comma(item.Discount) + '</td>'
+                    str += '      <td><small class="f-s-9">' + item.jnvatDetails.Display + '</small></td>'
+                    str += '      <td>' + comma(item.vatAmount) + '</td>'
+                    str += '      <td>' + comma(item.Total) + '</td>'
+                    str += '<td hidden id="td-Key" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-CloseRowKey" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+                    str += '<td hidden id="td-ItemKind" data-value="' + item.ItemKind + '"></td>'
+                    str += '<td hidden id="td-ItemKey" data-value="' + item.ItemKey + '"></td>'
+                    str += '<td hidden id="td-Code" data-value="' + item.jnAccount.Code + '"></td>'
+                    str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-ExpDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Color" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-Size" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-Unit" data-value="' + item.Unit + '"></td>'
+                    str += '<td hidden id="td-UnitPrice" data-value="' + item.UnitPrice + '"></td>'
+                    str += '<td hidden id="td-Quantity" data-value="' + item.Quantity + '"></td>'
+                    str += '<td hidden id="td-Bonus" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-Discount" data-value="' + item.Discount + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-UnitCost" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
+                    str += '<td hidden id="td-CostCenter" data-value="' + $('#frm-CostCenter').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Project" data-value="' + $('#frm-Project').dxLookup('option', 'value') + '"></td>'
+                    str += '<td hidden id="td-Batch" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-Lot" data-value="' + '' + '"></td>'
+                    str += '<td hidden id="td-PartRate" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-PartPrice" data-value="' + 0 + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-rows").append(str);
+                    CalcAmount();
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    //**End Closing Contract*/
+    //**Copy Invoice*/
+    function ShowCopyInvoice ()
+    {
+        $('#con-CopyInvoice').empty();
+        $("#con-CopyInvoice").load('/Selections/SalesInvoices');
+        $("#mod-CopyInvoice").modal({ backdrop: 'static' }).modal('toggle');
+    }
+    function cta4CopyInvoice (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                LoadData(options.data.Key);
+                $("#mod-CopyInvoice").modal('toggle');
+            },
+        });
+    }
+    //**End Copy Invoice*/
+    function PrintDocument ()
+    {
+        SalesInvoicePrintTemplates(80, opk);
+    }
+     function ChangeAccountKey(){
+         if($('#frm-AccountKind').dxSelectBox('option','value')==0){
+             if($('#frm-CurrentKey').dxLookup('option','value')==null){
+                $('#frm-CurrentKey').dxLookup('option', 'value', $('#frm-AccountKey').dxLookup('option', 'value'));
+             }
+         }
+     }
+    function updateQRCode (text)
+    {
+
+        var element = document.getElementById("qrcode");
+
+        var bodyElement = document.body;
+        if (element.lastChild)
+            element.replaceChild(showQRCode(text), element.lastChild);
+        else
+            element.appendChild(showQRCode(text));
+
+    }
+</script>

@@ -1,0 +1,72 @@
+@model CLiInventory.Cards.Stock.StockUnit
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1606","Item Unit")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-StockUnit" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @Html.HiddenFor(m => m.Item)
+                    <div class="xkey">
+                        <div class="text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                        <div class="text-gray">@iT.T(xLan,"1607","Item"): @Model.Item</div>
+                    </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1579","Unit Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Unit).ID("cntsu-Unit").Width(140).InputAttr("required", true).DataSource(CLiInventory.Selections.Unit.GetList(DB,xLan)).ValueExpr("Code").DisplayExpr("Code")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1608","Rate Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.RateKind).ID("cntsu-RateKind").Width(140).InputAttr("required", true).DataSource(iReplacer.invUnitRate(xLan)).ValueExpr("Value").DisplayExpr("Display")
+                </div>
+            </div>
+            <div class="form-group row mb-4">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1609","Rate Value")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.RateValue).ID("cntsu-RateValue").Width(140).ShowSpinButtons(true).Format("0,###.##")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-StockUnit").submit(function(event) {
+            event.preventDefault();
+            UpdateStockUnit();
+        });
+    });
+    function UpdateStockUnit() {
+        var data = $('#frm-StockUnit').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/inv/icards/UpdateStockUnit",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-StockUnit").modal('toggle');
+                RefreshGrid_StockUnit();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

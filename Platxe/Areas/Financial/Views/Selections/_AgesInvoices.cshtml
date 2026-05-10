@@ -1,0 +1,97 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1372","Sales Invoices")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div>
+            @(Html.DevExtreme().DataGrid<CLiFinancial.Documents.Selections.AgesCloseInvoices>().ID("grd-AgesCloseInvoices")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("idocuments").Area("Financial")
+                .Key("OperationKey")
+                .LoadAction("AgesInvoices").LoadParams(new { DocumentKind = ViewBag.DocumentKind, Key = ViewBag.Key }).UpdateAction("fackUpdate"))
+                .Editing(ed => ed.Mode(GridEditMode.Batch).AllowUpdating(true).AllowAdding(false).AllowDeleting(false).RefreshMode(GridEditRefreshMode.Repaint).UseIcons(false))
+                .ColumnAutoWidth(true)
+                .FocusedRowEnabled(true)
+                .OnRowUpdated("SelectRowAgesInvoice")
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.InvoiceDate).Caption(iT.T(xLan, "1210", "Date")).Width(70).Format("dd.MM.yyyy").AllowEditing(false);
+                    columns.AddFor(m => m.InvoiceNo).Caption(iT.T(xLan, "1265", "No")).Width(65).AllowEditing(false);
+                    columns.AddFor(m => m.DueDate).Caption(iT.T(xLan, "1978", "DueDate")).Width(70).Format("dd.MM.yyyy").AllowEditing(false);
+                    columns.AddFor(m => m.RemDays).Caption(iT.T(xLan, "1979", "RemDays")).Width(70).AllowEditing(false);
+                    columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(85).Format("0,###.##").AllowEditing(false);
+                    columns.AddFor(m => m.ClosedAmount).Caption(iT.T(xLan, "1357", "Closed")).Width(80).Format("0,###.##").AllowEditing(false);
+                    // columns.AddFor(m => m.RemAmount).Caption(iT.T(xLan, "1358","Rem.Amount")).Width(85).Format("0,###.##");
+                    columns.AddFor(m => m.ReturnedAmount).Caption(iT.T(xLan, "1359", "Ret.Amount")).Width(85).Format("0,###.##").AllowEditing(false);
+                    columns.AddFor(m => m.TotalRem).Caption(iT.T(xLan, "1359", "Ret.Amount")).Width(85).Format("0,###.##").CellTemplate(new JS("ct4TotalRem")).AllowEditing(false);
+                    columns.AddFor(m => m.xAmount).Caption(iT.T(xLan, "1375", "xAmount")).Width(90).Format("0,###.##").CellTemplate(new JS("ct4xAmount"));
+                    columns.Add().Name("act").Caption("Act.").Width(40).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("cta4AgesCloseInvoices"));
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                })
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .Selection(s => s.Mode(SelectionMode.Multiple).AllowSelectAll(false).Deferred(false))
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+            <button type="button" class="btn btn-yellow" onclick="SaveInvoices()">@iT.T(xLan,"1376","Save Invoice")</button>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        var grdAgesInvoices = $('#grd-AgesCloseInvoices').dxDataGrid("instance");
+        var keys = [];
+        for (const item of TempRowInvoices)
+        {
+            keys.push(item.InvoiceKey);
+        }
+        grdAgesInvoices.selectRows(keys, false).done(function ()
+        {
+            for (const item of TempRowInvoices)
+            {
+                var selectedRowIndex = grdAgesInvoices.getRowIndexByKey(item.InvoiceKey);
+                grdAgesInvoices.cellValue(selectedRowIndex, 'xAmount', item.Amount);
+                grdAgesInvoices.selectRows(item.InvoiceKey, false)
+            }
+            grdAgesInvoices.saveEditData();
+        });
+    });
+</script>

@@ -1,0 +1,118 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"1177","Chart of Account Tree")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="col-6">
+                    <p style="margin-bottom:15px;margin-top:15px">
+                        @iT.T(xLan,"1178","Accounts")
+                        <small> <a href="javascript:;" onclick="ReLoodTree()" class="text-danger">@iT.T(xLan,"1156","Refresh")</a></small>
+                        <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="CloseAll()">@iT.T(xLan,"1174","Open All")</a></small>
+                        <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="OpenAll()">@iT.T(xLan,"1174","Open All")</a></small>
+                    </p>
+                    <div style="margin:1px;width:100%" class="mb-1">
+                        <input id="txt-Search" type="text" class="form-control form-control-sm" placeholder="@iT.T(xLan,"1179","Search account...")">
+                    </div>
+                    <div data-scrollbar="true" style="padding:5px 5px;overflow:auto;height:500px;">
+                        <div id="jstree-checkable" style="height:100%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        LoodTree();
+        $('#jstree-checkable').on('select_node.jstree', function(e, data) {
+            //var i, j, r = [];
+            //for (i = 0, j = data.selected.length; i < j; i++) {
+            //    r.push(data.instance.get_node(data.selected[i]).text);
+            //}
+            //$('#event_result').html('Selected: ' + r.join(', '));
+            Key = data.instance.get_node(data.selected[0]).id;
+            $('#txt-SelectedItem').text(data.instance.get_node(data.selected[0]).text);
+        });
+        $("#txt-Search").keyup(function() {
+            $('#jstree-checkable').jstree(true).search($(this).val(), true, true);
+        });
+    });
+    function LoodTree() {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/icards/ChartOfAccountTree",
+            dataType: "json",
+            success: function(response) {
+                $('#jstree-checkable').jstree({
+                    'plugins': ["wholerow", "types", "search"],
+                    'core': {
+                        "themes": {
+                            "responsive": false
+                        },
+                        'data': response
+                    },
+                    "types": {
+                        "default": {
+                            "icon": "fa fa-folder text-primary fa-lg"
+                        },
+                        "file": {
+                            "icon": "fa fa-file text-success fa-lg"
+                        }
+                    }
+                });
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ReLoodTree() {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/icards/ChartOfAccountTree",
+            dataType: "json",
+            success: function(response) {
+                $('#jstree-checkable').jstree(true).settings.core.data = response;
+                $('#jstree-checkable').jstree(true).refresh();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function OpenAll() {
+        $('#jstree-checkable').jstree(true).open_all();
+    }
+    function CloseAll() {
+        $('#jstree-checkable').jstree(true).close_all();
+    }
+</script>

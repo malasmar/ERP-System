@@ -1,0 +1,133 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"1221","General Ledger List")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="d-flex align-items-center">
+            <div class="f-s-11 f-w-500 me-3">@iT.T(xLan, "1222","Year")</div>
+            <div class="input-group">
+                @Html.DevExtreme().NumberBox().ID("num-Year").ShowSpinButtons(true).Width(90).Value(Year)
+                <span class="input-group-append">
+                    <button type="button" class="btn btn-default btn-white" onclick="RefreshGrid()" title="@iT.T(xLan,"1156","Refresh")" style="height:36px"><i class="fa fa-sync-alt" style="width:15px;min-width:15px"></i></button>
+                </span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(
+                    Html.DevExtreme().DataGrid<CLiAccounting.Documents.Transaction>().ID("grd-Transaction")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("idocuments").Area("Accounting")
+                    .Key("OperationKey")
+                    .LoadAction("DocumentsList").LoadParams(new { Year = new JS("GetYear") })).DataSourceOptions(x=>x.Paginate(true).PageSize(50))
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(45).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1269", "GL Kind")).Width(55).Lookup(L => L.DataSource(iReplacer.accGeneralLedgerKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4DocumentKind"));
+                        columns.AddFor(m => m.Document).Caption(iT.T(xLan, "1160", "Financial")).Width(110).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan)).ValueExpr("Value").DisplayExpr("Display"));
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1268", "Voucher No")).Width(100);
+                       
+                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1270", "GL Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.No).Caption(iT.T(xLan, "1271", "GL No")).Width(75);
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description"));
+                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Rows).Caption(iT.T(xLan, "1272", "Rows")).Width(100);
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.DocumentKind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Total).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1221", "General Ledger List")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'tips' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'tips')
+                        {
+                            ViewGeneralLedger(options.data.OperationKey);
+                        }
+                        break;
+               
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-Transaction').dxDataGrid("instance").refresh();
+    }
+    function GetYear ()
+    {
+        return $('#num-Year').dxNumberBox('option', 'value');
+    }
+    function ct4DocumentKind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-primary">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+</script>

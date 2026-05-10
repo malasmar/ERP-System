@@ -1,0 +1,191 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+
+<script>
+
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 5:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 6:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+</script>
+
+
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"2187","Cost Center Income Summary")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="card border-0 mb-1 bg-yellow text-dark acc">
+                    <div class="card-body">
+                        <div class="text-truncate">
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:auto"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>@iT.T(xLan, "2188","Code")</td><td id="txt-Code"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1229","Name (Arabic )")</td><td id="txt-Arabic"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1230","Name (English)")</td><td id="txt-English"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card border-0 mb-1 bg-yellow text-dark acc">
+                    <div class="card-body">
+                        <div class="text-truncate">
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:auto"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>@iT.T(xLan, "2182","Revenue")</td><td id="txt-Revenue"></td></tr>
+                                    <tr><td>@iT.T(xLan, "2183","Expense")</td><td id="txt-Expense"></td></tr>
+                                    <tr><td>@iT.T(xLan, "2189","Profit")</td><td id="txt-Profit"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr class="p-0 m-1" />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="PrintReport()">@iT.T(xLan, "1361","Print Report")</button>
+                
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Reports.CostCenter.IncomeSummary>().ID("grd-IncomeSummary")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ireports").Area("Financial")
+                    .LoadAction("CostCenterIncomeSummary")
+                    .LoadParams(new
+                    {
+                        Key = ViewBag.Key
+                    })
+                    .Key("Code")
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "2186", "Kind")).Width(80).Lookup(L => L.DataSource(iReplacer.finIncomeKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1274", "Arabic Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
+                        columns.AddFor(m => m.Balance).Caption(iT.T(xLan, "2176", "Amount")).Width(90).Format("0,###.##");
+
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Kind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Balance).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2187", "Cost Center Income Balance")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="btn-group">
+            <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1242","Close")</button>
+        </div>
+    </div>
+</div>
+
+
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $('#txt-Code').text(data.Code);
+        $('#txt-Arabic').text(data.Name1);
+        $('#txt-English').text(data.Name2);
+        $('#txt-Revenue').text(comma(data.Credit));
+        $('#txt-Expense').text(comma(data.Debit));
+        $('#txt-Profit').text(comma(data.Balance));
+
+    });
+
+ 
+    function PrintReport ()
+    {
+        window.open('/Print/Financial/CostCenterIncomeSummary?Key=' + data.Key );
+    }
+</script>

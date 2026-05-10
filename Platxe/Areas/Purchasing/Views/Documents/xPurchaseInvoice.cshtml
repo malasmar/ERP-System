@@ -1,0 +1,1465 @@
+@model CLiInventory.Documents.Transaction
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string Currency = CLiCore.VoucherOperation.DefaultCurrency(DB);
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    CLiCore.Shared.UserDefaultData defaultData = CLiCore.Shared.UserDefaultData.GetItem(UserKey);
+}
+<style>
+    .shl-invoice-header > span {
+        margin-left: 4px;
+        margin-right: 4px;
+    }
+    .xd > tr:hover {
+        cursor: pointer;
+    }
+    .shl-invoice-header > p {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+    /*   .xd > tr:hover .ccp {
+                                                            display: block !important;
+                                                        }
+                                                        .xd > tr:hover {
+                                                            cursor: pointer;
+                                                            height: 85px;
+                                                        }*/
+    .wd70 {
+        width: 65px !important;
+        min-width: 65px !important;
+        max-width: 65px !important;
+    }
+    .badg-plx {
+        width: 55px !important;
+        min-width: 55px !important;
+        max-width: 55px !important;
+        line-height: 22px !important;
+        font-size: 10px;
+    }
+    .width-20 {
+        width: 20px !important;
+        min-width: 20px !important;
+    }
+</style>
+<div class="invoice">
+    <div class="invoice-company">
+        <div class="float-end hidden-print">
+            <div class="btn-group">
+                <button type="button" class="btn btn-yellow mb-10px" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"1622","Save Update")</button>
+                <button type="button" onclick="PrintDocument()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+            </div>
+        </div>
+        <div class="shl-invoice-header">
+            @CLiCore.iCore.DocumentsName(xLan,Model.DocumentKind) <span id="inf-Status" class="badge bg-info text-dark"><small class="f-s-9 me-1">@iT.T(xLan,"2141","Status")</small><span id="txt-Status" class="me-1">Update</span></span><span id="txt-VoucherNo" class="text-danger"># @Model.InvoiceNo </span> 
+            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+        </div>
+    </div>
+    <form id="frm-Voucher">
+        @Html.HiddenFor(m=>m.DocumentKind)
+        @Html.HiddenFor(m=>m.OperationKey)
+        @Html.HiddenFor(m=>m.InvoiceNo)
+        @Html.HiddenFor(m=>m.MonthlyNo)
+        @Html.HiddenFor(m=>m.CreateUser)
+        @Html.HiddenFor(m=>m.CreateDate)
+        <div class="invoice-header">
+            <div class="invoice-from">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1624","Invoice Date")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().DateBoxFor(m => m.InvoiceDate).ID("frm-InvoiceDate").UseMaskBehavior(true).Width(125).DisplayFormat("dd.MM.yyyy").Min(new DateTime(xYear,1,1)).Max(DateTime.UtcNow.AddMinutes(180)).ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1636","Invoice No")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().TextBoxFor(m => m.ReferenceNo).ID("frm-ReferenceNo").Width(125).ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1992","AccountKind")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.AccountKind).ID("frm-AccountKind").Width(125).DataSource(iReplacer.finTransactionAccByDocument(xLan,Model.DocumentKind)).ValueExpr("Value").DisplayExpr("Display").OnValueChanged("ChangefrmAccountKind").ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1219","Account")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m => m.AccountKey).ID("frm-AccountKey").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, PLenums.TransactionAccount.CurrentAccount, PLenums.CurrentAccountKind.Supplier)).ValueExpr("Key").DisplayExpr("Display").ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1726","Supplier")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m => m.CurrentKey).ID("frm-CurrentKey").DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, PLenums.TransactionAccount.CurrentAccount, PLenums.CurrentAccountKind.Supplier)).ValueExpr("Key").DisplayExpr("Display").ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                                   <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1281","Branch")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("frm-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display")
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1328","Prefix")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Prefix).ID("frm-Prefix").DataSource(CLiFinancial.Selections.Prefix.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Value(defaultData.Prefix).ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row" hidden>
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1281","Branch")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.Branch).ID("frm-Branch").DataSource(CLiFinancial.Selections.Branches.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Value(defaultData.Branch).ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1373","Due Date")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                <div class="input-group">
+                                    @Html.DevExtreme().NumberBox().ID("frm-DueDays").Width(75).OnValueChanged("ChangeDueDays").ShowSpinButtons(true).ElementAttr("class", "enter-fact")
+                                    @Html.DevExtreme().DateBoxFor(m => m.DueDate).ID("frm-DueDate").Width(110).DisplayFormat("dd.MM.yyyy").ElementAttr("class", "enter-fact")
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1212","Description")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().TextBoxFor(m => m.Description).ID("frm-Description").ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12"></label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().CheckBoxFor(m => m.IsBounsDiscount).ID("cnt-IsBounsDiscount").Text(iT.T(xLan,"","Bouns Dicount")).OnValueChanged("changeBounsDiscount")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1977","vatKey")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.vatKey).ID("frm-vatKey").ElementAttr("class", "enter-fact").Width(140).DataSource(CLiFinancial.Selections.vatKind.vatRates(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1625","Warehouse")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().SelectBoxFor(m => m.SourceWarehouse).ID("frm-SourceWarehouse").DataSource(CLiInventory.Selections.Warehouse.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Value(defaultData.WarehouseNo).ElementAttr("class", "enter-fact")
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1332","Cst.Center")</label>
+                            <div class="col-lg-9 col-sm-12">
+                                @Html.DevExtreme().LookupFor(m=>m.CostCenter).ID("frm-CostCenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="card border-0 text-truncate mb-3 text-dark">
+                            <!-- BEGIN card-body -->
+                            <div class="card-body">
+                                <!-- BEGIN title -->
+                                <div class="mb-2">
+                                    <b class="mb-1">Invoice Total</b>
+                                </div>
+                                <div class="d-flex align-items-center mb-1">
+                                    <h2 class="mb-0"><span>@Model.Total.ToString("n2")</span></h2>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"1347","Subtotal")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.SubTotal.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"2153","Discount")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Discount.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"2146","VAT")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.vatAmount.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-1">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-circle text-red fs-8px me-2"></i>@iT.T(xLan,"1120","Total")
+                                    </div>
+                                    <div class="d-flex align-items-center ms-auto">
+                                        <div class="w-50px text-end ps-2 fw-bold"><span>@Model.Total.ToString("n2")</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="invoice-content mt-3">
+        <div class="sticky">
+            <button type="button" id="btn-addnew" class="btn btn-yellow btn-sm text-dark" onclick="addnew()"><i class="fa fa-add"></i></button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-invoice table-hover">
+                <thead>
+                    <tr>
+                        <th style="width:50px;max-width:50px"></th>
+                        <th style="width:100%;min-width:200px">@iT.T(xLan,"1586","Item Name")</th>
+                        <th style="width:110px;min-width:110px;max-width:110px">@iT.T(xLan,"2379","Unit")</th>
+                        <th style="width:110px;min-width:110px;max-width:110px">@iT.T(xLan,"2380","Expiry")</th>
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1076","Quantity")</th>
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1639","Bonus")</th>
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1629","Unit Price") </th>
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"","Sales Price") </th>
+                        @*       <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1077","Amount")</th>*@
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1097","Discount")</th>
+                        @*  <th style="width:80px;min-width:80px;max-width:80px"><small class="f-s-9">@iT.T(xLan,"1345","VAT")</small> @iT.T(xLan,"1346","Rate")</th>*@
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1345","VAT")</th>
+                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1120","Total")</th>
+                    </tr>
+                </thead>
+                <tbody class="xd" id="tb-rows">
+                </tbody>
+            </table>
+        </div>
+        <div class="row p-2 me-2" style="background-color:#f4f4f4">
+            <div class="col-6">
+                <div class="invoice-price">
+                    <table class="table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width:100%;min-width:130px"></th>
+                                <th style="width:auto"></th>
+                                <th style="width:100px;min-width:100px"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="f-s-12 f-w-600" style="padding:0.15rem 0.15rem;">
+                            <tr><td>@iT.T(xLan,"","Total")</td><td><span id="txt-Total">0.00</span></td></tr>
+                            <tr><td>@iT.T(xLan,"","Discount")</td><td>@Html.DevExtreme().TextBoxFor(m=>m.ItemsDiscountText).ID("frm-ItemsDiscountText").Width(125).OnValueChanged("CalcAmount") </td><td><span id="txt-ItemsDiscountText"></span></td>  </tr>
+                            <tr><td>@iT.T(xLan,"","Net")</td><td><span id="txt-Net">0.00</span></td></tr>
+                            <tr><td>@iT.T(xLan,"","Tax")</td><td><span id="txt-Tax">0.00</span></td></tr>
+                            <tr><td>@iT.T(xLan,"","Extra Discount")</td><td>@Html.DevExtreme().NumberBoxFor(m=>m.PaymentDiscount).ID("frm-PaymentDiscount").ShowSpinButtons(false).Width(125).Min(0).Format("0,###.##").OnValueChanged("CalcAmount") </td></tr>
+                            <tr><td>@iT.T(xLan,"","Net Total")</td><td><span id="txt-NetTotal">0.00</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-6">
+                @{
+                    if (Model.OperationKey != null)
+                    {
+                        <div class="float-end" id="qrcode"></div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="invoice-note">
+        <hr>
+        <div class="text-left">
+            <div class="btn-group">
+                <button type="button" class="btn btn-yellow mb-10px" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"1622","Save Update")</button>
+                <button type="button" onclick="PrintDocument()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-SearchItems" class="modal"><div class="modal-dialog modal-lg" id="con-SearchItems"></div></div>
+
+<script class="append-on-ajax-script">
+    var clcDebitCredit = 0;
+    var isNewRow;
+    var currentRow;
+    var opk = null;
+    var VoucherStatus = false;
+    var Currency;
+    var rowCurrentItemKey = null;
+    var RowKey = null;
+    var RowItemDetails;
+    var IsLoading;
+    var DiscountKind = false;
+    var InvoiceStatus = 0;
+    var EditorStatus = false;
+    var EditorID;
+    var EditorWorking = false;
+    var EditorKey = null;
+    var EditorCode = '';
+    var EditorDisplay = '';
+    var BounsDiscount = false;
+    var searchData = null;
+    var rowExpiryMandatory = false;
+    var rowDiscountAmount = 0;
+    var rowvatAmount = 0;
+  
+    $(document).ready(function ()
+    {
+        Currency = '@Currency';
+        if ('@ViewBag.Status' == 'True')
+        {
+            opk = '@Model.OperationKey';
+            InvoiceStatus = Number('@Model.Status');
+            VoucherStatus = false;
+            $('#inf-Status').removeClass('bg-info');
+            $('#inf-Status').addClass('bg-danger');
+            $('#txt-Status').text(iShll.update);
+            LoadData(opk);
+        } else
+        {
+            $('#inf-Status').addClass('bg-info');
+            $('#inf-Status').removeClass('bg-danger');
+            $('#txt-Status').text(iShll.new);
+            VoucherStatus = true;
+        }
+        $('#tb-rows').on('click', '#btn-delete', function ()
+        {
+           
+            DeleteRow($(this).data('key'));
+        });
+        $('#tb-rows').on('click', 'tr', function ()
+        {
+            if ($(this).attr('id') == 'btn-delete')
+                return;
+
+            if (EditorStatus == true)
+                return;
+            //if ($(this).attr('id') == 'tr-roweditor')
+            //    return;
+            //$(this).empty();
+            //$('#tr-roweditor').prop('hidden', false);
+            // $(this).append($('#tr-roweditor').html());
+            //var template = $("tr-roweditor");
+            //$(template).prop('hidden', false);
+            //var newRow = template.clone();
+            //$(this).append(newRow);
+            EditorID = $(this).attr('id');
+            LoadEditor($(this), $(this).data('key'));
+        });
+        const lookupKey = $("#frm-AccountKey").dxLookup("instance");
+        lookupKey.registerKeyHandler("enter", function (e)
+        {
+            var $canfocus = $('.enter-fact :focusable');
+            var index = $canfocus.index(document.activeElement);
+            if (index >= $canfocus.length) index = 0;
+            $canfocus.eq(index).focus();
+        });
+        const lookupKey_Current = $("#frm-CurrentKey").dxLookup("instance");
+        lookupKey_Current.registerKeyHandler("enter", function (e)
+        {
+            var $canfocus = $('.enter-fact :focusable');
+            var index = $canfocus.index(document.activeElement);
+            if (index >= $canfocus.length) index = 0;
+            $canfocus.eq(index).focus();
+        });
+        $('#frm-InvoiceDate').dxDateBox('focus');
+    });
+    $(document).on('keypress', '.enter-fact', function (e)
+    {
+        if (e.which == 13 || e.which == 9)
+        {
+            //e.preventDefault();
+            // Get all focusable elements on the page
+            if ($(this).attr('id') == 'frm-vatKey')
+            {
+                var trc = $('#tb-rows tr').length;
+                if (Number(trc) == 0)
+                {
+                    addnew();
+                    $('#xrow-Account').dxTextBox('focus');
+                }
+                return;
+            }
+            $('#xrow-ExpDate').dxDateBox('focus');
+            var $canfocus = $('.enter-fact :focusable');
+            var index = $canfocus.index(document.activeElement) + 1;
+            if (index >= $canfocus.length) index = 0;
+            $canfocus.eq(index).focus();
+        }
+    });
+    $(document).on('keypress', '.enter-act', function (e)
+    {
+        if (e.which == 13 || e.which == 9)
+        {
+            //e.preventDefault();
+            // Get all focusable elements on the page
+            if ($(this).attr('id') == 'xrow-Total')
+            {
+                if ($('#xrow-ExpDate').dxDateBox('option', 'value') == null || $('#xrow-ExpDate').dxDateBox('option', 'value') < new Date())
+                {
+                    if (rowExpiryMandatory == true)
+                    {
+                        $('#xrow-ExpDate').dxDateBox('focus');
+                        return;
+                    }
+                }
+                if ($('#xrow-Quantity').dxNumberBox('option', 'value') == 0)
+                {
+                    $('#xrow-Quantity').dxNumberBox('focus');
+                    return;
+                }
+                SaveRow();
+                var trc = $('#tb-rows tr').length;
+                var xc = $('#' + EditorID).data('key');
+                if (Number(trc) == Number(xc))
+                {
+                    addnew();
+                    $('#xrow-Account').dxTextBox('focus');
+                }
+                return;
+            }
+            if ($(this).attr('id') == 'xrow-ExpDate')
+            {
+                if ($('#xrow-ExpDate').dxDateBox('option', 'value') == null || $('#xrow-ExpDate').dxDateBox('option', 'value') < new Date())
+                {
+                    if (rowExpiryMandatory == true)
+                    {
+                        $('#xrow-ExpDate').dxDateBox('focus');
+                        return;
+                    }
+                }
+            }
+            var $canfocus = $('.enter-act :focusable');
+            var index = $canfocus.index(document.activeElement) + 1;
+            if (index >= $canfocus.length) index = 0;
+            $canfocus.eq(index).focus();
+            $canfocus.eq(index).select();
+        }
+    });
+    $(document).mouseup(function (e)
+    {
+        var container = $('#' + EditorID);
+        if (!container.is(e.target) && container.has(e.target).length === 0)
+        {
+            if (EditorStatus == false)
+                return;
+            if (EditorWorking == true)
+                return;
+            if ($('#xrow-Account').dxTextBox('option', 'value') == '')
+            {
+                $('#xrow-Account').dxTextBox('focus');
+                return;
+            }
+            if ($('#xrow-Quantity').dxNumberBox('option', 'value') == 0)
+            {
+                $('#xrow-Quantity').dxNumberBox('focus');
+                return;
+            }
+            if ($('#xrow-ExpDate').dxDateBox('option', 'value') == null || $('#xrow-ExpDate').dxDateBox('option', 'value') < new Date())
+            {
+                if (rowExpiryMandatory == true)
+                {
+                    $('#xrow-ExpDate').dxDateBox('focus');
+                    return;
+                }
+            }
+            SaveRow();
+        }
+    });
+
+    function addnew ()
+    {
+        if (EditorStatus == true)
+            return;
+
+         RowItemDetails=null;
+
+        RowKey = GeneratGuid();
+        rowExpiryMandatory = false;
+        rowDiscountAmount = 0;
+        rowvatAmount = 0;
+        EditorKey = null;
+        var count = $('#tb-rows tr').length + 1;
+        var str = '';
+        str += '<tr id="tr-' + count + '"  data-key="' + count + '" >'
+        str += '<td hidden id="td-ItemKey" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-Code" data-value="' + '' + '"></td>'
+        str += '<td hidden id="td-Display" data-value=""></td>'
+        str += '<td hidden id="td-Unit" data-value=""></td>'
+        str += '<td hidden id="td-ExpDate" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-UnitPrice" data-value="0"></td>'
+        str += '<td hidden id="td-SalesPrice" data-value="0"></td>'
+        str += '<td hidden id="td-Quantity" data-value="0"></td>'
+        str += '<td hidden id="td-Bonus" data-value="0"></td>'
+        str += '<td hidden id="td-Amount" data-value="0"></td>'
+        str += '<td hidden id="td-Discount" data-value="0"></td>'
+        str += '<td hidden id="td-UnitCost" data-value="0"></td>'
+        str += '<td hidden id="td-vatRate" data-value="0"></td>'
+        str += '<td hidden id="td-Total" data-value="0"></td>'
+        str += '</tr>'
+        $('#tb-rows').append(str);
+        EditorID = 'tr-' + count
+        LoadEditor($('#tr-' + count), count);
+    }
+
+    function SaveRow ()
+    {
+        if (EditorKey == null)
+            return;
+        var amount = 0;
+        amount = Number($('#xrow-UnitPrice').dxNumberBox('option', 'value') * $('#xrow-Quantity').dxNumberBox('option', 'value'));
+        var str = '';
+        str += '      <td ></td>'
+        str += '      <td >' + $('#xrow-Account').dxTextBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-Unit').dxSelectBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-ExpDate').dxDateBox('option', 'text') + '</td>'
+        str += '      <td >' + $('#xrow-Quantity').dxNumberBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-Bonus').dxNumberBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-UnitPrice').dxNumberBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-SalesPrice').dxNumberBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-Discount').dxTextBox('option', 'value') + '</td>'
+        str += '      <td >' + $('#xrow-vatRate').dxNumberBox('option', 'value') + ' %</td>'
+        str += '      <td >' + $('#xrow-Total').dxNumberBox('option', 'value') + '</td>'
+        str += '<td hidden id="td-ItemKey" data-value="' + EditorKey + '"></td>'
+        str += '<td hidden id="td-Code" data-value="' + EditorCode + '"></td>'
+        str += '<td hidden id="td-Display" data-value="' + $('#xrow-Account').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Unit" data-value="' + $('#xrow-Unit').dxSelectBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-UnitPrice" data-value="' + $('#xrow-UnitPrice').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-SalesPrice" data-value="' + $('#xrow-SalesPrice').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Quantity" data-value="' + $('#xrow-Quantity').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-ExpDate" data-value="' + $('#xrow-ExpDate').dxDateBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Bonus" data-value="' + $('#xrow-Bonus').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Amount" data-value="' + amount + '"></td>'
+        str += '<td hidden id="td-Discount" data-value="' + $('#xrow-Discount').dxTextBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-DiscountAmount" data-value="' + rowDiscountAmount + '"></td>'
+        str += '<td hidden id="td-vatRate" data-value="' + $('#xrow-vatRate').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Total" data-value="' + $('#xrow-Total').dxNumberBox('option', 'value') + '"></td>'
+        str += '<td hidden id="td-Key" data-value="' + RowKey + '"></td>'
+        str += '<td hidden id="td-ItemKind" data-value="' + 8 + '"></td>'
+        str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-vatAmount" data-value="' + rowvatAmount + '"></td>'
+        str += '<td hidden id="td-UnitCost" data-value="' + 0 + '"></td>'
+        str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-Description" data-value="' + '' + '"></td>'
+        str += '<td hidden id="td-CostCenter" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-Project" data-value="' + null + '"></td>'
+        str += '<td hidden id="td-ExpMandatory" data-value="' + rowExpiryMandatory + '"></td>'
+        str += '<td hidden id="td-ItemsDiscount" data-value="' + 0 + '"></td>'
+        $('#' + EditorID).empty();
+        $('#' + EditorID).append(str);
+        EditorStatus = false;
+        CalcAmount();
+    }
+
+    function LoadEditor (element, count)
+    {
+        EditorStatus = true;
+        var xe = element.clone();
+        $(element).empty();
+        var str = '';
+        str += '      <td style="padding:1px;">'
+        str += '              <div style="margin-top:3px">'
+        str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
+        str += '              </div>'
+        str += '          </td>>'
+        str += '      <td style="padding:1px;"><div id="xrow-Account"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-Unit"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-ExpDate"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-Quantity"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-Bonus"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-UnitPrice"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-SalesPrice"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-Discount"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-vatRate"></div></td>'
+        str += '      <td style="padding:1px;"><div id="xrow-Total"></div></td>'
+        $(element).append(str);
+
+        rowExpiryMandatory = $(xe).find('[id="td-ExpMandatory"]').data('value');
+        rowDiscountAmount = $(xe).find('[id="td-DiscountAmount"]').data('value');
+        rowvatAmount = $(xe).find('[id="td-vatAmount"]').data('value');
+
+        $('#xrow-Account').dxTextBox({
+            width: '100%',
+            onEnterKey: function (e)
+            {
+                if ($(xe).find('[id="td-Display"]').data('value') == $('#xrow-Account').dxTextBox('option', 'value'))
+                {
+                    if ($(xe).find('[id="td-Display"]').data('value') != '')
+                    {
+                        $('#xrow-Unit').dxSelectBox('focus');
+                        return;
+                    }
+                } else
+                {
+                    EditorWorking = true;
+                    OpenSearchItems();
+                }
+            },
+            value: $(xe).find('[id="td-Display"]').data('value')
+        });
+        EditorKey = $(xe).find('[id="td-ItemKey"]').data('value');
+        $('#xrow-Unit').dxSelectBox({
+            dataSource: '/api/inv/icore/ItemUnits?Key=' + $(xe).find('[id="td-ItemKey"]').data('value'),
+            displayExpr: 'Code',
+            valueExpr: 'Code',
+            width: '100%',
+            onFocusIn: function (e)
+            {
+                EditorWorking = true;
+            },
+            onFocusOut: function (e)
+            {
+                EditorWorking = false;
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+
+        $("#xrow-Unit").dxSelectBox("getDataSource").load().done(function (data)
+        {
+            if (data.length > 0)
+            {
+                $("#xrow-Unit").dxSelectBox("option", "value", data[ 0 ].Code);
+            }
+        });
+
+        $('#xrow-ExpDate').dxDateBox({
+            displayFormat: 'dd.MM.yyyy',
+            useMaskBehavior:true,
+            width: '100%',
+            value: $(xe).find('[id="td-ExpDate"]').data('value'),
+            onValueChanged: function (e)
+            {
+                if (e.value == null)
+                    return;
+                if (e.value < new Date())
+                {
+                    alert('You enter invalid expiry date');
+                    $('#xrow-ExpDate').dxDateBox('reset');
+                    return;
+                }
+            },
+            onFocusIn: function (e)
+            {
+                EditorWorking = true;
+            },
+            onFocusOut: function (e)
+            {
+                EditorWorking = false;
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-Quantity').dxNumberBox({
+            showSpinButtons: false,
+            min: 1,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-Quantity"]').data('value'),
+            onValueChanged: function (e)
+            {
+                EditAmount()
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-Bonus').dxNumberBox({
+            showSpinButtons: false,
+            min: 0,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-Bonus"]').data('value'),
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-UnitPrice').dxNumberBox({
+            showSpinButtons: false,
+            min: 1,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-UnitPrice"]').data('value'),
+            onValueChanged: function (e)
+            {
+                EditAmount()
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-SalesPrice').dxNumberBox({
+            showSpinButtons: false,
+            min: 0,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-SalesPrice"]').data('value'),
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-Amount').dxNumberBox({
+            showSpinButtons: false,
+            min: 0,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-Amount"]').data('value'),
+            elementAttr: {
+                class: 'enter-act'
+            },
+            readOnly: true
+        });
+        $('#xrow-Discount').dxTextBox({
+            showSpinButtons: false,
+            width: '100%',
+            value: $(xe).find('[id="td-Discount"]').data('value'),
+            onValueChanged: function (e)
+            {
+                EditAmount()
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-vatRate').dxNumberBox({
+            showSpinButtons: false,
+            min: 0,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-vatRate"]').data('value'),
+            onValueChanged: function (e)
+            {
+                EditAmount()
+            },
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-Total').dxNumberBox({
+            showSpinButtons: true,
+            min: 0,
+            format: '0,###.###',
+            width: '100%',
+            value: $(xe).find('[id="td-Total"]').data('value'),
+            readOnly: true,
+            elementAttr: {
+                class: 'enter-act'
+            }
+        });
+        $('#xrow-Account').dxTextBox('focus');
+    }
+
+    function EditAmount ()
+    {
+        //if (IsLoading == 1)
+        //    return;
+        var disKind = false;
+        var disstr = "";
+        disstr = $('#xrow-Discount').dxTextBox('option', 'value');
+        var disValue = 0;
+        if (disstr != '')
+        {
+            disstr = disstr.replace(/ /g, "");
+            if (disstr.indexOf('%') >= 0)
+            {
+                disstr = disstr.replace(/%/g, "");
+                disKind = true;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#xrow-Discount').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            } else
+            {
+                disKind = false;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#xrow-Discount').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            }
+        }
+      
+        var UnitPrice = $('#xrow-UnitPrice').dxNumberBox('option', 'value');
+        var Quantity = $('#xrow-Quantity').dxNumberBox('option', 'value');
+        var Amount = UnitPrice * Quantity;
+        var Discount = 0;
+        if (disKind == false)
+        {
+            Discount = disValue;
+        } else
+        {
+            if (BounsDiscount == true)
+            {
+                Discount = Number(Amount - (Amount / (1 + (disValue / 100)))).toFixed(4);
+            } else
+            {
+                Discount = Number(Number(disValue * (UnitPrice * Quantity) / 100).toFixed(4));
+            }
+        }
+        rowDiscountAmount = Discount;
+        var Total = 0;
+        Total = Number(Number(Amount - Discount).toFixed(4));
+        $('#xrow-Total').dxNumberBox('option', 'value', Number(Total.toFixed(4)));
+    }
+
+    function LoadData (key)
+    {
+        $.ajax({
+            type: "get",
+            url: "/api/Sales/idocuments/TransactionDetails",
+            data: {
+                key: key
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                var count = 1;
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '  <tr id="tr-' + count + '" data-key="' + count + '" >'
+                    str += ' <td></td> '
+                    str += '      <td >' + item.jnAccount.Display + '</td>'
+                    str += '      <td >' + item.Unit + '</td>'
+                    str += '      <td >' + item.strExpDate + '</td>'
+                    str += '      <td >' + item.Quantity + '</td>'
+                    str += '      <td >' + item.Bonus + '</td>'
+                    str += '      <td >' + item.UnitPrice + '</td>'
+                    str += '      <td >' + item.SalesPrice + '</td>'
+                    str += '      <td >' + item.DiscountText + '</td>'
+                    str += '      <td >' + item.vatRate + '</td>'
+                    str += '      <td >' + item.Total + '</td>'
+                    str += '<td hidden id="td-Code" data-value="' + item.jnAccount.Code + '"></td>'
+                    str += '<td hidden id="td-Display" data-value="' + item.jnAccount.Display + '"></td>'
+                    str += '<td hidden id="td-Key" data-value="' + item.Key + '"></td>'
+                    str += '<td hidden id="td-Index" data-value="' + count + '"></td>'
+                    str += '<td hidden id="td-ItemKind" data-value="' + item.ItemKind + '"></td>'
+                    str += '<td hidden id="td-ItemKey" data-value="' + item.ItemKey + '"></td>'
+                    str += '<td hidden id="td-ProDate" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-ExpDate" data-value="' + item.ExpDate + '"></td>'
+                    str += '<td hidden id="td-Color" data-value="' + item.Color + '"></td>'
+                    str += '<td hidden id="td-Size" data-value="' + item.Size + '"></td>'
+                    str += '<td hidden id="td-Unit" data-value="' + item.Unit + '"></td>'
+                    str += '<td hidden id="td-UnitPrice" data-value="' + item.UnitPrice + '"></td>'
+                    str += '<td hidden id="td-SalesPrice" data-value="' + item.SalesPrice + '"></td>'
+                    str += '<td hidden id="td-Quantity" data-value="' + item.Quantity + '"></td>'
+                    str += '<td hidden id="td-Bonus" data-value="' + item.Bonus + '"></td>'
+                    str += '<td hidden id="td-Amount" data-value="' + item.Amount + '"></td>'
+                    str += '<td hidden id="td-DiscountAmount" data-value="' + item.Discount + '"></td>'
+                    str += '<td hidden id="td-Discount" data-value="' + item.DiscountText + '"></td>'
+                    str += '<td hidden id="td-vatAmount" data-value="' + item.vatAmount + '"></td>'
+                    str += '<td hidden id="td-UnitCost" data-value="' + 0 + '"></td>'
+                    str += '<td hidden id="td-vatKey" data-value="' + item.vatKey + '"></td>'
+                    str += '<td hidden id="td-vatRate" data-value="' + item.vatRate + '"></td>'
+                    str += '<td hidden id="td-Total" data-value="' + item.Total + '"></td>'
+                    str += '<td hidden id="td-BatchKey" data-value="' + null + '"></td>'
+                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
+                    str += '<td hidden id="td-CostCenter" data-value="' + item.CostCenter + '"></td>'
+                    str += '<td hidden id="td-Project" data-value="' + item.Project + '"></td>'
+                    str += '<td hidden id="td-Batch" data-value="' + item.BatchDetails.Batch + '"></td>'
+                    str += '<td hidden id="td-Lot" data-value="' + item.BatchDetails.Lot + '"></td>'
+                    str += '<td hidden id="td-PartRate" data-value="' + item.BatchDetails.PartRate + '"></td>'
+                    str += '<td hidden id="td-PartPrice" data-value="' + item.BatchDetails.PartPrice + '"></td>'
+                    str += '  </tr>'
+                    $("#tb-rows").append(str);
+                    CalcAmount();
+                    count += 1;
+                }
+                CalcAmount();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function DeleteRow (key)
+    {
+        //if(RowItemDetails==null)
+        //{
+        //  $('#tr-' + key).remove();
+
+        //  EditorStatus = false;
+        //  EditorWorking = false;
+         
+        //  CalcAmount();
+        //  return;
+        //}
+       
+              $('#tr-' + key).remove();
+                        CalcAmount();
+                        EditorStatus = false;
+                        EditorWorking = false;
+                        return;
+
+        $.confirm({
+            title: 'Confirm',
+            content: 'Are you sure to delete row?',
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Delete',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        $('#tr-' + key).remove();
+                        CalcAmount();
+                        EditorStatus = false;
+                        EditorWorking = false;
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+
+    function CalcAmount ()
+    {
+         var selectedvatKind = $("#frm-vatKey").dxSelectBox('instance').option('selectedItem');
+         var vatKind=0;
+         vatKind=selectedvatKind.Calculate===false ? 0 :1;
+
+        var disKind = false;
+        var disstr = "";
+        disstr = $('#frm-ItemsDiscountText').dxTextBox('option', 'value');
+        var disValue = 0;
+        if (disstr != '')
+        {
+            disstr = disstr.replace(/ /g, "");
+            if (disstr.indexOf('%') >= 0)
+            {
+                disstr = disstr.replace(/%/g, "");
+                disKind = true;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#frm-ItemsDiscountText').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            } else
+            {
+                disKind = false;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#frm-ItemsDiscountText').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            }
+        }
+
+        var discountAmount = 0;
+        var total = 0;
+        $('#tb-rows').find('tr').each(function ()
+        {
+            total += ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+        });
+        if (disKind == true)
+        {
+            discountAmount = total * (disValue / 100);
+        } else
+        {
+            discountAmount = disValue;
+        }
+
+        var disPercent = 0;
+        disPercent = (discountAmount * 100) / total;
+
+        $('#tb-rows').find('tr').each(function ()
+        {
+            var lineTot = 0;
+            lineTot += ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+            $(this).find('[id="td-ItemsDiscount"]').data('value', (lineTot * (disPercent / 100)));
+            
+            var lineVAT = 0;
+            var linevatRate = 0;
+            linevatRate = $(this).find('[id="td-vatRate"]').data('value');
+            lineVAT = ((lineTot - (lineTot * (disPercent / 100))) * (linevatRate / 100)) * vatKind;
+            $(this).find('[id="td-vatAmount"]').data('value', lineVAT);
+
+
+        });
+
+        var totAmount = 0;
+        var totVAT = 0;
+        var totDiscount = 0;
+        var totItemDiscount = 0;
+
+        $('#tb-rows').find('tr').each(function ()
+        {
+            totAmount += ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+            totVAT += $(this).find('[id="td-vatAmount"]').data('value');
+            totDiscount += $(this).find('[id="td-DiscountAmount"]').data('value');
+            totItemDiscount += $(this).find('[id="td-ItemsDiscount"]').data('value');
+
+        });
+
+        $('#txt-Total').text(comma3(totAmount));
+        $('#txt-Net').text(comma3(totAmount - totItemDiscount));
+        $('#txt-Tax').text(comma3(totVAT));
+
+        $('#txt-NetTotal').text(comma3(totAmount - totItemDiscount + totVAT - $('#frm-PaymentDiscount').dxNumberBox('option', 'value')));
+        $('#txt-ItemsDiscountText').text(comma3(discountAmount));
+
+    }
+
+    function ChangefrmAccountKind (e)
+    {
+        $("#frm-AccountKey").dxLookup({
+            dataSource: '/api/icore/LoadAccounts?Kind=' + e.value
+        });
+        $('#frm-AccountKey').dxLookup('reset');
+    }
+    //Start Operation
+    function ValidateSave ()
+    {
+        var rowscount = $('#tb-rows tr').length;
+        if (rowscount == 0)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'There is no data in General Ledger!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        if ($('#frm-AccountKey').dxLookup('option', 'value') == null)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Please select master account!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        if ($('#frm-SourceWarehouse').dxSelectBox('option', 'value') == null)
+        {
+            $.alert({
+                title: 'Stop',
+                icon: 'fa fa-warning',
+                type: 'red',
+                content: 'Please select warehouse!',
+                buttons: {
+                    Ok: {
+                        text: 'ok'
+                    }
+                }
+            });
+            return false;
+        }
+        return true;
+    }
+
+    function SaveGeneralLedger ()
+    {
+        if (EditorID != null && EditorStatus == true)
+        {
+            $('#' + EditorID).empty();
+            EditorStatus = false;
+            EditorWorking = false;
+        }
+        if (ValidateSave() == false)
+        {
+            return;
+        }
+        $.confirm({
+            title: 'Confirm',
+            content: 'Save/update Transaction confirmation?',
+            type: 'red',
+            buttons: {
+                Delete: {
+                    text: 'Save/Update',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        //Start Update
+                        var values = [];
+                        $('#tb-rows').find('tr').each(function ()
+                        {
+                            var d = new Date($(this).find('[id="td-ExpDate"]').data('value'));
+                            //d.setDate(d.getDate() + 1);
+                            if (d.getFullYear() < 2000)
+                            {
+                                d = null;
+                            }
+                            values.push({
+                                Key: $(this).find('[id="td-Key"]').data('value'),
+                                Index: $(this).find('[id="td-Index"]').data('value'),
+                                ItemKind: $(this).find('[id="td-ItemKind"]').data('value'),
+                                ItemKey: $(this).find('[id="td-ItemKey"]').data('value'),
+                                ProDate: null,
+                                ExpDate: d,
+                                Color: $(this).find('[id="td-Color"]').data('value'),
+                                Size: $(this).find('[id="td-Size"]').data('value'),
+                                Unit: $(this).find('[id="td-Unit"]').data('value'),
+                                UnitPrice: $(this).find('[id="td-UnitPrice"]').data('value'),
+                                SalesPrice: $(this).find('[id="td-SalesPrice"]').data('value'),
+                                Quantity: $(this).find('[id="td-Quantity"]').data('value'),
+                                Bonus: $(this).find('[id="td-Bonus"]').data('value'),
+                                Amount: $(this).find('[id="td-Amount"]').data('value'),
+                                Discount: $(this).find('[id="td-DiscountAmount"]').data('value'),
+                                DiscountText: $(this).find('[id="td-Discount"]').data('value'),
+                                vatAmount: $(this).find('[id="td-vatAmount"]').data('value'),
+                                UnitCost: $(this).find('[id="td-UnitCost"]').data('value'),
+                                vatKey: $(this).find('[id="td-vatKey"]').data('value'),
+                                vatRate: $(this).find('[id="td-vatRate"]').data('value'),
+                                Total: $(this).find('[id="td-Total"]').data('value'),
+                                Batch: $(this).find('[id="td-BatchKey"]').data('value'),
+                                ConsumptionKind: $(this).find('[id="td-ConsumptionKind"]').data('value'),
+                                Status: $(this).find('[id="td-Status"]').data('value'),
+                                Description: $(this).find('[id="td-Description"]').data('value'),
+                                CostCenter: $(this).find('[id="td-CostCenter"]').data('value'),
+                                BatchDetails: {
+                                    Batch: $(this).find('[id="td-Batch"]').data('value'),
+                                    Lot: $(this).find('[id="td-Lot"]').data('value'),
+                                    PartRate: $(this).find('[id="td-PartRate"]').data('value'),
+                                    PartPrice: $(this).find('[id="td-PartPrice"]').data('value')
+                                }
+                            });
+                        });
+                        var voucher = $('#frm-Voucher').serialize();
+                        $.ajax({
+                            type: "post",
+                            url: "/api/Purchasing/idocuments/UpdatePurchaseInvoice",
+                            data: voucher + '&Data=' + JSON.stringify(values) + '&isNew=' + VoucherStatus,
+                            dataType: "json",
+                            success: function (response)
+                            {
+                                if (response.Status == true)
+                                {
+                                    exDocumentError(response);
+                                    return;
+                                }
+                                $('#No').text(response.VoucherNo);
+                                $('#OperationKey').val(response.OperationKey);
+                                $('#inf-Status').removeClass('bg-info');
+                                $('#inf-Status').addClass('bg-danger');
+                                $('#txt-Status').text(iShll.update);
+                                opk = response.OperationKey;
+                                VoucherStatus = false;
+                                PrintDocument();
+                            },
+                            failure: function (response)
+                            {
+                                alert(response);
+                            },
+                            error: function (response)
+                            {
+                                alert(response.responseText);
+                            }
+                        });
+                        //End Update
+                    }
+                },
+                Cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return;
+                    }
+                }
+            }
+        });
+    }
+    //Other Details show or hid
+    function ChangeDueDays (e)
+    {
+        var vd = new Date();
+        vd = $('#frm-InvoiceDate').dxDateBox('option', 'value');
+        var due = new Date();
+        $('#frm-DueDate').dxDateBox('option', 'value', due.setDate(vd.getDate() + e.value));
+    }
+
+    function PrintDocument ()
+    {
+        FinancialPrintTemplates(71, opk);
+    }
+
+    function OpenSearchItems ()
+    {
+        var value = '';
+        value = $('#xrow-Account').dxTextBox('option', 'value');
+        //value = value.replace(' ', '+');
+        //value = value.replace('(', '');
+        //value = value.replace(')', '');
+        $.ajax({
+            type: "get",
+            url: "/api/Purchasing/idocuments/SearchItemsCheck",
+            data: {
+                Key: value
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                if (response.length == 1)
+                {
+                    SelectOneItem(response[ 0 ]);
+                    return;
+                } else
+                {
+                    searchData = response;
+                    $('#con-SearchItems').empty();
+                    $("#con-SearchItems").load('/Purchasing/Selections/SearchItems');
+                    $("#mod-SearchItems").modal({
+                        backdrop: 'static'
+                    }).modal('toggle');
+                }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+
+    function cta4SearchItems (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [ {
+                icon: "selectall"
+            } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                $('#xrow-Account').dxTextBox('option', 'value', options.data.Display);
+                EditorKey = options.data.Key;
+                EditorCode = options.data.Code;
+                $("#xrow-Unit").dxSelectBox("reset");
+                $("#xrow-Unit").dxSelectBox({
+                    dataSource: '/api/inv/icore/ItemUnits?Key=' + options.data.Key
+                });
+                $("#xrow-Unit").dxSelectBox("getDataSource").load().done(function (data)
+                {
+                    if (data.length > 0)
+                    {
+                        $("#xrow-Unit").dxSelectBox("option", "value", data[ 0 ].Code);
+                    }
+                });
+                $.ajax({
+                    type: "get",
+                    url: "/api/inv/icore/InvoiceItemDetails",
+                    data: {
+                        Key: options.data.Key
+                    },
+                    dataType: "json",
+                    success: function (response)
+                    {
+                        RowItemDetails = response;
+                        rowExpiryMandatory = response.EnableBatch;
+                        $('#xrow-vatRate').dxNumberBox('option','value',response.vatRate);
+                        $('#xrow-UnitPrice').dxNumberBox('option','value',response.PurchasePrice);
+                        $('#xrow-SalesPrice').dxNumberBox('option','value',response.SalesPrice);
+                    },
+                    failure: function (response)
+                    {
+                        alert(response);
+                    },
+                    error: function (response)
+                    {
+                        alert(response.responseText);
+                    }
+                });
+                $('#xrow-Unit').dxSelectBox('focus');
+                EditorWorking = false;
+                $("#mod-SearchItems").modal('toggle');
+                $('#xrow-Unit').dxSelectBox('focus');
+            },
+        });
+    }
+    var ck = false;
+
+    function changeBounsDiscount (e)
+    {
+        //if(ck==true)
+        //return;
+        //ck=true;
+        //   var rowscount = $('#tb-rows tr').length;
+        //   if(rowscount>0){
+        //       alert('Not allowed to edit bouns discount when grid contain items.');
+        //            $('#cnt-IsBounsDiscount').dxCheckBox('option','value',e.previousValue);
+        //       return;
+        //   }
+        BounsDiscount = e.value;
+        //ck=false;
+    }
+
+    function SelectOneItem (data)
+    {
+        $('#xrow-Account').dxTextBox('option', 'value', data.Display);
+        EditorKey = data.Key;
+        EditorCode = data.Code;
+        $("#xrow-Unit").dxSelectBox("reset");
+        $("#xrow-Unit").dxSelectBox({
+            dataSource: '/api/inv/icore/ItemUnits?Key=' + data.Key
+        });
+        $("#xrow-Unit").dxSelectBox("getDataSource").load().done(function (data)
+        {
+            if (data.length > 0)
+            {
+                $("#xrow-Unit").dxSelectBox("option", "value", data[ 0 ].Code);
+            }
+        });
+        $.ajax({
+            type: "get",
+            url: "/api/inv/icore/InvoiceItemDetails",
+            data: {
+                Key: data.Key
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                RowItemDetails = response;
+                rowExpiryMandatory = response.EnableBatch;
+            
+                $('#xrow-vatRate').dxNumberBox('option','value',response.vatRate);
+                $('#xrow-UnitPrice').dxNumberBox('option','value',response.PurchasePrice);
+                $('#xrow-SalesPrice').dxNumberBox('option', 'value', response.SalesPrice);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+        $('#xrow-Unit').dxSelectBox('focus');
+        EditorWorking = false;
+        $('#xrow-Unit').dxSelectBox('focus');
+    }
+
+    function Changed_ItemsDiscountText ()
+    {
+        var disKind = false;
+        var disstr = "";
+        disstr = $('#frm-ItemsDiscountText').dxTextBox('option', 'value');
+        var disValue = 0;
+        if (disstr != '')
+        {
+            disstr = disstr.replace(/ /g, "");
+            if (disstr.indexOf('%') >= 0)
+            {
+                disstr = disstr.replace(/%/g, "");
+                disKind = true;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#frm-ItemsDiscountText').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            } else
+            {
+                disKind = false;
+                if ($.isNumeric(disstr) == true)
+                {
+                    disValue = Number(disstr);
+                } else
+                {
+                    $('#frm-ItemsDiscountText').dxTextBox('option', 'value', '');
+                    disValue = 0;
+                }
+            }
+        }
+        var discountAmount = 0;
+        var total = 0;
+        $('#tb-rows').find('tr').each(function ()
+        {
+            total += ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+        });
+        if (disKind == true)
+        {
+            discountAmount = total * (disValue / 100);
+        } else
+        {
+            discountAmount = disValue;
+        }
+
+           var disPercent=0;
+              disPercent=   (discountAmount*100)  / total;
+
+        $('#tb-rows').find('tr').each(function ()
+        {
+           var lineTot=0;
+            lineTot += ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+            $(this).find('[id="td-ItemsDiscount"]').data('value',(lineTot*(disPercent/100))); 
+            var lineVAT=0;
+            var linevatRate=0;
+            
+            linevatRate = $(this).find('[id="td-vatRate"]').data('value');
+            lineVAT = ((lineTot - (lineTot * (disPercent / 100))) * (linevatRate/100))  ;
+
+            $(this).find('[id="td-vatAmount"]').data('value', lineVAT);
+
+        });
+
+        var totAmount=0;
+        var totVAT=0;
+        var totDiscount=0;
+        var totItemDiscount=0;
+
+         $('#tb-rows').find('tr').each(function ()
+        {
+            totAmount +=  ($(this).find('[id="td-UnitPrice"]').data('value') * $(this).find('[id="td-Quantity"]').data('value')) - $(this).find('[id="td-DiscountAmount"]').data('value');
+            totVAT +=  $(this).find('[id="td-vatAmount"]').data('value');
+            totDiscount += $(this).find('[id="td-DiscountAmount"]').data('value');
+            totItemDiscount += $(this).find('[id="td-ItemsDiscount"]').data('value');
+
+        });
+
+        $('#txt-Total').text(comma3(totAmount));
+        $('#txt-Net').text(comma3(totAmount - totItemDiscount));
+        $('#txt-Tax').text(comma3(totVAT));
+
+        $('#txt-NetTotal').text(comma3(totAmount - totItemDiscount + totVAT - $('#frm-PaymentDiscount').dxNumberBox('option','value')));
+        $('#txt-ItemsDiscountText').text(comma3(discountAmount));
+
+
+    }
+</script>

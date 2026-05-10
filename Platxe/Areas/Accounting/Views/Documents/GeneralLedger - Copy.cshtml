@@ -1,0 +1,170 @@
+<style>
+            .shl-invoice-header > span {
+                margin-left:4px;
+                margin-right:4px;
+            }
+               .shl-invoice-header > p {
+                margin-top:4px;
+                margin-bottom:4px;
+            }
+         .xd > tr:hover .ccp {
+        display: block !important;
+    }
+    .xd > tr:hover {
+       height:80px;
+    }
+</style>
+<div class="invoice">
+    <div class="invoice-company">
+        <span class="float-end hidden-print">
+            <div class="btn-group">
+                <a href="javascript:;" class="btn btn-sm btn-yellow mb-10px"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> Export as PDF</a>
+                <a href="javascript:;" onclick="window.print()" class="btn btn-sm btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</a>
+            </div>
+        </span>
+        <div class="shl-invoice-header">
+            General Ledger<span class="badge bg-info text-dark">Update <small class="f-s-9">Status</small></span><span class="text-danger"> #78</span><small class="f-s-11">Monthly No: 444</small>
+            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+        </div>
+    </div>
+    <div class="invoice-header">
+        <div class="invoice-from">
+            <small>from</small>
+            <address class="mt-5px mb-5px">
+                <strong class="text-dark">Twitter, Inc.</strong><br>
+                Street Address<br>
+                City, Zip Code<br>
+                Phone: (123) 456-7890<br>
+                Fax: (123) 456-7890
+            </address>
+        </div>
+        <div class="invoice-to">
+            <small>to</small>
+            <address class="mt-5px mb-5px">
+                <strong class="text-dark">Company Name</strong><br>
+                Street Address<br>
+                City, Zip Code<br>
+                Phone: (123) 456-7890<br>
+                Fax: (123) 456-7890
+            </address>
+        </div>
+        <div class="invoice-date">
+            <small>Invoice / July period</small>
+            <div class="date text-dark mt-5px">August 3,2021</div>
+            <div class="invoice-detail">
+                #0000123DSS<br>
+                Services Product
+            </div>
+        </div>
+    </div>
+    <div class="invoice-content">
+        <div class="sticky">
+            <button type="button" id="btn-add" class="btn btn-yellow btn-sm text-dark">Add New Row</button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-invoice table-hover">
+                <thead>
+                    <tr>
+                        <th style="width:100px">Actions</th>
+                        <th style="max-width:70px">Kind</th>
+                        <th style="width:80px">Code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th style="width:100px">Debit</th>
+                        <th style="width:100px">Credit</th>
+                    </tr>
+                </thead>
+                <tbody class="xd">
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">1</small>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>
+                                    <button type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>
+                                </div>
+                            </div>
+                            <div class="ccp position-absolute d-none">
+                                <p class="f-s-10 p-0 m-0 mt-1"><b>Cost Center:</b> Muhammade H.H. Shllash sum dolor sit amet, consectetur adipiscing </p>
+                                <p class="f-s-10 p-0 m-0 mt-1"><b>Project:</b> Muhammade H.H. Shllash sum dolor sit amet, consectetur adipiscing </p>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-yellow text-dark">Current Account</span></td>
+                        <td><span class="text-dark">1001000101011</span></td>
+                        <td>
+                            <span class="text-dark">Website design &amp; development</span>
+                        </td>
+                        <td>Lorem ipsum dolor sit cu.</td>
+                        <td>0</td>
+                        <td>$2,500.00</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">1</small>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>
+                                    <button type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>
+                                </div>
+                            </div>
+                            <div class="ccp position-absolute d-none">
+                                <p class="f-s-10 p-0 m-0 mt-1"><b>Cost Center:</b> Muhammade H.H. Shllash sum dolor sit amet, consectetur adipiscing </p>
+                                <p class="f-s-10 p-0 m-0 mt-1"><b>Project:</b> Muhammade H.H. Shllash sum dolor sit amet, consectetur adipiscing </p>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-yellow text-dark">Cashbox</span></td>
+                        <td><span class="text-dark">1001000101011</span></td>
+                        <td><span class="text-dark">Website design &amp; development</span></td>
+                        <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</td>
+                        <td>0</td>
+                        <td>$2,500.00</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">1</small>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>
+                                    <button type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-yellow text-dark">Cashbox</span></td>
+                        <td><span class="text-dark">1001000101011</span></td>
+                        <td><span class="text-dark">Website design &amp; development</span></td>
+                        <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</td>
+                        <td>0</td>
+                        <td>$2,500.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="invoice-price">
+            <div class="invoice-price-left">
+                <div class="invoice-price-row">
+                    <div class="sub-price">
+                        <small>SUBTOTAL</small>
+                        <span class="text-dark">$4,500.00</span>
+                    </div>
+                    <div class="sub-price">
+                        <small>PAYPAL FEE (5.4%)</small>
+                        <span class="text-dark">$108.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="invoice-price-right">
+                <small>TOTAL</small> <span class="fw-bold">$4508.00</span>
+            </div>
+        </div>
+    </div>
+    <div class="invoice-note">
+        <hr>
+        <div class="text-left">
+            <div class="btn-group">
+                <button class="btn btn-sm btn-yellow mb-10px"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> Export as PDF</button>
+                <button class="btn btn-sm btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> Print</button>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,71 @@
+﻿var iShll;
+ 
+function LoadEnglishPlatx ()
+{
+    iShll = {
+        new: 'New',
+        update: 'Update',
+        confirm: 'Confirm',
+        confirm_delete_row: 'Are you sure to delete row?',
+        delete: 'Delete',
+        drfJan: 'January',
+        drfFeb: 'February',
+        drfMar: 'March',
+        drfApr: 'April',
+        drfMay: 'May',
+        drfJun: 'June',
+        drfJul: 'July',
+        drfAug: 'August',
+        drfSep: 'September',
+        drfOct: 'October',
+        drfNov: 'November',
+        drfDec: 'December',
+        drfSubmit: 'Submit',
+        drfCancel: 'Cancel',
+        drfFrom: 'From',
+        drfTo: 'To',
+        drfCustom: 'Custom',
+        drfToday: 'Today',
+        drfYesterday: 'Yesterday',
+        drfLast7Days: 'Last 7 Days',
+        drfLast30Days: 'Last 30 Days',
+        drfThisMonth: 'This Month',
+        drfThisYear: 'This Year',
+        drfseparator: ' To ',
+    }
+}
+
+function LoadArabicPlatx ()
+{
+    iShll = {
+        new: 'جديد',
+        update: 'تحديث',
+        confirm: 'تاكيد العملية',
+        confirm_delete_row: 'هل تريد حذف السطر؟',
+        delete: 'حذف',
+        drfJan: 'يناير',
+        drfFeb: 'فبراير',
+        drfMar: 'مارس',
+        drfApr: 'ابريل',
+        drfMay: 'مايو',
+        drfJun: 'يونيو',
+        drfJul: 'يوليو',
+        drfAug: 'اغسطس',
+        drfSep: 'سبتمبر',
+        drfOct: 'اوكتوبر',
+        drfNov: 'نوفمبر',
+        drfDec: 'ديسمبر',
+        drfSubmit: 'تطبيق',
+        drfCancel: 'الغاء',
+        drfFrom: 'من',
+        drfTo: 'الى',
+        drfCustom: 'مخصص',
+        drfToday: 'اليوم',
+        drfYesterday: 'الامس',
+        drfLast7Days: 'اخر 7 ايام',
+        drfLast30Days: 'اخر 30 يوم',
+        drfThisMonth: 'الشهر الحالي',
+        drfThisYear: 'السنة الحالية',
+        drfseparator: ' الى ',
+    }
+}

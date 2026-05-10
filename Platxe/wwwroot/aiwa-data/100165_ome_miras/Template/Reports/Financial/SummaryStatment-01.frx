@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="02/21/2014 01:49:03" ReportInfo.Modified="11/14/2020 12:24:40" ReportInfo.CreatorVersion="2020.3.7.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+
+   
+
+    private void ReportSummary1_AfterData(object sender, EventArgs e)
+    {
+  
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <TableDataSource Name="Report Data" ReferenceName="Report Data" DataType="System.Int32" Enabled="true">
+      <Column Name="RecNo" DataType="System.Int32"/>
+      <Column Name="VoucherNo" DataType="System.Int32"/>
+      <Column Name="VoucherDate" DataType="System.DateTime"/>
+      <Column Name="ReferenceNo" DataType="System.String"/>
+      <Column Name="ReferenceDate" DataType="System.DateTime"/>
+      <Column Name="ProjectCode" DataType="System.String"/>
+      <Column Name="ProjectName1" DataType="System.String"/>
+      <Column Name="ProjectName2" DataType="System.String"/>
+      <Column Name="Description" DataType="System.String"/>
+      <Column Name="Currency" DataType="System.String"/>
+      <Column Name="debit" DataType="System.Decimal"/>
+      <Column Name="credit" DataType="System.Decimal"/>
+      <Column Name="debitbalance" DataType="System.Decimal"/>
+      <Column Name="creditbalance" DataType="System.Decimal"/>
+      <Column Name="FirstDate" DataType="System.DateTime"/>
+      <Column Name="LastDate" DataType="System.DateTime"/>
+      <Column Name="Opk" DataType="System.Guid"/>
+      <Column Name="DocKind" DataType="System.Int32"/>
+      <Column Name="TransactionNo" DataType="System.String"/>
+      <Column Name="ac1Kind" DataType="System.Int32"/>
+      <Column Name="ac1Type" DataType="System.Int32"/>
+      <Column Name="ac2Kind" DataType="System.Int32"/>
+      <Column Name="ac2Type" DataType="System.Int32"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="CostCenter" DataType="System.Guid"/>
+      <Column Name="Project" DataType="System.Guid"/>
+      <Column Name="SPerson" DataType="System.Guid"/>
+      <Column Name="CPerson" DataType="System.Guid"/>
+      <Column Name="vatKey" DataType="System.Int32"/>
+      <Column Name="Amount" DataType="System.Decimal"/>
+      <Column Name="vatAmount" DataType="System.Decimal"/>
+      <Column Name="Total" DataType="System.Decimal"/>
+      <Column Name="isvat" DataType="System.Int32"/>
+      <Column Name="vatRate" DataType="System.Decimal"/>
+      <Column Name="Opening" DataType="System.Int32"/>
+      <Column Name="CostCode" DataType="System.String"/>
+      <Column Name="CostName1" DataType="System.String"/>
+      <Column Name="CostName2" DataType="System.String"/>
+      <Column Name="sys_EnglishName" DataType="System.String"/>
+      <Column Name="sys_ArabicName" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="Company Profile" ReferenceName="Company Profile" DataType="System.Int32" Enabled="true">
+      <Column Name="ArabicName" DataType="System.String"/>
+      <Column Name="EnglishName" DataType="System.String"/>
+      <Column Name="RegistrationCode" DataType="System.String"/>
+      <Column Name="CommercialType" DataType="System.String"/>
+      <Column Name="Kind" DataType="System.String"/>
+      <Column Name="VATRegestration" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+    </TableDataSource>
+    <TableDataSource Name="Current Account" ReferenceName="Current Account" DataType="System.Int32" Enabled="true">
+      <Column Name="Kind" DataType="System.Int32"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="ConPerson1" DataType="System.String"/>
+      <Column Name="ConPerson2" DataType="System.String"/>
+      <Column Name="vatReg" DataType="System.String"/>
+      <Column Name="Phone1" DataType="System.String"/>
+      <Column Name="Phone2" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+    </TableDataSource>
+    <Total Name="Total" Expression="[Report Data.debit]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="Total1" Expression="[Report Data.credit]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+    <Total Name="Total2" Expression="[Report Data.debit]-[Report Data.credit]" Evaluator="Data1" PrintOn="ReportSummary1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="15" OtherPagesSource="15" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="793.8" Height="222.8" AfterDataEvent="PageHeader1_AfterData">
+      <TextObject Name="Text1" Left="583.45" Top="38.9" Width="226.8" Height="28.35" Fill.Color="DarkGray" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text2" Left="680.4" Top="76.7" Width="80.05" Height="18.9" Text="مـن تاريخ" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text3" Left="680.4" Top="97.6" Width="80.05" Height="18.9" Text="الى تاريخ" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text46" Left="680.4" Top="123.95" Width="89.5" Height="18.9" Text="رمـــز الحساب" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text47" Left="680.4" Top="145.3" Width="89.5" Height="18.9" Text="اسم الحساب" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text4" Left="567" Top="76.7" Width="103.95" Height="18.9" Text="[Report Data.FirstDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text5" Left="567" Top="97.6" Width="103.95" Height="18.9" Text="[Report Data.LastDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text7" Left="406.35" Top="145.3" Width="264.6" Height="18.9" Text="[Current Account.Name1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text8" Left="715.85" Top="203.45" Width="75.6" Height="18.9" Text="التاريخ" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text48" Left="618.35" Top="203.45" Width="94.5" Height="18.9" Text="نوع المعاملة" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text49" Left="540.3" Top="203.45" Width="75.6" Height="18.9" Text="الرقم" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text50" Left="458.7" Top="203.45" Width="76.05" Height="18.9" Text="مدين" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text51" Left="379.65" Top="203.45" Width="76.05" Height="18.9" Text="دائن" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text53" Left="302.25" Top="203.45" Width="76.05" Height="18.9" Text="الرصيد" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text54" Left="8.1" Top="203.45" Width="287.5" Height="18.9" Text="الشرح" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <LineObject Name="Line1" Left="5.1" Top="222.8" Width="784" Diagonal="true"/>
+      <TextObject Name="Text6" Left="406.35" Top="123.95" Width="264.6" Height="18.9" Text="[Current Account.Code]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <PictureObject Name="Picture1" Left="28.35" Top="18.9" Width="160.65" Height="94.5" DataColumn="Company Profile.Logo"/>
+      <TextObject Name="Text64" Left="670.95" Top="75.6" Width="13.9" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text65" Left="670.95" Top="96.5" Width="13.9" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text66" Left="670.95" Top="122.85" Width="13.9" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text67" Left="670.95" Top="144.2" Width="13.9" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text68" Left="690.85" Top="38.9" Width="94.5" Height="28.35" Text="كشف حساب" VertAlign="Center" Font="Tahoma, 10pt, style=Bold"/>
+      <TextObject Name="Text69" Left="680.4" Top="171.2" Width="89.5" Height="18.9" Text="الاسم اللاتيني" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+      <TextObject Name="Text70" Left="406.35" Top="171.2" Width="264.6" Height="18.9" Text="[Current Account.Name2]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text71" Left="670.95" Top="170.1" Width="13.9" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 9pt"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="226.8" Width="793.8" Height="24.35" CanShrink="true" DataSource="Report Data">
+      <TextObject Name="Text9" Left="458.7" Width="76.05" Height="21.35" Text="[Report Data.debit]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text10" Left="379.65" Width="76.05" Height="21.35" Text="[Report Data.credit]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text13" Left="8.1" Width="287.5" Height="21.35" Text="[Report Data.Description]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text12" Left="302.25" Width="76.05" Height="21.35" Text="[Round([Report Data.debitbalance]-[Report Data.creditbalance],2)]" Format="Number" Format.UseLocale="true" Format.DecimalDigits="2" HorzAlign="Right" VertAlign="Center" WordWrap="false" Font="Tahoma, 8pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text14" Left="717.85" Width="71.6" Height="21.35" Text="[Report Data.VoucherDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text16" Left="619.35" Width="94.5" Height="21.35" Text="[Report Data.sys_ArabicName]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text17" Left="541.3" Width="75.6" Height="21.35" Text="[Report Data.VoucherNo]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <LineObject Name="Line3" Left="5.1" Top="23.45" Width="784" Anchor="Bottom, Left" Border.Width="0.25" Diagonal="true"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="255.15" Width="793.8" Height="56.7" Fill.Color="WhiteSmoke" AfterDataEvent="ReportSummary1_AfterData">
+      <TextObject Name="Text15" Left="529.2" Top="9.45" Width="75.6" Height="20.9" Text="الاجمالي" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text18" Left="377.1" Top="9.45" Width="113.4" Height="18.9" Text="[Total]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text19" Left="377.1" Top="37.8" Width="113.4" Height="18.9" Text="[Total1]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text59" Left="491.4" Width="28.35" Height="18.9" Text="مدين" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text61" Left="292.95" Top="33.8" Width="47.25" Height="20.9" Text="الرصيد" VertAlign="Center" Font="Tahoma, 9pt, style=Bold"/>
+      <TextObject Name="Text20" Left="141.75" Top="33.8" Width="141.75" Height="20.9" Text="[Total2]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="2" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text60" Left="491.4" Top="31.8" Width="28.35" Height="18.9" Text="دائن" VertAlign="Center" Font="Tahoma, 7pt"/>
+    </ReportSummaryBand>
+    <PageFooterBand Name="PageFooter1" Top="315.85" Width="793.8" Height="58.91">
+      <TextObject Name="Text45" Left="718.2" Top="12.45" Width="66.15" Height="18.9" Text="تاريخ الطباعة" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text37" Left="519.75" Top="12.45" Width="189" Height="18.9" Text="[Date]" Format="Date" Format.Format="F" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text62" Left="463.05" Top="12.45" Width="47.25" Height="18.9" Text="الصفحة" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text21" Left="419.8" Top="12.45" Width="37.8" Height="18.9" Anchor="Top, Right" Text="[Page#]" AutoWidth="true" HorzAlign="Right" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text22" Left="347.2" Top="12.45" Width="47.25" Height="18.9" Anchor="Top, Right" Text="[TotalPages#]" AutoWidth="true" HorzAlign="Right" Font="Tahoma, 7pt"/>
+      <TextObject Name="Text63" Left="396.9" Top="12.45" Width="19.35" Height="18.9" Anchor="Top, Right" Text="من" AutoWidth="true" Font="Tahoma, 7pt"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

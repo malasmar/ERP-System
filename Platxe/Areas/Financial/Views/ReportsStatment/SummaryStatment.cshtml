@@ -1,0 +1,329 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool showMonthlyNo = xConfig.ShowMonthlyNo(DB);
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"1365","Summary Account Statment")<small> @iT.T(xLan,"1307","Current Account")</small></h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1224","First Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1225","Last Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1219","Account")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().Lookup().ID("edKey").Width(300).DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(CLiFinancial.Selections.Dynamic.TransactionAccount(DB,xLan, ViewBag.CurrentKind)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("ChangeAccount")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 "></label>
+                    <div class="col-9">
+                        @Html.DevExtreme().CheckBox().ID("edOpening").Text(iT.T(xLan, "1226","Without Opening Balance"))
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="col-lg-5">
+                <div class="card border-0 mb-1 bg-yellow text-dark acc">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <h2 class="mb-0">Balance: <span id="txt-Balance">0.00</span></h2>
+                        </div>
+                        <hr class="bg-white-transparent-2 m-1 p-0">
+                        <div class="text-truncate">
+                            <table class="table-sm">
+                                <thead>
+                                    <tr>
+                                        <th style="width:auto"></th>
+                                        <th style="width:auto"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>@iT.T(xLan, "1228","Account Code")</td><td id="txt-Code"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1229","Name (Arabic )")</td><td id="txt-Arabic"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1230","Name (English)")</td><td id="txt-English"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1052","Debit Balance")</td><td id="txt-Debit"></td></tr>
+                                    <tr><td>@iT.T(xLan, "1053","Credit Balance")</td><td id="txt-Credit"></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                    <button type="button" class="btn btn-yellow test-dark btn-sm" onclick="PrintReport()">@iT.T(xLan, "1361","Print Report")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiFinancial.Reports.AccountStatment.StatmentSummary>().ID("grd-StatmentSummary")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ireports").Area("Financial")
+                    .Key("OperationKey")
+                    .LoadAction("SummaryStatment")
+                    .LoadParams(new
+                    {
+                        Key = new JS("getKey"),
+                        FirstDate = new JS("getFirst"),
+                        LastDate = new JS("getLast"),
+                        Opening = new JS("getOpening")
+                    })
+                    )
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(65).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1975", "DocumentKind")).Width(110).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan, true)).ValueExpr("Value").DisplayExpr("Display"));
+                        columns.AddFor(m => m.VoucherDate).Caption(iT.T(xLan, "1210", "Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1265", "No")).Width(80).CellTemplate(new JS("ctBold"));
+                        columns.AddFor(m => m.strMonthlyNo).Caption(iT.T(xLan, "2332", "Monthly No")).Width(90).CellTemplate(new JS("ctBold")).Visible(showMonthlyNo);
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).Width("100%").MinWidth(180).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##").CellTemplate(new JS("ctRedBold"));
+                        columns.AddFor(m => m.DebitBalance).Caption(iT.T(xLan, "1052", "Debit Balance")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.CreditBalance).Caption(iT.T(xLan, "1053", "Credit Balance")).Width(100).Format("0,###.##").CellTemplate(new JS("ctRedBold"));
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.DocumentKind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1365", "Summary Account Statment")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: 'edit' },
+                { icon: 'tips' }
+            ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        OpenTransaction(options.data.DocumentKind, options.data.OperationKey);
+                        break;
+                    case 1:
+                        ShowTransaction(options.data.DocumentKind, options.data.OperationKey);
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-StatmentSummary').dxDataGrid("instance").refresh().done(function ()
+        {
+            var debit = 0;
+            var credit = 0;
+            var balance = 0;
+            var dataGridInstance = $('#grd-StatmentSummary').dxDataGrid("instance");
+            debit = dataGridInstance.getTotalSummaryValue('Debit');
+            credit = dataGridInstance.getTotalSummaryValue('Credit');
+            balance = debit - credit;
+            $('#txt-Debit').text(comma(debit));
+            $('#txt-Credit').text(comma(credit));
+            $('#txt-Balance').text(comma(balance));
+        });
+    }
+    function getKey ()
+    {
+        return $('#edKey').dxLookup('option', 'value')
+    }
+    function getFirst ()
+    {
+        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        return fd.toLocaleDateString();
+    }
+    function getLast ()
+    {
+        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        return ld.toLocaleDateString();
+    }
+    function getOpening ()
+    {
+        return $('#edOpening').dxCheckBox('option', 'value')
+    }
+    function ChangeYear ()
+    {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+    function ChangeAccount ()
+    {
+        var AccountSelection = $("#edKey").dxLookup('instance').option('selectedItem');
+        $('#txt-Code').text(AccountSelection.Code);
+        $('#txt-Arabic').text(AccountSelection.Name1);
+        $('#txt-English').text(AccountSelection.Name2);
+        $('#txt-Debit').text('0.00');
+        $('#txt-Credit').text('0.00');
+        $('#txt-Balance').text('0.00');
+        RefreshGrid();
+    }
+    function OpenTransaction (Kind, Key)
+    {
+        switch (Kind)
+        {
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                window.open('/Financial/Documents/Transaction?Key=' + Key);
+                break;
+            case 9:
+                window.open('/Financial/Documents/JournalVoucher?Key=' + Key);
+                break;
+            case 80:
+                window.open('/Sales/Documents/SalesInvoice?Key=' + Key);
+                break;
+            case 83:
+                window.open('/Sales/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 71:
+                window.open('/Purchasing/Documents/PurchaseInvoice?Key=' + Key);
+                break;
+            case 75:
+                window.open('/Purchasing/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 77:
+                window.open('/Inventory/Documents/Consumption?Key=' + Key);
+                break;
+            case 78:
+                window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    function ShowTransaction (Kind, Key)
+    {
+        switch (Kind)
+        {
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+                ViewFinancialTransaction(Key);
+                break;
+            case 9:
+                ViewJournalVoucher(Key);
+                break;
+            case 80:
+            case 83:
+                ViewSalesInvoices(Key);
+                break;
+            case 71:
+            case 75:
+                ViewPurchaseInvoice(Key);
+                break;
+
+                window.open('/Purchasing/Documents/ReturnInvoice?Key=' + Key);
+                break;
+            case 77:
+                window.open('/Inventory/Documents/Consumption?Key=' + Key);
+                break;
+            case 78:
+                window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
+                break;
+            default:
+
+                break;
+        }
+    }
+    function PrintReport ()
+    {
+        window.open('/Print/Financial/SummaryAccountStatment?Key=' + getKey() + '&FirstDate=' + getFirst() + '&LastDate=' + getLast() + '&Opening=' + getOpening());
+    }
+</script>

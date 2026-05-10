@@ -1,0 +1,187 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .acc .widget {
+        margin-bottom: 4px;
+    }
+
+    .acc hr {
+        margin-top: 8px;
+        margin-bottom: 8px;
+    }
+</style>
+<h1 class="page-header">@iT.T(xLan,"2598","Items Cost Audit")<small class="me-1"></small></h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1224","First Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan, "1225","Last Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4"></div>
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-dark btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiInventory.Reports.Audit.ItemsCostAudit>().ID("grd-ItemsCostAudit")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Auditing")
+                    .Key("Key")
+                    .LoadAction("ItemsCostAudit")
+                    .LoadParams(new
+                    {
+                        FirstDate = new JS("getFirst"),
+                        LastDate = new JS("getLast")
+                    })
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(70).Fixed(true).FixedPosition(devFixd).AllowFixing(true);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).MinWidth(180).CellTemplate(new JS("ctWordWrap")).Fixed(true).FixedPosition(devFixd).AllowFixing(true);
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
+                        columns.AddFor(m => m.Unit).Caption(iT.T(xLan, "2379", "Unit")).Width(70);
+                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "2509", "Cost Date")).Width(70).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.Quantity).Caption(iT.T(xLan, "2464", "Quantity")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Cost).Caption(iT.T(xLan, "2468", "Unit Cost")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "2466", "Amount")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Opening).Caption(iT.T(xLan, "2599", "Opening")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Add).Caption(iT.T(xLan, "2600", "Add")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Purchase).Caption(iT.T(xLan, "2601", "Purchase")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.ReturnSales).Caption(iT.T(xLan, "2602", "Ret.Sales")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.ReConsumption).Caption(iT.T(xLan, "2603", "ReConsumption")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.TransferIn).Caption(iT.T(xLan, "2604", "Tra.In")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.Sales).Caption(iT.T(xLan, "2605", "Sales")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.ReturnPurchase).Caption(iT.T(xLan, "2606", "R.Purchase")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.Consumption).Caption(iT.T(xLan, "2607", "Consumption")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.TransferOut).Caption(iT.T(xLan, "2608", "Tra.Out")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.IncomeAmount).Caption(iT.T(xLan, "2609", "Income")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.OutcomeAmount).Caption(iT.T(xLan, "2610", "Outcome")).Width(80).Format("0,###.##");
+                        columns.AddFor(m => m.NetAmount).Caption(iT.T(xLan, "2611", "Net")).Width(70).Format("0,###.##");
+                        columns.AddFor(m => m.Diff).Caption(iT.T(xLan, "2612", "Diff")).Width(70).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Quantity).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Cost).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Opening).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Add).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Purchase).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.ReturnSales).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.ReConsumption).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.TransferIn).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Sales).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.ReturnPurchase).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Consumption).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.TransferOut).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.IncomeAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.OutcomeAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.NetAmount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Diff).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "2598", "Items Cost Audit")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+
+    function RefreshGrid ()
+    {
+        $('#grd-ItemsCostAudit').dxDataGrid("instance").refresh();
+    }
+
+    function getFirst ()
+    {
+        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        return fd.toLocaleDateString();
+    }
+    function getLast ()
+    {
+        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        return ld.toLocaleDateString();
+    }
+
+
+    function ChangeYear ()
+    {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+
+
+    function PrintReport ()
+    {
+        window.open('/Print/Financial/AccountStatment?Key=' + getKey() + '&FirstDate=' + getFirst() + '&LastDate=' + getLast() + '&Opening=' + getOpening());
+    }
+
+</script>

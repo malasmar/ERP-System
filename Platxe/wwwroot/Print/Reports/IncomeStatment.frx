@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="12/14/2022 13:03:03" ReportInfo.Modified="01/11/2023 17:20:26" ReportInfo.CreatorVersion="2019.3.5.0">
+  <Dictionary>
+    <TableDataSource Name="Company Profile" ReferenceName="Company Profile" DataType="System.Int32" Enabled="true">
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="RC" DataType="System.String"/>
+      <Column Name="vatRNo" DataType="System.String"/>
+      <Column Name="Commercial" DataType="System.String"/>
+      <Column Name="Economic" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="AddressEnglish" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+    </TableDataSource>
+    <TableDataSource Name="Report Details" ReferenceName="Report Details" DataType="System.Int32" Enabled="true">
+      <Column Name="Row" DataType="System.Int64"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="parent" DataType="System.String"/>
+      <Column Name="Level" DataType="System.Int32"/>
+      <Column Name="Kind" DataType="System.Int32"/>
+      <Column Name="PreviewAmount" DataType="System.Decimal"/>
+      <Column Name="Amount" DataType="System.Decimal"/>
+      <Column Name="ExpensesKind" DataType="System.Int32"/>
+      <Column Name="T" DataType="System.Int32"/>
+    </TableDataSource>
+    <Parameter Name="FirstDate" DataType="System.String"/>
+    <Parameter Name="LastDate" DataType="System.String"/>
+    <Total Name="Revenue" Expression="[Report Details.Amount]" Evaluator="Data1" PrintOn="ReportSummary1" EvaluateCondition="[Report Details.Level]==1 &amp;&amp; [Report Details.Kind]==3"/>
+    <Total Name="Expenses" Expression="[Report Details.Amount]" Evaluator="Data1" PrintOn="ReportSummary1" EvaluateCondition="[Report Details.Level]==1 &amp;&amp; [Report Details.Kind]==4"/>
+    <Total Name="Net" Expression="[Report Details.Amount]" Evaluator="Data1" PrintOn="ReportSummary1" EvaluateCondition="[Report Details.Level]==1"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" LeftMargin="5" TopMargin="5" RightMargin="5" BottomMargin="5" FirstPageSource="15" OtherPagesSource="15" Guides="9.45,746.55" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="756" Height="302.4" Guides="198.45">
+      <TextObject Name="Text1" Left="453.6" Top="6.45" Width="292.95" Height="28.35" Text="[Company Profile.Name1]" HorzAlign="Right" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text2" Left="9.45" Top="6.45" Width="292.95" Height="28.35" Text="[Company Profile.Name2]" VertAlign="Center" Font="Arial, 12pt, style=Bold"/>
+      <TableObject Name="Table1" Left="9.45" Top="35.8" Width="737.1" Height="113.4">
+        <TableColumn Name="Column1" Width="100.17"/>
+        <TableColumn Name="Column2" Width="204.12"/>
+        <TableColumn Name="Column3" Width="137.97"/>
+        <TableColumn Name="Column4" Width="213.57"/>
+        <TableColumn Name="Column5" Width="81.27"/>
+        <TableRow Name="Row1">
+          <TableCell Name="Cell1" Text="C.R. No" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell2" Text="[Company Profile.RC]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell3" Font="Arial, 10pt" RowSpan="5">
+            <PictureObject Name="Picture1" Width="137.97" Height="113.4" Dock="Fill" DataColumn="Company Profile.Logo"/>
+          </TableCell>
+          <TableCell Name="Cell4" Text="[Company Profile.RC]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell5" Text="رقم السجل" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row2">
+          <TableCell Name="Cell6" Text="VAT Number" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell7" Text="[Company Profile.vatRNo]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell8" Font="Arial, 10pt"/>
+          <TableCell Name="Cell9" Text="[Company Profile.vatRNo]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell10" Text="الرقم الضريبي" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row3">
+          <TableCell Name="Cell11" Text="Phone" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell12" Text="[Company Profile.Phone]-[Company Profile.Mobile]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell13" Font="Arial, 10pt"/>
+          <TableCell Name="Cell14" Text="[Company Profile.Phone]-[Company Profile.Mobile]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell15" Text="رقم الهاتف" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row4">
+          <TableCell Name="Cell16" Text="Fax" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell17" Text="[Company Profile.Fax]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell18" Font="Arial, 10pt"/>
+          <TableCell Name="Cell19" Text="[Company Profile.Fax]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell20" Text="الفاكس" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row5" Height="37.8">
+          <TableCell Name="Cell21" Text="Address" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell22" Text="[Company Profile.AddressEnglish]" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell23" Font="Arial, 10pt"/>
+          <TableCell Name="Cell24" Text="[Company Profile.Address]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell25" Text="العنوان" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <LineObject Name="Line1" Left="9.45" Top="151.2" Width="737.1" Visible="false" Border.Width="0.25" Diagonal="true"/>
+      <ShapeObject Name="Shape1" Left="-1" Top="152.65" Width="759.9" Height="38.8" Border.Color="White" Fill.Color="LightSkyBlue"/>
+      <ShapeObject Name="Shape2" Left="415.8" Top="152.65" Width="255.15" Height="38.8" Border.Color="White" Fill.Color="White"/>
+      <TextObject Name="Text3" Left="421.25" Top="153.2" Width="245.7" Height="22.9" Text="قائمة الدخل" HorzAlign="Center" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text4" Left="421.25" Top="174.1" Width="245.7" Height="18.9" Text="INCOME STATEMENT LIST" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text12" Left="650.4" Top="208.25" Width="67.8" Height="18.9" Text="من تاريخ" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text13" Left="650.4" Top="232.51" Width="67.8" Height="18.9" Text="الى تاريخ" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text30" Left="641.4" Top="208.25" Width="9.45" Height="18.9" Text=":" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text31" Left="641.4" Top="232.51" Width="9.45" Height="18.9" Text=":" VertAlign="Center" Font="Tahoma, 8pt, style=Bold"/>
+      <TextObject Name="Text41" Left="539.35" Top="208.25" Width="98.95" Height="18.9" Text="[FirstDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text57" Left="539.35" Top="232.51" Width="98.95" Height="18.9" Text="[LastDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+      <TextObject Name="Text6" Left="-9.45" Top="243.7" Width="198.45" Height="18.9" Text="الارقام الواردة في التقرير كلها بالريال السعودي" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt"/>
+      <TableObject Name="Table4" Left="9.45" Top="262.6" Width="737.65" Height="37.8">
+        <TableColumn Name="Column17" Width="121.55"/>
+        <TableColumn Name="Column18" Width="616.1"/>
+        <TableRow Name="Row8" Height="37.8">
+          <TableCell Name="Cell37" Border.Lines="Left, Right" Border.Color="White" Fill.Color="LightSkyBlue" Text="الفترة الحالية&#13;&#10;Current" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TableCell Name="Cell38" Border.Lines="Left, Right" Border.Color="White" Fill.Color="LightSkyBlue" Text="اسم الحساب&#13;&#10;ACCOUNT NAME" HorzAlign="Center" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <LineObject Name="Line4" Left="311.85" Top="-18.9" Border.Color="WhiteSmoke" Border.Width="0.25" Diagonal="true"/>
+    </PageHeaderBand>
+    <GroupHeaderBand Name="GroupHeader1" Top="305.63" Width="756" Height="0.45" Condition="[Report Details.Kind]" SortOrder="None">
+      <GroupHeaderBand Name="GroupHeader2" Top="309.3" Width="756" Height="1.45" Condition="[Report Details.Level]" SortOrder="None">
+        <DataBand Name="Data1" Top="313.98" Width="756" Height="29.8" CanGrow="true" DataSource="Report Details">
+          <TextObject Name="Text179" Left="37.8" Width="81.6" Height="26.9" CanGrow="true" GrowToBottom="true" Text="[Report Details.Amount]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <TextObject Name="Text5" Left="141.75" Width="534.2" Height="26.9" Text="[Report Details.Name1]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+          <LineObject Name="Line2" Left="28.35" Top="28.35" Width="699.3" Border.Color="WhiteSmoke" Border.Width="0.25" Diagonal="true"/>
+          <TextObject Name="Text7" Left="142.75" Top="7.45" Width="94.5" Height="19.9" Text="[Switch([Report Details.ExpensesKind]==0,&quot;مصروفات ادارية&quot;,[Report Details.ExpensesKind]==1,&quot;مصروفات تسويق&quot;,[Report Details.ExpensesKind]==2,&quot;مصروفات تشغيلية&quot;)]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 7pt">
+            <Highlight>
+              <Condition Expression="[Report Details.Kind]==3" Visible="false" Font="Arial, 10pt"/>
+              <Condition Expression="[Report Details.ExpensesKind]==2" Font="Arial, 10pt"/>
+            </Highlight>
+          </TextObject>
+          <TextObject Name="Text180" Left="680.4" Width="61.05" Height="26.9" Text="[Switch([Report Details.T]==0,&quot;حركة&quot;,[Report Details.T]==1,&quot;تجميعي&quot;)]" HorzAlign="Right" VertAlign="Center" Font="Tahoma, 8pt"/>
+        </DataBand>
+        <GroupFooterBand Name="GroupFooter2" Top="347" Width="756" Height="8.9">
+          <LineObject Name="Line3" Left="37.8" Top="4.45" Width="689.3" Border.Color="Silver" Border.Width="0.25" Diagonal="true"/>
+        </GroupFooterBand>
+      </GroupHeaderBand>
+      <GroupFooterBand Name="GroupFooter1" Top="359.13" Width="756" Height="2.45"/>
+    </GroupHeaderBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="364.8" Width="756" Height="141.75">
+      <LineObject Name="Line5" Left="37.8" Top="5.45" Width="690.4" Border.Color="Silver" Border.Width="0.25" Diagonal="true"/>
+      <TableObject Name="Table2" Left="434.7" Top="9.45" Width="292.95" Height="113.4">
+        <TableColumn Name="Column19" Width="113.4"/>
+        <TableColumn Name="Column20" Width="179.55"/>
+        <TableRow Name="Row9" Height="28.35">
+          <TableCell Name="Cell39" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="الاجمالي" HorzAlign="Right" VertAlign="Center" Font="Sakkal Majalla, 12pt, style=Bold" ColSpan="2"/>
+          <TableCell Name="Cell40" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" HorzAlign="Right" VertAlign="Center" Font="Sakkal Majalla, 12pt"/>
+        </TableRow>
+        <TableRow Name="Row10" Height="28.35">
+          <TableCell Name="Cell44" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="[Revenue]" Padding="2, 0, 2, 0" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold"/>
+          <TableCell Name="Cell45" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="مجموع الايرادات" Padding="2, 0, 2, 0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold"/>
+        </TableRow>
+        <TableRow Name="Row11" Height="28.35">
+          <TableCell Name="Cell49" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="[Expenses]" Padding="2, 0, 2, 0" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold"/>
+          <TableCell Name="Cell50" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="مجموع المصروفات" Padding="2, 0, 2, 0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold"/>
+        </TableRow>
+        <TableRow Name="Row12" Height="28.35">
+          <TableCell Name="Cell54" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="[Net]" Padding="2, 0, 2, 0" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold">
+            <Highlight>
+              <Condition Expression="Value &gt;0" Font="Arial, 10pt"/>
+            </Highlight>
+          </TableCell>
+          <TableCell Name="Cell55" Border.Lines="All" Border.Color="White" Fill.Color="LightSkyBlue" Text="صافي الربح او الخسارة" Padding="2, 0, 2, 0" HorzAlign="Right" VertAlign="Bottom" Font="Sakkal Majalla, 12pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+    </ReportSummaryBand>
+    <PageFooterBand Name="PageFooter1" Top="509.78" Width="756" Height="21.45" Border.Lines="Top">
+      <TextObject Name="Text33" Left="9.45" Width="100.5" Height="21.45" Text="Page [Page#] From [TotalPages#]" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text34" Left="113.4" Width="53.25" Height="21.45" Text="Print Date" Format="Number" Format.UseLocale="false" Format.DecimalDigits="2" Format.DecimalSeparator="." Format.GroupSeparator="," Format.NegativePattern="1" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+      <TextObject Name="Text35" Left="160.65" Width="213.9" Height="21.45" Text="[Date]" Format="Date" Format.Format="f" VertAlign="Center" WordWrap="false" Font="Tahoma, 7pt" Trimming="EllipsisCharacter"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

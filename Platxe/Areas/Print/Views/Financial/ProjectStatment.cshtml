@@ -1,0 +1,14 @@
+@{
+    ViewData["Title"] = "Print Preview";
+    Layout = null;// "~/Views/Shared/_Layout.cshtml";
+}
+@if (ViewData.ContainsKey("WebReport"))
+{
+    @await ViewBag.WebReport.Render();
+}
+else
+{
+    <h1>Fast Report .Net Core</h1>
+    <h2>&larr; Choose a report!</h2>
+    <p>Your awesome description!</p>
+}

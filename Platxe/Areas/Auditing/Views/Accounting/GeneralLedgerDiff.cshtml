@@ -1,0 +1,215 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+
+<h1 class="page-header">@iT.T(xLan,"2526","Unposted Operation")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+                <hr />
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiAccounting.Audit.GeneralLedgerDiff>().ID("grd-GeneralLedgerDiff")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icore").Area("Auditing")
+                    .Key("OperationKey")
+                    .LoadAction("GeneralLedgerDiff"))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(100).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1975", "DocumentKind")).Width(110).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan, true)).ValueExpr("Value").DisplayExpr("Display"));
+                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1210", "Date")).Width(100).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1265", "No")).Width(80);
+                        columns.AddFor(m => m.No).Caption(iT.T(xLan, "2527", "GL.No")).Width(80);
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).Width("100%").MinWidth(180).CellTemplate(new JS("ct4Description"));
+                        columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "2528", "Debit")).Width(90).Format("0,###.##");
+                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "2529", "Credit")).Width(90).Format("0,###.##");
+                        columns.AddFor(m => m.Diff).Caption(iT.T(xLan, "2530", "Diff")).Width(90).Format("0,###.##").CellTemplate(new JS("ctRedBold"));
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.DocumentKind).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Diff).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .Selection(s => s.Mode(SelectionMode.Multiple).ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always).AllowSelectAll(true).SelectAllMode(SelectAllMode.AllPages))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+
+<script class="append-on-ajax-script">
+    function ct4Action (container, options)
+    {
+        $('<div>').appendTo(container).dxMenu({
+            items: [
+                { icon: "edit" },
+                { icon: "print" },
+                { icon: "tips" } ],
+            showFirstSubmenuMode: 'onClick',
+            hideSubmenuOnMouseLeave: false,
+            onItemClick: function (e)
+            {
+                switch (e.itemIndex)
+                {
+                    case 0:
+                        if (e.itemData.icon == 'edit')
+                        {
+                            switch (options.data.DocumentKind)
+                            {
+                                case 3:
+                                case 4:
+                                case 5:
+                                case 6:
+                                case 7:
+                                case 8:
+                                    window.open('/Financial/Documents/Transaction?DocumentKind=' + options.data.DocumentKind + '&Key=' + options.data.OperationKey);
+                                    break;
+                                case 9:
+                                    window.open('/Financial/Documents/JournalVoucher?DocumentKind=' + options.data.DocumentKind + '&Key=' + options.data.OperationKey);
+                                    break;
+                                case 80:
+                                    window.open('/Sales/Documents/SalesInvoice?Key=' + options.data.OperationKey);
+                                    break;
+                                case 83:
+                                    window.open('/Sales/Documents/ReturnInvoice?Key=' + options.data.OperationKey);
+                                    break;
+                                case 71:
+                                    window.open('/Purchasing/Documents/PurchaseInvoice?Key=' + options.data.OperationKey);
+                                    break;
+                                case 75:
+                                    window.open('/Purchasing/Documents/ReturnInvoice?Key=' + options.data.OperationKey);
+                                    break;
+                                case 77:
+                                    window.open('/Inventory/Documents/Consumption?Key=' + options.data.OperationKey);
+                                    break;
+                                case 78:
+                                    window.open('/Inventory/Documents/ConsumptionReturn?Key=' + options.data.OperationKey);
+                                    break;
+
+                                    break;
+                                default:
+                                    window.open('/Financial/Documents/Transaction?DocumentKind=' + options.data.DocumentKind + '&Key=' + options.data.OperationKey);
+                                    break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        if (e.itemData.icon == 'trash')
+                        {
+                            DeleteRow(options.data.OperationKey, options.data.Name1);
+                        }
+                        if (e.itemData.icon == 'print')
+                        {
+                            FinancialPrintTemplates(options.data.DocumentKind, options.data.OperationKey);
+                        }
+
+                        break;
+                    case 2:
+                        if (e.itemData.icon == 'tips')
+                        {
+                            ViewJournalVoucher(options.data.OperationKey);
+                        }
+                        break;
+                }
+            },
+        });
+    }
+    function RefreshGrid ()
+    {
+        $('#grd-GeneralLedgerDiff').dxDataGrid("instance").refresh();
+    }
+   
+    function ct4Posted (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case true:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case false:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Status (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Description (container, options)
+    {
+        var str = '';
+        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
+        $(str).appendTo(container)
+    }
+
+   
+</script>

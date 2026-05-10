@@ -1,0 +1,92 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"2695","Reculculate VAT Decliration")</h1>
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+                <b>@iT.T(xLan,"2696","Operation")</b>
+            </div>
+            <div class="panel-body">
+                <h4>@iT.T(xLan, "2697","Reculculate Transaction Incloud VAT")</h4>
+                <hr />
+                <h6><b>@iT.T(xLan, "2698","Rcalculate VAT")</b></h6>
+                <div class="note note-secondary">
+                    <div class="note-content">
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8 "></i> @iT.T(xLan, "2699",".")</p>
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8"></i> @iT.T(xLan, "","")</p>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-2 ">@iT.T(xLan, "2700","Year")</label>
+                    @Html.DevExtreme().NumberBox().ID("ect-Year").Width(110).ShowSpinButtons(true)
+                </div>
+           
+            
+               
+                <div class="mt-2">
+                    <button class="btn btn-danger" onclick="ConfirmRecalculateVAT()">@iT.T(xLan, "2701","Recalculate VAT")</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+ 
+ 
+
+
+<script class="append-on-ajax-script">
+
+    function ConfirmRecalculateVAT ()
+    {
+       
+
+        $.confirm({
+            title: '<span class="f-s-10 text-grey">Confirm</span>',
+            content: 'Are you sure to post Recalculate VAT? can not undo this operation',
+            buttons: {
+                Delete: {
+                    text: 'Recalculate',
+                    btnClass: 'btn-red',
+                    action: function ()
+                    {
+                        RePostVAT();
+                    }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return
+                    }
+                }
+            }
+        });
+    }
+    function RePostVAT ()
+    {
+        var y = $('#ect-Year').dxNumberBox('option','value');
+        $.ajax({
+            type: "Post",
+            url: "/api/Auditing/icore/UpdateFinancialTransaction",
+            data:{Year:y},
+            dataType: "json",
+            success: function (response)
+            {
+                alert('Operation Complete');
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

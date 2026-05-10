@@ -1,0 +1,294 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="04/30/2019 23:31:57" ReportInfo.Modified="06/15/2019 23:24:48" ReportInfo.CreatorVersion="2018.1.4.0">
+  <ScriptText>using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows.Forms;
+using System.Drawing;
+using System.Data;
+using FastReport;
+using FastReport.Data;
+using FastReport.Dialog;
+using FastReport.Barcode;
+using FastReport.Table;
+using FastReport.Utils;
+
+namespace FastReport
+{
+  public class ReportScript
+  {
+    private void Data1_AfterData(object sender, EventArgs e)
+    {
+      switch(((Int32)Report.GetColumnValue(&quot;Request data.LeaveKind&quot;)))
+      {
+        case 0:
+          chka1.Checked=true;
+          chke1.Checked=true;
+        break;
+        case 1:
+          chka2.Checked=true;
+          chke2.Checked=true;
+          break;
+        case 2:
+          chka3.Checked=true;
+          chke3.Checked=true;
+          break;
+      }
+    }
+  }
+}
+</ScriptText>
+  <Dictionary>
+    <TableDataSource Name="e data" ReferenceName="e data" DataType="System.Int32" Enabled="true">
+      <Column Name="Key" DataType="System.Guid"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="ID" DataType="System.Int32"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="PaymentType" DataType="System.Int32"/>
+      <Column Name="Gender" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="BirthDate" DataType="System.DateTime"/>
+      <Column Name="N-ID" DataType="System.String"/>
+      <Column Name="ar-Nationality" DataType="System.String"/>
+      <Column Name="en-Nationality" DataType="System.String"/>
+      <Column Name="MaritalStatus" DataType="System.Int32"/>
+      <Column Name="AdultFollower" DataType="System.Int32"/>
+      <Column Name="ChildFollower" DataType="System.Int32"/>
+      <Column Name="Bank" DataType="System.String"/>
+      <Column Name="IBAN" DataType="System.String"/>
+      <Column Name="ENrollID" DataType="System.Int32"/>
+      <Column Name="BasicSalary" DataType="System.Decimal"/>
+      <Column Name="FundeKind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="FundeValue" DataType="System.Decimal"/>
+      <Column Name="FundeAmount" DataType="System.Decimal"/>
+      <Column Name="NetSalary" DataType="System.Decimal"/>
+      <Column Name="EmployeeInsKind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="EmployeeIns" DataType="System.Int32"/>
+      <Column Name="CompanyIns" DataType="System.Int32"/>
+      <Column Name="AllHome1" DataType="System.Decimal"/>
+      <Column Name="AllHome2" DataType="System.Decimal"/>
+      <Column Name="AllHome1Kind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="AllHome2Kind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="AllHome1Month" DataType="System.Int32"/>
+      <Column Name="AllHome2Month" DataType="System.Int32"/>
+      <Column Name="AllTransportation" DataType="System.Decimal"/>
+      <Column Name="AllComunication" DataType="System.Decimal"/>
+      <Column Name="AllFood1" DataType="System.Decimal"/>
+      <Column Name="AllOther1" DataType="System.Decimal"/>
+      <Column Name="AllOther2" DataType="System.Decimal"/>
+      <Column Name="AllOther3" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed1" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed2" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed3" DataType="System.Decimal"/>
+      <Column Name="EOS_Deposit" DataType="System.Decimal"/>
+      <Column Name="DepositAmount" DataType="System.Decimal"/>
+      <Column Name="StartDate" DataType="System.DateTime"/>
+      <Column Name="EndDate" DataType="System.DateTime"/>
+      <Column Name="occupation" DataType="System.String"/>
+      <Column Name="OccupationGrid" DataType="System.String"/>
+      <Column Name="JobDescription" DataType="System.String"/>
+      <Column Name="DailyHour" DataType="System.Decimal"/>
+      <Column Name="ShiftCard" DataType="System.String"/>
+      <Column Name="AnnualDays" DataType="System.Int32"/>
+      <Column Name="AnnualBalance" DataType="System.Decimal"/>
+      <Column Name="LastReturn" DataType="System.DateTime"/>
+      <Column Name="ContractKind" DataType="System.Int32"/>
+      <Column Name="VacationKind" DataType="System.Int32"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="xPhone" DataType="System.String"/>
+      <Column Name="xMobile" DataType="System.String"/>
+      <Column Name="xAddress" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Status" DataType="System.Int32"/>
+      <Column Name="GrpCode" DataType="System.String"/>
+      <Column Name="GrpName1" DataType="System.String"/>
+      <Column Name="GrpName2" DataType="System.String"/>
+      <Column Name="ClsCode" DataType="System.String"/>
+      <Column Name="ClsName1" DataType="System.String"/>
+      <Column Name="ClsName2" DataType="System.String"/>
+      <Column Name="DepCode" DataType="System.String"/>
+      <Column Name="DepName1" DataType="System.String"/>
+      <Column Name="DepName2" DataType="System.String"/>
+      <Column Name="CitCode" DataType="System.String"/>
+      <Column Name="CitName1" DataType="System.String"/>
+      <Column Name="CitName2" DataType="System.String"/>
+      <Column Name="LocCode" DataType="System.String"/>
+      <Column Name="LocName1" DataType="System.String"/>
+      <Column Name="LocName2" DataType="System.String"/>
+      <Column Name="TemCode" DataType="System.String"/>
+      <Column Name="TemName1" DataType="System.String"/>
+      <Column Name="TemName2" DataType="System.String"/>
+      <Column Name="emp_LastRetDate" DataType="System.DateTime"/>
+      <Column Name="emp_LastAnnualDay" DataType="System.Int32"/>
+      <Column Name="emp_ServiceAfterReturn" DataType="System.Int32"/>
+      <Column Name="emp_AllowVacation" DataType="System.Int32"/>
+      <Column Name="LeavK1" DataType="System.Int32"/>
+      <Column Name="LeavK2" DataType="System.Int32"/>
+      <Column Name="LeavK3" DataType="System.Int32"/>
+      <Column Name="LeavK4" DataType="System.Int32"/>
+      <Column Name="LeavK5" DataType="System.Int32"/>
+      <Column Name="LeavK6" DataType="System.Int32"/>
+      <Column Name="LeavK7" DataType="System.Int32"/>
+      <Column Name="ServiceDays" DataType="System.Int32"/>
+      <Column Name="totalSalaryx" DataType="System.Decimal"/>
+      <Column Name="txtSalary" DataType="System.String"/>
+    </TableDataSource>
+    <TableDataSource Name="Request data" ReferenceName="Request data" DataType="System.Int32" Enabled="true">
+      <Column Name="RecNo" DataType="System.Int32"/>
+      <Column Name="CreatDate" DataType="System.DateTime"/>
+      <Column Name="SlipNo" DataType="System.Int32"/>
+      <Column Name="eKey" DataType="System.Guid"/>
+      <Column Name="ID" DataType="System.Int32"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="DepartmentN1" DataType="System.String"/>
+      <Column Name="DepartmentN2" DataType="System.String"/>
+      <Column Name="GroupN1" DataType="System.String"/>
+      <Column Name="GroupN2" DataType="System.String"/>
+      <Column Name="ClassN1" DataType="System.String"/>
+      <Column Name="ClassN2" DataType="System.String"/>
+      <Column Name="LeaveKind" DataType="System.Int32"/>
+      <Column Name="LeaveDate" DataType="System.DateTime"/>
+      <Column Name="Description" DataType="System.String"/>
+      <Column Name="cs1" DataType="System.Int32"/>
+      <Column Name="cs2" DataType="System.Int32"/>
+      <Column Name="cs3" DataType="System.Int32"/>
+      <Column Name="cs4" DataType="System.Int32"/>
+      <Column Name="cu1" DataType="System.Int32"/>
+      <Column Name="cd1" DataType="System.DateTime"/>
+      <Column Name="cu2" DataType="System.Int32"/>
+      <Column Name="cd2" DataType="System.DateTime"/>
+      <Column Name="cu3" DataType="System.Int32"/>
+      <Column Name="cd3" DataType="System.DateTime"/>
+      <Column Name="cu4" DataType="System.Int32"/>
+      <Column Name="cd4" DataType="System.DateTime"/>
+      <Column Name="ms1" DataType="System.String"/>
+      <Column Name="ms2" DataType="System.String"/>
+      <Column Name="ms3" DataType="System.String"/>
+      <Column Name="ms4" DataType="System.String"/>
+      <Column Name="e1Name1" DataType="System.String"/>
+      <Column Name="e1Name2" DataType="System.String"/>
+      <Column Name="e2Name1" DataType="System.String"/>
+      <Column Name="e2Name2" DataType="System.String"/>
+      <Column Name="e3Name1" DataType="System.String"/>
+      <Column Name="e3Name2" DataType="System.String"/>
+      <Column Name="e4Name1" DataType="System.String"/>
+      <Column Name="e4Name2" DataType="System.String"/>
+      <Column Name="LeaveDays" DataType="System.Int32"/>
+      <Column Name="LeaveDays2" DataType="System.Int32"/>
+      <Column Name="Year" DataType="System.Int32"/>
+      <Column Name="Month" DataType="System.Int32"/>
+      <Column Name="TikStatus" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="BookType" DataType="System.Int32"/>
+      <Column Name="TikAir" DataType="System.String"/>
+      <Column Name="TikDate" DataType="System.DateTime"/>
+      <Column Name="TikTime" DataType="System.TimeSpan"/>
+      <Column Name="TikRetDate" DataType="System.DateTime"/>
+      <Column Name="TikRetTime" DataType="System.TimeSpan"/>
+      <Column Name="TikDescription" DataType="System.String"/>
+      <Column Name="TikPrice" DataType="System.Decimal"/>
+      <Column Name="ExitReturn" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="v1Kind" DataType="System.Int32"/>
+      <Column Name="v1Days" DataType="System.Int32"/>
+      <Column Name="v2Kind" DataType="System.Int32"/>
+      <Column Name="v2Days" DataType="System.Int32"/>
+      <Column Name="Balance" DataType="System.Int32"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1">
+    <PageHeaderBand Name="PageHeader1" Width="718.2" Height="141.75">
+      <PictureObject Name="Picture1" Left="28.35" Top="9.45" Width="330.75" Height="103.95" Image="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"/>
+      <TextObject Name="Text1" Left="425.25" Top="122.85" Width="132.3" Height="18.9" Text="أذن خـــــــــــروج وتأخير" HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text2" Left="170.1" Top="122.85" Width="245.7" Height="18.9" Text="permission –Authorization and Late " HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="Data1" Top="145.75" Width="718.2" Height="710.75" AfterDataEvent="Data1_AfterData" AfterLayoutEvent="Data1_AfterLayout" DataSource="Request data">
+      <ShapeObject Name="Shape1" Left="75.6" Width="585.9" Height="292.95"/>
+      <TextObject Name="Text3" Left="585.9" Top="37.8" Width="66.15" Height="18.9" Text="التاريخ" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text4" Left="585.9" Top="66.15" Width="66.15" Height="18.9" Text="الاسم" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text5" Left="567" Top="94.5" Width="85.05" Height="18.9" Text="طبيعة المغادرة" HorzAlign="Right" VertAlign="Center"/>
+      <CheckBoxObject Name="chka1" Left="633.15" Top="122.85" Width="18.9" Height="18.9" Checked="false"/>
+      <CheckBoxObject Name="chka2" Left="633.15" Top="141.75" Width="18.9" Height="18.9" Checked="false"/>
+      <CheckBoxObject Name="chka3" Left="633.15" Top="160.65" Width="18.9" Height="18.9" Checked="false"/>
+      <TextObject Name="Text6" Left="576.45" Top="122.85" Width="47.25" Height="18.9" Text="رسمي" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text7" Left="576.45" Top="141.75" Width="47.25" Height="18.9" Text="شخصي" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text8" Left="576.45" Top="160.65" Width="47.25" Height="18.9" Text="طارئ" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text9" Left="85.05" Top="37.8" Width="56.7" Height="18.9" Text="Date" VertAlign="Center"/>
+      <TextObject Name="Text10" Left="85.05" Top="66.15" Width="56.7" Height="18.9" Text="Name" VertAlign="Center"/>
+      <TextObject Name="Text11" Left="85.05" Top="94.5" Width="94.5" Height="18.9" Text="Leave Kind" VertAlign="Center"/>
+      <TextObject Name="Text12" Left="103.95" Top="122.85" Width="85.05" Height="18.9" Text="Official " VertAlign="Center"/>
+      <TextObject Name="Text13" Left="103.95" Top="141.75" Width="85.05" Height="18.9" Text="Personal " VertAlign="Center"/>
+      <TextObject Name="Text14" Left="103.95" Top="160.65" Width="85.05" Height="18.9" Text="Emergency " VertAlign="Center"/>
+      <TextObject Name="Text15" Left="425.25" Top="198.45" Width="226.8" Height="18.9" Text="الغرض من الخروج/ التأخير " HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text16" Left="94.5" Top="198.45" Width="226.8" Height="18.9" Text="Purpose of out going/Late" VertAlign="Center"/>
+      <TextObject Name="Text17" Left="624.7" Top="264.6" Width="28.35" Height="18.9" Text="المدة " VertAlign="Center"/>
+      <TextObject Name="Text18" Left="596.35" Top="264.6" Width="28.35" Height="18.9" Text="من" VertAlign="Center"/>
+      <TextObject Name="Text19" Left="482.95" Top="264.6" Width="28.35" Height="18.9" Text="الى" VertAlign="Center"/>
+      <TextObject Name="Text20" Left="83.05" Top="264.6" Width="66.15" Height="18.9" Text="Duration" VertAlign="Center"/>
+      <TextObject Name="Text21" Left="146.75" Top="264.6" Width="47.25" Height="18.9" Text="From" VertAlign="Center"/>
+      <TextObject Name="Text22" Left="265.6" Top="264.6" Width="47.25" Height="18.9" Text="To" VertAlign="Center"/>
+      <CheckBoxObject Name="chke1" Left="85.05" Top="122.85" Width="18.9" Height="18.9" Checked="false"/>
+      <CheckBoxObject Name="chke2" Left="85.05" Top="141.75" Width="18.9" Height="18.9" Checked="false"/>
+      <CheckBoxObject Name="chke3" Left="85.05" Top="160.65" Width="18.9" Height="18.9" Checked="false"/>
+      <ShapeObject Name="Shape2" Left="75.6" Top="293.95" Width="585.9" Height="122.85"/>
+      <TextObject Name="Text25" Left="585.9" Top="302.4" Width="66.15" Height="18.9" Text="مدير الإدارة " HorzAlign="Right" VertAlign="Center" Font="Arial, 10pt, style=Bold"/>
+      <TextObject Name="Text26" Left="472.5" Top="37.8" Width="103.95" Height="18.9" Text="[Request data.CreatDate]" Format="Custom" Format.Format="dd.MM.yyyy" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text27" Left="160.65" Top="37.8" Width="94.5" Height="18.9" Text="[Request data.CreatDate]" Format="Custom" Format.Format="dd.MM.yyyy" VertAlign="Center"/>
+      <TextObject Name="Text28" Left="415.8" Top="66.15" Width="160.65" Height="18.9" Text="[Request data.Name1]" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text30" Left="160.65" Top="66.15" Width="189" Height="18.9" Text="[Request data.Name2]" VertAlign="Center"/>
+      <TextObject Name="Text31" Left="113.4" Top="222.35" Width="510.3" Height="37.8" Text="[Request data.Description]" HorzAlign="Center" VertAlign="Center"/>
+      <TextObject Name="Text32" Left="519.75" Top="264.6" Width="66.15" Height="18.9" Text="[Request data.LeaveHour]" Format="Custom" Format.Format="" VertAlign="Center"/>
+      <TextObject Name="Text33" Left="406.35" Top="264.6" Width="75.6" Height="18.9" Text="[Request data.ReturnHour]" Format="Custom" Format.Format="" VertAlign="Center"/>
+      <TextObject Name="Text34" Left="189" Top="264.6" Width="66.15" Height="18.9" Text="[Request data.LeaveHour]" Format="Custom" Format.Format="" VertAlign="Center"/>
+      <TextObject Name="Text35" Left="302.4" Top="264.6" Width="75.6" Height="18.9" Text="[Request data.ReturnHour]" Format="Custom" Format.Format="" VertAlign="Center"/>
+      <ShapeObject Name="Shape3" Left="75.6" Top="417.8" Width="585.9" Height="160.65"/>
+      <TextObject Name="Text36" Left="406.35" Top="425.25" Width="160.65" Height="18.9" Text="ملاحظات موظف الاستقبال  " HorzAlign="Right"/>
+      <TextObject Name="Text37" Left="236.25" Top="425.25" Width="170.1" Height="18.9" Text="Reception Remarks "/>
+      <TextObject Name="Text38" Left="444.15" Top="481.95" Width="75.6" Height="18.9" Text="وقت الخروج" HorzAlign="Right"/>
+      <TextObject Name="Text39" Left="226.8" Top="481.95" Width="64.6" Height="18.9" Text="Time Out "/>
+      <TextObject Name="Text40" Left="444.15" Top="510.3" Width="75.6" Height="18.9" Text="وقت العودة " HorzAlign="Right"/>
+      <TextObject Name="Text41" Left="226.8" Top="510.3" Width="64.6" Height="18.9" Text="Time In"/>
+      <TextObject Name="Text42" Left="85.05" Top="453.6" Width="557.55" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text43" Left="302.4" Top="481.95" Width="141.75" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text44" Left="302.4" Top="510.3" Width="141.75" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text23" Left="510.3" Top="585.9" Width="151.2" Height="18.9" Text="يحول إلى شئون الموظفين :" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text24" Left="75.6" Top="585.9" Width="170.1" Height="18.9" Text="Send to personnel Dept" VertAlign="Center"/>
+      <TextObject Name="Text45" Left="614.25" Top="538.65" Width="37.8" Height="18.9" Text="الاسم " HorzAlign="Right"/>
+      <TextObject Name="Text46" Left="425.25" Top="538.65" Width="37.8" Height="18.9" Text="التوقيع" HorzAlign="Right"/>
+      <TextObject Name="Text47" Left="292.95" Top="538.65" Width="28.35" Height="18.9" Text="Sig" HorzAlign="Right"/>
+      <TextObject Name="Text48" Left="85.05" Top="538.65" Width="47.25" Height="18.9" Text="Name"/>
+      <TextObject Name="Text49" Left="94.5" Top="605.8" Width="557.55" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text50" Left="94.5" Top="624.7" Width="557.55" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text51" Left="94.5" Top="643.6" Width="557.55" Height="18.9" Text="...................................................................................................................................................." HorzAlign="Right"/>
+      <TextObject Name="Text52" Left="585.9" Top="330.75" Width="66.15" Height="18.9" Text="الاسم" HorzAlign="Right"/>
+      <TextObject Name="Text53" Left="585.9" Top="359.1" Width="66.15" Height="18.9" Text="حالة الطلب" HorzAlign="Right"/>
+      <TextObject Name="Text54" Left="378" Top="330.75" Width="198.45" Height="18.9" Text="[Request data.e4Name1]" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text55" Left="151.2" Top="330.75" Width="198.45" Height="18.9" Text="[Request data.e4Name2]" VertAlign="Center"/>
+      <TextObject Name="Text56" Left="85.05" Top="330.75" Width="56.7" Height="18.9" Text="Name"/>
+      <TextObject Name="Text57" Left="85.05" Top="359.1" Width="56.7" Height="18.9" Text="Status"/>
+      <TextObject Name="Text58" Left="481.95" Top="359.1" Width="94.5" Height="18.9" Text="[IIf([Request data.cs4]==1,&quot;موافق&quot;,&quot;غير موافق&quot;)]" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text59" Left="151.2" Top="359.1" Width="94.5" Height="18.9" Text="[IIf([Request data.cs4]==1,&quot;Agree&quot;,&quot;No Agree&quot;)]" VertAlign="Center"/>
+      <TextObject Name="Text61" Left="576.45" Top="37.8" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text62" Left="576.45" Top="66.15" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text63" Left="141.75" Top="37.8" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text64" Left="141.75" Top="66.15" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text65" Left="576.45" Top="330.75" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text66" Left="576.45" Top="359.1" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text67" Left="141.75" Top="330.75" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text68" Left="141.75" Top="359.1" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text69" Left="444.15" Top="481.95" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text70" Left="444.15" Top="510.3" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text71" Left="614.25" Top="538.65" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text72" Left="126.85" Top="538.65" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text74" Left="292.95" Top="481.95" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text75" Left="292.95" Top="510.3" Width="9.45" Height="18.9" Text=":" HorzAlign="Right" VertAlign="Center"/>
+      <TextObject Name="Text29" Left="604.8" Top="661.5" Width="94.5" Height="18.9" Text="تاريخ الطباعة" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text73" Left="368.55" Top="661.5" Width="236.25" Height="18.9" Text="[Date]" HorzAlign="Right" VertAlign="Center" Font="Arial, 7pt"/>
+      <TextObject Name="Text76" Left="472.5" Top="538.65" Width="141.75" Height="18.9" Text="........................................................." HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
+      <TextObject Name="Text78" Left="132.3" Top="538.65" Width="151.2" Height="18.9" Text="........................................................." HorzAlign="Right" VertAlign="Center" Font="Arial, 6pt"/>
+    </DataBand>
+  </ReportPage>
+</Report>

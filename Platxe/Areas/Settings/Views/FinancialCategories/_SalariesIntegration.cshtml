@@ -1,0 +1,264 @@
+@model CLiFinancial.Cards.SalariesIntegration
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    List<CLiFinancial.Selections.Dynamic> data = CLiFinancial.Selections.Dynamic.TransactionAccount(DB, xLan, PLenums.TransactionAccount.Expenses);
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1820","Current Account Activity")</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+    </div>
+    <form id="frm-SalariesIntegration" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <hr />
+            <ul class="nav nav-pills mb-2">
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-1" data-bs-toggle="tab" class="nav-link active">
+                        <span class="d-sm-none">@iT.T(xLan,"2235","Accrual")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"2235","Accrual")</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-2" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"2236","Allowances")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"2236","Allowances")</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#nav-pills-tab-3" data-bs-toggle="tab" class="nav-link">
+                        <span class="d-sm-none">@iT.T(xLan,"2237","Deductions")</span>
+                        <span class="d-sm-block d-none">@iT.T(xLan,"2237","Deductions")</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content p-3 rounded-top panel rounded-0 m-0">
+                <div class="tab-pane fade active show" id="nav-pills-tab-1">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2238","BasicSalary")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.BasicSalary).ID("cnt-BasicSalary").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2239","Overtiem")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Overtiem).ID("cnt-Overtiem").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2240","Reward")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Reward).ID("cnt-Reward").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2241","Bonus")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Bonus).ID("cnt-Bonus").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2242","Commission")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Commission).ID("cnt-Commission").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2243","AnnualVacation")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AnnualVacation).ID("cnt-AnnualVacation").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2244","Tickets")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Tickets).ID("cnt-Tickets").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2245","EndService")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.EndService).ID("cnt-EndService").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+               
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-2">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2246","Home")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AllHome).ID("cnt-AllHome").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2247","Transportation")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AllTransportation).ID("cnt-AllTransportation").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2248","Comunication")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AllComunication).ID("cnt-AllComunication").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2249","Food")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AllFood).ID("cnt-AllFood").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2250","Other")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.AllOther).ID("cnt-AllOther").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2251","Benefit-1")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Benefit1).ID("cnt-Benefit1").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2252","Benefit-2")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Benefit2).ID("cnt-Benefit2").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2253","Benefit-3")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Benefit3).ID("cnt-Benefit3").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="nav-pills-tab-3">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2254","Absence")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Absence).ID("cnt-Absence").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2255","Late")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Late).ID("cnt-Late").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2256","Penalty")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Penalty).ID("cnt-Penalty").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2257","Insurance")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Insurance).ID("cnt-Insurance").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2258","Deduction-1")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Deduction1).ID("cnt-Deduction1").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2259","Deduction-2")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Deduction2).ID("cnt-Deduction2").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2260","Deduction-3")</label>
+                        <div class="col-lg-9 col-sm-12">
+                            @Html.DevExtreme().LookupFor(m => m.Deduction3).ID("cnt-Deduction3").DataSource(data).ValueExpr("Key").DisplayExpr("Display")
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function ()
+    {
+        $("#frm-SalariesIntegration").submit(function (event)
+        {
+            event.preventDefault();
+            SaveAccount();
+        });
+    });
+    function SaveAccount ()
+    {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "")
+        {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-SalariesIntegration').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/Settings/iFinancialCategories/UpdateSalariesIntegration",
+            data: data,
+            dataType: "json",
+            success: function (response)
+            {
+                $("#mod-SalariesIntegration").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

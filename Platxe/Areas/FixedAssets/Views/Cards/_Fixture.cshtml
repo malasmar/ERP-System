@@ -1,0 +1,184 @@
+@model CLiFinancial.FixedAssets.Cards.Fixture
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+}
+<div class="modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title">@iT.T(xLan,"1422","Fixture Cards")</h4>
+    </div>
+    <form id="frm-Fixture" data-parsley-validate="true">
+        <div class="modal-body">
+            @Html.HiddenFor(m => m.Key)
+ 
+
+            @{
+                if (Model.Key != null)
+                {
+                    <div class="xkey text-gray">@iT.T(xLan,"1299","Key"): @Model.Key</div>
+                }
+            }
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1162","Category")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().LookupFor(m => m.Category).ID("cnt-Category").InputAttr("required", true).DataSource(CLiFinancial.FixedAssets.Selections.Categories.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").Disabled(Model.Key==null?false:true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1158","Kind")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SelectBoxFor(m => m.Kind).ID("cnt-Kind").DataSource(iReplacer.fxdKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(150)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan, "1423","Barcode")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Barcode).ID("cnt-Barcode")
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-3 col-sm-12">@iT.T(xLan, "1416","Tangible")</div>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Tangible).ID("cnt-Tangible").Width(85).SwitchedOffText(iT.T(xLan, "1416","Tangible")).SwitchedOnText(iT.T(xLan, "1424","Intangible"))
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-3 col-sm-12">@iT.T(xLan, "1425","Enable Batch")</div>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().CheckBoxFor(m => m.BatchEnable).ID("cnt-BatchEnable").Text("Enable Batch")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan, "1426","Dep.Percent")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().NumberBoxFor(m => m.Percent).ID("cnt-Percent").Width(120).Min(0).ShowSpinButtons(true)
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1427","Model")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Model).ID("cnt-Model")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1428","Brand")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Brand).ID("cnt-Brand")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1429","Details1")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Details1).ID("cnt-Details1")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1430","Details2")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Details2).ID("cnt-Details2")
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1431","Details3")</label>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().TextBoxFor(m => m.Details3).ID("cnt-Details3")
+                </div>
+            </div>
+            <hr class="m-2 p-0" />
+            <div class="form-group row">
+                <div class="col-lg-3 col-sm-12">@iT.T(xLan,"1282","Status")</div>
+                <div class="col-lg-9 col-sm-12">
+                    @Html.DevExtreme().SwitchFor(m => m.Disable).ID("cnt-Disable").Width(70).SwitchedOnText("Disable").SwitchedOffText("Active")
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script class="append-on-ajax-script">
+    $(document).ready(function() {
+        $("#frm-Fixture").submit(function(event) {
+            event.preventDefault();
+            SaveAccount();
+        });
+        $('#cnt-Category').dxLookup({
+            onValueChanged: function(e) {
+                var selectedAccount = $("#cnt-Category").dxLookup('instance').option('selectedItem');
+                $('#cnt-Percent').dxNumberBox('option', 'value', selectedAccount.Percent);
+               
+                if($('#Key').val()=='null'){
+                   FixtureCode(e.value, selectedAccount.Prefix);
+                }
+          
+            }
+        });
+    });
+    function SaveAccount() {
+        if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
+            alert('Please enter Code!');
+            return;
+        }
+        if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
+            alert('Please enter name (Display) !');
+            return;
+        }
+        var data = $('#frm-Fixture').serialize();
+        $.ajax({
+            type: "POST",
+            url: "/api/fxd/icards/UpdateFixture",
+            data: data,
+            dataType: "json",
+            success: function(response) {
+                $("#mod-Fixture").modal('toggle');
+                RefreshGrid();
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function FixtureCode(Key, Prefix) {
+        $.ajax({
+            type: "get",
+            url: "/api/fxd/icards/FixtureCode",
+            data: { Key: Key, Prefix: Prefix },
+            dataType: "json",
+            success: function(res) {
+                $('#cnt-Code').dxTextBox('option', 'value', res);
+            },
+            failure: function(response) {
+                alert(response);
+            },
+            error: function(response) {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

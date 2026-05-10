@@ -1,0 +1,162 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<style>
+    .shTahoma {
+        font-family: Tahoma !important;
+    }
+</style>
+
+<div id="div-print" class="row justify-content-center m-t-35">
+    <div class="col-7">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="text-center">
+                    <p class="f-s-16 f-w-600">@iT.T(xLan, "1366","VAT Declaration Report")</p>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-12">
+                        <div class="form-group row">
+                            <label class="col-3">@iT.T(xLan, "1224","First Date")</label>
+                            <div class="col-9">
+                                @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year, 1, 1))
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3">@iT.T(xLan, "1225","Last Date")</label>
+                            <div class="col-9">
+                                @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year, 12, 31))
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-dark btn-sm" onclick="LoadData()">@iT.T(xLan, "1156","Refresh")</button>
+                            <button hidden type="button" class="btn btn-primary btn-sm" onclick="PrintReport()">@iT.T(xLan, "1361","Print Report")</button>
+                        </div>
+                        <hr />
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table m-b-0">
+                        <thead>
+                            <tr>
+                                <th style="width:35%">#</th>
+                                <th style="width:25%">@iT.T(xLan, "1077","Amount")</th>
+                                <th style="width:25%">@iT.T(xLan, "1367","Returned")</th>
+                                <th style="width:20%">@iT.T(xLan, "1350","vat Amount")</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tb-data">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script class="append-on-ajax-script">
+    $(Document).ready(function ()
+    {
+        LoadData();
+    })  ;
+
+    function LoadData ()
+    {
+        var f = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        var l = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        $.ajax({
+            type: "Get",
+            url: "/api/fin/ireports/vatDeclaration",
+            data: {
+                FirstDate: f.toLocaleDateString(),
+                LastDate: l.toLocaleDateString()
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                var tot = 0;
+                $('#tb-data').empty();
+                for (const item of response)
+                {
+                    var str = '';
+                    str += '<tr>'
+                    str += '   <td colspan="4">'
+                    str += '      <h2 class="mb-2">' + item.Display + '<small>  (Rate ' + item.Rate + '%) </small></h2>'
+                    str += '   </td>'
+                    str += '</tr>'
+                    str += '<tr>'
+                    str += '   <td>' + 'Sales' + '</td>'
+                    str += '   <td class="f-s-15 shTahoma"><div>' + comma(item.AmountSales) + GetVAT(item.Sales) + '</div></td>'
+                    str += '   <td class="f-s-15 shTahoma"><div>' + comma(item.AmountSalesReturn) + GetVAT(item.SalesReturn) + '</div></td>'
+                    str += '   <td class="f-s-15 shTahoma">' + comma(item.Sales - item.SalesReturn) + '</td>'
+                    str += '</tr>'
+                    str += '<tr>'
+                    str += '   <td>' + 'Purchase' + '</td>'
+                    str += '   <td class="f-s-15 shTahoma"><div>' + comma(item.AmountPurchase) + GetVAT(item.Purchase) + '</div></td>'
+                    str += '   <td class="f-s-15 shTahoma"><div>' + comma(item.AmountPurchaseReturn) + GetVAT(item.PurchaseReturn) + '</div></td>'
+                    str += '   <td class="f-s-15 shTahoma">' + comma(item.Purchase - item.PurchaseReturn) + '</td>'
+                    str += '</tr>'
+                    $('#tb-data').append(str);
+                    tot += (item.Balance);
+                }
+                var xtot = '';
+                xtot += '<tr class="f-s-18 bg-silver">'
+                xtot += '   <td colspan="3">' + 'Total of (VAT) SR' + ' </td>'
+                xtot += '   <td>' + comma(tot) + '</td>'
+                xtot += '</tr>'
+                $('#tb-data').append(xtot);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+    function GetVAT (value)
+    {
+       
+            return '<p class="f-s-12 m-1">' + '<small>VAT</small> ' + ' ' + comma(value) + '</p>'
+      
+    }
+
+    //function PrintReport ()
+    //{
+    //    printDiv('div-print');
+    //}
+    //function printDiv (divName)
+    //{
+    //    var divContents = document.getElementById(divName).innerHTML;
+    //    var a = window.open('', '', 'height=500, width=500');
+    //    a.document.write('<html>');
+    //    a.document.write('<body > <h1>Div contents are <br>');
+    //    a.document.write(divContents);
+    //    a.document.write('</body></html>');
+    //    a.document.close();
+    //    a.print();
+    //}
+</script>

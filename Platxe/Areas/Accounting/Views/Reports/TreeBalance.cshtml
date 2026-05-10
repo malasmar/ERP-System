@@ -1,0 +1,229 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2423","Tree Report Balance")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan,"1222","Year")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan,"1224","First Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-3 ">@iT.T(xLan,"1225","Last Date")</label>
+                    <div class="col-9">
+                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+                <div class="form-group row">
+                    <div class="col-10">
+                        @Html.DevExtreme().CheckBox().ID("ed-ExpensesDetails").Text(iT.T(xLan,"2421","Show Expenses Details"))
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1"></div>
+
+        </div>
+ 
+        <div class="row">
+            <div class="col-lg-3">
+
+                <p style="margin-bottom:15px;margin-top:15px">
+                    @iT.T(xLan,"1178","Accounts")
+                    <small> <a href="javascript:;" onclick="ReLoodTree()" class="text-danger">@iT.T(xLan,"1156","Refresh")</a></small>
+                    <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="CloseAll()">@iT.T(xLan,"1174","Open All")</a></small>
+                    <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="OpenAll()">@iT.T(xLan,"1174","Open All")</a></small>
+                </p>
+                <div style="margin:1px;width:100%" class="mb-1">
+                    <input id="txt-Search" type="text" class="form-control form-control-sm" placeholder="@iT.T(xLan,"1179","Search account...")">
+                </div>
+                <div data-scrollbar="true" style="padding:5px 5px;overflow:auto;height:500px;">
+                    <div id="jstree-checkable" style="height:100%"></div>
+                </div>
+
+            </div>
+            <div class="col-lg-9">
+
+                @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.TreeBalance.ParentBalance>().ID("grd-ParentBalance")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("ireports").Area("Accounting")
+                    .Key("Code")
+                    .LoadAction("ParentBalance")
+                    .LoadParams(new
+                    {
+                        Account = new JS("getAccount"),
+                        First = new JS("getFirst"),
+                        Last = new JS("getLast"),
+                        ExpKind = new JS("getExpKind")
+                    })
+                    )
+                    .FocusedRowEnabled(true)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(90);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                        columns.AddFor(m => m.Opening).Caption(iT.T(xLan, "2424", "Opening")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "2425", "Debit")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "2426", "Credit")).Width(100).Format("0,###.##");
+                        columns.AddFor(m => m.Balance).Caption(iT.T(xLan, "2427", "Balance")).Width(100).Format("0,###.##");
+                    })
+                    .Summary(tot =>
+                    {
+                        tot.TotalItems(item =>
+                        {
+                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                            item.AddFor(m => m.Opening).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Balance).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                        });
+                        tot.Texts(txt => { txt.Sum(""); });
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1235", "Income Statment Report")))
+                    .RowAlternationEnabled(true)
+                    .RtlEnabled(devRtl)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    )
+
+            </div>
+        </div>
+    </div>
+</div>
+<script class="append-on-ajax-script">
+    var key = '';
+    $(document).ready(function () {
+        LoodTree();
+        $('#jstree-checkable').on('select_node.jstree', function (e, data) {
+
+            key = data.instance.get_node(data.selected[ 0 ]).id;
+            RefreshGrid();
+        });
+        $("#txt-Search").keyup(function () {
+            $('#jstree-checkable').jstree(true).search($(this).val(), true, true);
+        });
+    });
+    function LoodTree () {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/ixreports/ChartParentLevel",
+            dataType: "json",
+            success: function (response) {
+                $('#jstree-checkable').jstree({
+                    'plugins': [ "wholerow", "types", "search" ],
+                    'core': {
+                        "themes": {
+                            "responsive": false
+                        },
+                        'data': response
+                    },
+                    "types": {
+                        "default": {
+                            "icon": "fa fa-folder text-primary fa-lg"
+                        },
+                        "file": {
+                            "icon": "fa fa-file text-success fa-lg"
+                        }
+                    }
+                });
+            },
+            failure: function (response) {
+                alert(response);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function ReLoodTree () {
+        $.ajax({
+            type: "get",
+            url: "/api/acc/ixreports/ChartParentLevel",
+            dataType: "json",
+            success: function (response) {
+                $('#jstree-checkable').jstree(true).settings.core.data = response;
+                $('#jstree-checkable').jstree(true).refresh();
+            },
+            failure: function (response) {
+                alert(response);
+            },
+            error: function (response) {
+                alert(response.responseText);
+            }
+        });
+    }
+    function OpenAll () {
+        $('#jstree-checkable').jstree(true).open_all();
+    }
+    function CloseAll () {
+        $('#jstree-checkable').jstree(true).close_all();
+    }
+    function RefreshGrid () {
+        
+        $('#grd-ParentBalance').dxDataGrid("instance").refresh();
+    }
+    function getAccount () {
+        return key;
+    }
+    function getYear () {
+        return $('#edYear').dxNumberBox('option', 'value')
+    }
+    function getFirst () {
+        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
+        return fd.toLocaleDateString();
+    }
+    function getLast () {
+        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
+        return ld.toLocaleDateString();
+    }
+  
+    function ChangeYear () {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+        function getExpKind(){
+        return $('#ed-ExpensesDetails').dxCheckBox('option', 'value');
+    }
+</script>

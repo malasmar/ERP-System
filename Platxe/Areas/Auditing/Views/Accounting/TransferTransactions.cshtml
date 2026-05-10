@@ -1,0 +1,341 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    bool devRtl;
+
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan,"2533","Transfer Accounts Transactions")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="form-group row">
+                    <label class="col-2 ">Target Account</label>
+                    <div class="col-10">
+                        @Html.DevExtreme().Lookup().ID("edTarget").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
+                        <div class="mb-2 mt-1">
+                            <p class="f-s-11 f-w-600 text-dark">Transaction : <b id="txtTr2"> 0</b></p>
+                        </div>
+                    </div>
+                </div>
+             
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-danger" onclick="ConfirmTransfer()">Transfer Data</button>
+                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.ChartofAccounts>().ID("grd-Accounts")
+                    .ShowBorders(true).Width("100%")
+                    .DataSource(d => d.WebApi()
+                    .Controller("icards").Area("Accounting")
+                    .Key("Key")
+                    .LoadAction("ChartofAccount"))
+                    .ColumnAutoWidth(true)
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(70).Lookup(L => L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
+                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
+                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
+                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
+                        columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Level")).Width(70);
+                        columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1167", "Parent Code")).Width(100);
+                        columns.AddFor(m => m.isParent).Caption(iT.T(xLan, "1159", "Is Parent")).Width(70).Lookup(L => L.DataSource(iReplacer.accParent(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4isParent"));
+                        columns.AddFor(m => m.Financial).Caption(iT.T(xLan, "1160", "Financial")).Width(65).Lookup(L => L.DataSource(iReplacer.accFinancial(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Financial"));
+                        columns.AddFor(m => m.Transactions).Caption(iT.T(xLan, "1161", "Trans.")).Width(60).CellTemplate(new JS("ct4Transactions"));
+                        columns.AddFor(m => m.Category).Caption(iT.T(xLan, "1162", "Category")).Width(90).Lookup(L => L.DataSource(iReplacer.accCategory(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Category"));
+
+
+                    })
+                    .Pager(pg =>
+                    {
+                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.ShowNavigationButtons(true);
+                        pg.ShowPageSizeSelector(true);
+                        pg.ShowInfo(true);
+                        pg.InfoText("{0} of {1} | {2} Rows");
+                    })
+                    .Paging(p => { p.PageSize(50); })
+                    .FilterRow(f => f.Visible(true))
+                    .HeaderFilter(f => f.Visible(true))
+                    .SearchPanel(sp =>
+                    {
+                        sp.Width(250);
+                        sp.Visible(true);
+                    })
+                    .Selection(s => s.Mode(SelectionMode.Multiple).ShowCheckBoxesMode(GridSelectionShowCheckBoxesMode.Always).AllowSelectAll(true).SelectAllMode(SelectAllMode.AllPages))
+                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1155", "Chart of Accounts")))
+                    .RowAlternationEnabled(true)
+                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                    .RtlEnabled(devRtl)
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div id="mod-ProgressBar" class="modal">
+    <div class="modal-dialog modal-lg" id="con-ProgressBar">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@iT.T(xLan,"2327","Post Transaction")</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="p-2" id="div-Progress">
+                            <div class="text-center">
+                                <p class="f-s-11 text-dark mb-0 pb-0">Post Transaction <small> Please Wait</small></p>
+                                <p class="f-s-10 text-red mt-1 pt-1" id="txtInfo">@iT.T(xLan, "2328","Please Wait")</p>
+                            </div>
+                            <div id="progress">
+                                @(Html.DevExtreme().ProgressBar().ID("progressBarStatus").Min(0).Width("100%"))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script class="append-on-ajax-script">
+    function xxxxx ()
+    {
+        return Document.title;
+    }
+
+    function RefreshGrid ()
+    {
+        $('#grd-Accounts').dxDataGrid("instance").refresh();
+    }
+
+
+    function ct4Kind (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-info text-dark">' + options.text + '</span></div>';
+                break;
+            case 3:
+                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                break;
+            case 4:
+                str = '<div class="text-center"><span class="badge bg-warning text-dark">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4isParent (container, options)
+    {
+        var str = '';
+        if (options.data.Level == 1)
+        {
+            str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+            $(str).appendTo(container)
+            return;
+        }
+        switch (options.value)
+        {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container);
+    }
+    function ct4Financial (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case false:
+                str = '<div class="text-center"><span class="badge bg-default text-dark">' + options.text + '</span></div>';
+                break;
+            case true:
+                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Status (container, options)
+    {
+        var str = '';
+        switch (options.value)
+        {
+            case 0:
+                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                break;
+            case 1:
+                str = '<div class="text-center"><span class="badge bg-success">' + options.text + '</span></div>';
+                break;
+            case 2:
+                str = '<div class="text-center"><span class="badge bg-danger text-dark">' + options.text + '</span></div>';
+                break;
+        }
+        $(str).appendTo(container)
+    }
+    function ct4Transactions (container, options)
+    {
+        if (options.value > 0)
+        {
+            container.append('<div>' + options.text + '</div>')
+                .css('background-color', '#CDCFCF')
+                .css('font-weight', 500);
+        }
+        if (options.value == 0)
+        {
+            container.append('<div>' + options.text + '</div>')
+                .css('font-weight', 500);
+        }
+    }
+    function ct4Category (container, options)
+    {
+        switch (options.value)
+        {
+            case 1:
+                container.append('<div>' + options.text + '</div>')
+                    .css('color', '#CD4325');
+                break;
+            default:
+                container.append('<div>' + options.text + '</div>')
+                break;
+        }
+    }
+
+
+
+    function ConfirmTransfer ()
+    {
+        var rowcount = $('#grd-Accounts').dxDataGrid("instance").getSelectedRowKeys().length;
+        if (rowcount == 0)
+        {
+            return
+        }
+        $.confirm({
+            title: 'Confirmation',
+            content: 'Confirm Transfer transaction for selected account to target account? Row/s:' + rowcount,
+            buttons: {
+                Delete: {
+                    text: 'Transfer',
+                    action: function ()
+                    {
+                        PostTransaction()
+                    }
+                },
+                cancel: {
+                    text: 'Cancel',
+                    action: function ()
+                    {
+                        return
+                    }
+                }
+            }
+        })
+    }
+
+    var ic = 0;
+    var data;
+
+    function PostTransaction ()
+    {
+        data = $("#grd-Accounts").dxDataGrid("instance").getSelectedRowsData();
+        ic = data.length - 1;
+        $("#progressBarStatus").dxProgressBar("option", "max", data.length);
+        $("#mod-ProgressBar").modal('toggle');
+        PostTransactionRow(0);
+    }
+
+    function PostTransactionRow (i)
+    {
+        $('#txtInfo').text('Working on Account ' + data[ i ].Name1 + ' the (row ' + i.toString() + ' of ' + ic.toString() + ') ');
+        $("#progressBarStatus").dxProgressBar("option", "value", i + 1);
+        $.ajax({
+            type: "Post",
+            url: "/api/Auditing/icore/UpdateGLTransfer",
+            data: {
+                Source: data[ i ].Key,
+                Target: $('#edTarget').dxLookup('option', 'value')
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                if (i < ic)
+                {
+                    ++i;
+                    PostTransactionRow(i);
+                }
+                if (i == ic)
+                {
+                    $("#mod-ProgressBar").modal('hide');
+                    RefreshGrid();
+                    ChangeAccount();
+
+                }
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+        function ChangeAccount ()
+    {
+        var k = $('#edTarget').dxLookup('option', 'value');
+        $.ajax({
+            type: 'get',
+            url: '/api/Auditing/icore/CountGLTransaction',
+            data: {
+                Key: k
+            },
+            dataType: "json",
+            success: function (response)
+            {
+                $('#txtTr2').text(response);
+            },
+            failure: function (response)
+            {
+                alert(response);
+            },
+            error: function (response)
+            {
+                alert(response.responseText);
+            }
+        });
+    }
+</script>

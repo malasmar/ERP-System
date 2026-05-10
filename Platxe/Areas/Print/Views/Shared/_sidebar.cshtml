@@ -1,0 +1,30 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+}
+<div class="menu">
+    <div class="menu-search mb-n3">
+        <input type="text" class="form-control" placeholder="@iT.T(xLan,"1140","Sidebar menu filter...")" data-sidebar-search="true" />
+    </div>
+    <div class="menu-item">
+        <a href="/" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-house-chimney"></i></div><div class="menu-text">@iT.T(xLan,"1141","Applications")</div></a>
+    </div>
+    <div class="menu-item">
+        <a href="/Financial" class="menu-link"><div class="menu-icon"><i class="ion-ios-pulse"></i></div><div class="menu-text">@iT.T(xLan,"1142","Home")</div></a>
+    </div>
+    <div class="menu-header">@iT.T(xLan,"1275","Financial Definitions")</div>
+    <div class="menu-item has-sub">
+        <a href="javascript:;" class="menu-link"><div class="menu-icon"><i class="fa-solid fa-square"></i></div><div class="menu-text">Financial Cards</div><div class="menu-caret"></div></a>
+        <div class="menu-submenu">
+            <div class="menu-item"><a href="/Financial/Cards/CurrentAccount" class="menu-link"><div class="menu-text">Current Account</div></a></div>
+            <div class="menu-item"><a href="/Financial/Cards/CashBox" class="menu-link"><div class="menu-text">Cash Box</div></a></div>
+            <div class="menu-item"><a href="/Financial/Cards/Bank" class="menu-link"><div class="menu-text">Banks</div></a></div>
+            <div class="menu-item"><a href="/Financial/Cards/Expenses" class="menu-link"><div class="menu-text">Expenses</div></a></div>
+            <div class="menu-item"><a href="/Financial/Cards/Revenue" class="menu-link"><div class="menu-text">Revenue</div></a></div>
+        </div>
+    </div>
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto" data-toggle="app-sidebar-minify"><i class="ion-ios-arrow-back"></i> <div class="menu-text">Collapse</div></a>
+    </div>
+    <!-- END minify-button -->
+</div>

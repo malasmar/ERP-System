@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="01/28/2021 00:09:31" ReportInfo.Modified="01/28/2021 00:09:50" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <TableDataSource Name="Company" ReferenceName="Company" DataType="System.Int32" Enabled="true">
+      <Column Name="ArabicName" DataType="System.String"/>
+      <Column Name="EnglishName" DataType="System.String"/>
+      <Column Name="RegistrationCode" DataType="System.String"/>
+      <Column Name="CommercialType" DataType="System.String"/>
+      <Column Name="Kind" DataType="System.String"/>
+      <Column Name="VATRegestration" DataType="System.String"/>
+      <Column Name="Details1" DataType="System.String"/>
+      <Column Name="Details2" DataType="System.String"/>
+      <Column Name="Details3" DataType="System.String"/>
+      <Column Name="Details4" DataType="System.String"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Fax" DataType="System.String"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="Website" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="Logo" DataType="System.Byte[]" BindableControl="Picture"/>
+    </TableDataSource>
+    <TableDataSource Name="e Data" ReferenceName="e Data" DataType="System.Int32" Enabled="true">
+      <Column Name="GDI" DataType="System.Guid"/>
+      <Column Name="Email" DataType="System.String"/>
+      <Column Name="ID" DataType="System.Int32"/>
+      <Column Name="Code" DataType="System.String"/>
+      <Column Name="Name1" DataType="System.String"/>
+      <Column Name="Name2" DataType="System.String"/>
+      <Column Name="Gender" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="BirthDate" DataType="System.DateTime"/>
+      <Column Name="NID" DataType="System.String"/>
+      <Column Name="Nationality" DataType="System.Int32"/>
+      <Column Name="MaritalStatus" DataType="System.Int32"/>
+      <Column Name="AdultFollower" DataType="System.Int32"/>
+      <Column Name="ChildFollower" DataType="System.Int32"/>
+      <Column Name="PaymentType" DataType="System.Int32"/>
+      <Column Name="Bank" DataType="System.String"/>
+      <Column Name="IBAN" DataType="System.String"/>
+      <Column Name="DeviceKey" DataType="System.Guid"/>
+      <Column Name="EnrollID" DataType="System.Int32"/>
+      <Column Name="DepN1" DataType="System.String"/>
+      <Column Name="DepN2" DataType="System.String"/>
+      <Column Name="GrpN1" DataType="System.String"/>
+      <Column Name="GrpN2" DataType="System.String"/>
+      <Column Name="ClsN1" DataType="System.String"/>
+      <Column Name="ClsN2" DataType="System.String"/>
+      <Column Name="CityN1" DataType="System.String"/>
+      <Column Name="CityN2" DataType="System.String"/>
+      <Column Name="LocN1" DataType="System.String"/>
+      <Column Name="LocN2" DataType="System.String"/>
+      <Column Name="TeamN1" DataType="System.String"/>
+      <Column Name="TeamN2" DataType="System.String"/>
+      <Column Name="JobTitleN1" DataType="System.String"/>
+      <Column Name="JobTitleN2" DataType="System.String"/>
+      <Column Name="JobGridN1" DataType="System.String"/>
+      <Column Name="JobGridN2" DataType="System.String"/>
+      <Column Name="StructureN1" DataType="System.String"/>
+      <Column Name="StructureN2" DataType="System.String"/>
+      <Column Name="Filter" DataType="System.Guid"/>
+      <Column Name="BasicSalary" DataType="System.Decimal"/>
+      <Column Name="FundeKind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="FundeValue" DataType="System.Decimal"/>
+      <Column Name="FundeAmount" DataType="System.Decimal"/>
+      <Column Name="NetSalary" DataType="System.Decimal"/>
+      <Column Name="AllHome1" DataType="System.Decimal"/>
+      <Column Name="AllHome2" DataType="System.Decimal"/>
+      <Column Name="AllHome1Kind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="AllHome2Kind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="AllHome1Month" DataType="System.Int32"/>
+      <Column Name="AllHome2Month" DataType="System.Int32"/>
+      <Column Name="AllTransportation" DataType="System.Decimal"/>
+      <Column Name="AllComunication" DataType="System.Decimal"/>
+      <Column Name="AllFood" DataType="System.Decimal"/>
+      <Column Name="AllOther1" DataType="System.Decimal"/>
+      <Column Name="AllOther2" DataType="System.Decimal"/>
+      <Column Name="AllOther3" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed1" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed2" DataType="System.Decimal"/>
+      <Column Name="MonthlyDed3" DataType="System.Decimal"/>
+      <Column Name="Deposit" DataType="System.Decimal"/>
+      <Column Name="DepositAmount" DataType="System.Decimal"/>
+      <Column Name="Security" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="SecuritySalary" DataType="System.Decimal"/>
+      <Column Name="SecurityAll1" DataType="System.Decimal"/>
+      <Column Name="SecurityAll2" DataType="System.Decimal"/>
+      <Column Name="eInsKind" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="eInsValue" DataType="System.Int32"/>
+      <Column Name="CompanyIns" DataType="System.Int32"/>
+      <Column Name="StartDate" DataType="System.DateTime"/>
+      <Column Name="EndDate" DataType="System.DateTime"/>
+      <Column Name="Occupation" DataType="System.String"/>
+      <Column Name="OccupationGrid" DataType="System.Guid"/>
+      <Column Name="JobKind" DataType="System.Int32"/>
+      <Column Name="JobTitle" DataType="System.Guid"/>
+      <Column Name="JobDescription" DataType="System.String"/>
+      <Column Name="DailyHour" DataType="System.Decimal"/>
+      <Column Name="ShiftCard" DataType="System.String"/>
+      <Column Name="AnnualDays" DataType="System.Int32"/>
+      <Column Name="AnnualBalance" DataType="System.Decimal"/>
+      <Column Name="LastReturn" DataType="System.DateTime"/>
+      <Column Name="ContractKind" DataType="System.Int32"/>
+      <Column Name="VacationKind" DataType="System.Int32"/>
+      <Column Name="Phone" DataType="System.String"/>
+      <Column Name="Mobile" DataType="System.String"/>
+      <Column Name="Address" DataType="System.String"/>
+      <Column Name="xPhone" DataType="System.String"/>
+      <Column Name="xMobile" DataType="System.String"/>
+      <Column Name="xAddress" DataType="System.String"/>
+      <Column Name="xEmail" DataType="System.String"/>
+      <Column Name="Kind" DataType="System.Int32"/>
+      <Column Name="eFilter" DataType="System.String"/>
+      <Column Name="Branch" DataType="System.Guid"/>
+      <Column Name="CostCenter" DataType="System.Guid"/>
+      <Column Name="Project" DataType="System.Guid"/>
+      <Column Name="LockCard" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="LockSalary" DataType="System.Boolean" BindableControl="CheckBox"/>
+      <Column Name="Status" DataType="System.Int32"/>
+      <Column Name="Image" DataType="System.String"/>
+      <Column Name="StrKind" DataType="System.Int32"/>
+      <Column Name="ServiceDays" DataType="System.Int32"/>
+      <Column Name="LastRetDate" DataType="System.DateTime"/>
+      <Column Name="LastService" DataType="System.Int32"/>
+      <Column Name="AllowedVacation" DataType="System.Int32"/>
+      <Column Name="Advance" DataType="System.Decimal"/>
+      <Column Name="Loan" DataType="System.Decimal"/>
+      <Column Name="RetAdvance" DataType="System.Decimal"/>
+      <Column Name="RetLoan" DataType="System.Decimal"/>
+      <Column Name="cfmRequest" DataType="System.Int32"/>
+    </TableDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="718.2" Height="37.8"/>
+    <PageHeaderBand Name="PageHeader1" Top="41.8" Width="718.2" Height="28.35"/>
+    <DataBand Name="Data1" Top="74.15" Width="718.2" Height="75.6"/>
+    <PageFooterBand Name="PageFooter1" Top="153.75" Width="718.2" Height="18.9"/>
+  </ReportPage>
+</Report>

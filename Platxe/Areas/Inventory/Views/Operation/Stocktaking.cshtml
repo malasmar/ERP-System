@@ -1,0 +1,111 @@
+@model CLiInventory.Operation.Stocktaking
+
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int xYear = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    string Currency = CLiCore.VoucherOperation.DefaultCurrency(DB);
+    Guid UserKey = Guid.Parse(User.FindFirstValue("Key"));
+    CLiCore.Shared.UserDefaultData defaultData = CLiCore.Shared.UserDefaultData.GetItem(UserKey);
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-7 col-md-12">
+        <h1 class="page-header">@iT.T(xLan,"2557","Inventory Stocktaking")</h1>
+        <div class="panel panel-inverse">
+            <div class="panel-body">
+                <b>@iT.T(xLan,"2558","Items Operation")</b>
+            </div>
+            <div class="panel-body">
+                <h4>@iT.T(xLan, "2559","Warehouse Stocktaking")</h4>
+                <hr />
+                <div class="row p-2">
+                    <div class="col-6">
+                        <h6><b>@iT.T(xLan, "2560","Notes and Conditions")</b></h6>
+                    </div>
+                    <div class="col-6">
+                        <div class="float-end">
+                            <a href="/Inventory/Operation/DownloadStockItems" class="btn btn-sm btn-danger">@iT.T(xLan, "2561","Download Stock Items")</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary">
+                    <div class="note-content">
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8 "></i> @iT.T(xLan, "2562","Download template of items")</p>
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8"></i> @iT.T(xLan, "","Don't change unit in stocktaking file,the stocktaking in the master unit.")</p>
+                        <p class="p-0 m-1"><i class="fa fa-circle f-s-8 "></i> @iT.T(xLan, "","don't change item sku (code) in the file.")</p>
+                    </div>
+                </div>
+                <form id="frmStocktaking" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-12">
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1624","Invoice Date")</label>
+                                <div class="col-lg-9 col-sm-12">
+                                    @Html.DevExtreme().DateBoxFor(m => m.Date).ID("frm-Date").Width(125).DisplayFormat("dd.MM.yyyy").Value(DateTime.Now)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1625","Warehouse")</label>
+                                <div class="col-lg-9 col-sm-12">
+                                    @Html.DevExtreme().SelectBoxFor(m => m.Warehouse).ID("frm-Warehouse").DataSource(CLiInventory.Selections.Warehouse.GetList(DB,xLan)).ValueExpr("No").DisplayExpr("Display").Value(defaultData.WarehouseNo)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1443","Employee Name")</label>
+                                <div class="col-lg-9 col-sm-12">
+                                    @Html.DevExtreme().TextBoxFor(m => m.Person).ID("frm-Person")
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1212","Description")</label>
+                                <div class="col-lg-9 col-sm-12">
+                                    @Html.DevExtreme().TextAreaFor(m => m.Comment).ID("frm-Description").Height(60)
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-12">@iT.T(xLan,"2563","Stocktaking file")</label>
+                                <div class="col-lg-9 col-md-12">
+                                    <div id="fileuploader-container">
+                                        @(Html.DevExtreme().FileUploader().Multiple(false).ID("StockFiles").Name("StockFiles").SelectButtonText("Select Stock File").LabelText("").UploadMode(FileUploadMode.UseForm).OnValueChanged("changefile"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-secondary m-t-20">
+                        <div class="note-content">
+                            <p class="p-0 m-1"><i class="fa fa-circle f-s-9"></i> @iT.T(xLan, "2564","You must start with purchase cost audit then Recalc sales cost.")</p>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-danger" onclick="SubmitStocktaking()">@iT.T(xLan, "2565","Upload Stocktaking")</button>
+                    </div>
+                </form>
+             
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script class="append-on-ajax-script">
+    var fileok = 0;
+    function changefile ()
+    {
+        fileok = 1;
+    }
+    function SubmitStocktaking ()
+    {
+        if (fileok == 0)
+        {
+            alert('There is no file!')
+            return;
+        }
+        $('#frmStocktaking').submit();
+    }
+
+</script>
