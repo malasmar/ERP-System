@@ -186,5 +186,42 @@ namespace Platxe.Areas.Accounting.Controllers.api
             CLiAccounting.Cards.Account.Update(DB, Card);
             return Ok();
         }
+
+        [HttpPost]
+        public JsonResult CreateChartofAccount(int ParentKey, string values)
+        {
+            try
+            {
+
+                var cls = new CLiAccounting.Cards.ChartofAccounts();
+                JsonConvert.PopulateObject(values, cls);
+
+                CLiAccounting.Cards.Account Parent = new CLiAccounting.Cards.Account().GetItem(DB, cls.ParentKey);
+
+                CLiAccounting.Cards.Account NewAccount = new CLiAccounting.Cards.Account(); ;
+                NewAccount.Code = cls.Code;
+                NewAccount.Name1 = cls.Name1;
+                NewAccount.Name2 = cls.Name2;
+                NewAccount.Level = cls.Level;
+                NewAccount.IsParent = false;
+                NewAccount.BalanceItem = null;
+                NewAccount.Kind = cls.Kind;
+                NewAccount.Financial = false;
+                NewAccount.Source = true;
+                NewAccount.Category = cls.Category;
+                NewAccount.Disable = false;
+                NewAccount.Status = 0;
+                NewAccount.Parent = Parent.Code;
+                NewAccount.DC = false;
+                NewAccount.CloseSubAccounts = false;
+                CLiAccounting.Cards.Account.Insert(DB, NewAccount);
+                return Json(Ok());
+            }
+            catch (Exception EX)
+            {
+                return Json("Error");
+            }
+        }
+
     }
 }
