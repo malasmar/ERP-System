@@ -15,136 +15,157 @@
         devFixd = HorizontalEdge.Right;
     }
 }
-<h1 class="page-header">@iT.T(xLan,"2423","Tree Report Balance")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1222","Year")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1224","First Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1225","Last Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <div class="col-10">
-                        @Html.DevExtreme().CheckBox().ID("ed-ExpensesDetails").Text(iT.T(xLan,"2421","Show Expenses Details"))
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-1"></div>
 
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-git-repo-forked'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"2423","Tree Balance Report")</h1>
+                <p class="page-subtitle-modern">Interactive hierarchical analysis of account balances</p>
+            </div>
         </div>
- 
-        <div class="row">
-            <div class="col-lg-3">
+        
+        <div class="header-actions">
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+        </div>
+    </div>
 
-                <p style="margin-bottom:15px;margin-top:15px">
-                    @iT.T(xLan,"1178","Accounts")
-                    <small> <a href="javascript:;" onclick="ReLoodTree()" class="text-danger">@iT.T(xLan,"1156","Refresh")</a></small>
-                    <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="CloseAll()">@iT.T(xLan,"1174","Open All")</a></small>
-                    <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="OpenAll()">@iT.T(xLan,"1174","Open All")</a></small>
-                </p>
-                <div style="margin:1px;width:100%" class="mb-1">
-                    <input id="txt-Search" type="text" class="form-control form-control-sm" placeholder="@iT.T(xLan,"1179","Search account...")">
+    <div class="card-modern mb-4">
+        <div class="card-body-modern">
+            <div class="row align-items-end g-3">
+                <div class="col-md-2">
+                    <label class="form-label small text-muted">@iT.T(xLan,"1222","Year")</label>
+                    @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
                 </div>
-                <div data-scrollbar="true" style="padding:5px 5px;overflow:auto;height:500px;">
-                    <div id="jstree-checkable" style="height:100%"></div>
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">@iT.T(xLan,"1224","First Date")</label>
+                    @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
                 </div>
-
+                <div class="col-md-3">
+                    <label class="form-label small text-muted">@iT.T(xLan,"1225","Last Date")</label>
+                    @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center h-100 pb-2">
+                        @Html.DevExtreme().CheckBox().ID("ed-ExpensesDetails").Text(iT.T(xLan,"2421","Show Detailed Expenses")).Value(false).ElementAttr("class", "mt-auto")
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-9">
+        </div>
+    </div>
 
-                @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.TreeBalance.ParentBalance>().ID("grd-ParentBalance")
-                    .ShowBorders(true).Width("100%")
-                    .DataSource(d => d.WebApi()
-                    .Controller("ireports").Area("Accounting")
-                    .Key("Code")
-                    .LoadAction("ParentBalance")
-                    .LoadParams(new
-                    {
-                        Account = new JS("getAccount"),
-                        First = new JS("getFirst"),
-                        Last = new JS("getLast"),
-                        ExpKind = new JS("getExpKind")
-                    })
-                    )
-                    .FocusedRowEnabled(true)
-                    .ColumnAutoWidth(true)
-                    .Columns(columns =>
-                    {
-                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(90);
-                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
-                        columns.AddFor(m => m.Opening).Caption(iT.T(xLan, "2424", "Opening")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "2425", "Debit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "2426", "Credit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.Balance).Caption(iT.T(xLan, "2427", "Balance")).Width(100).Format("0,###.##");
-                    })
-                    .Summary(tot =>
-                    {
-                        tot.TotalItems(item =>
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="card-modern h-100">
+                <div class="card-header-modern">
+                    <h6 class="mb-0 fw-bold"><i class='bx bx-list-check me-2'></i>@iT.T(xLan,"1178","Account Tree")</h6>
+                </div>
+                <div class="card-body-modern p-3">
+                    <div class="mb-3">
+                        <div class="input-group-modern shadow-sm">
+                            <span class="input-group-text bg-white border-end-0 small"><i class='bx bx-search text-muted'></i></span>
+                            <input id="txt-Search" type="text" class="form-control form-control-sm border-start-0 ps-0 shadow-none" placeholder="@iT.T(xLan,"1179","Search...")">
+                        </div>
+                    </div>
+                    <div class="d-flex gap-2 mb-3 small">
+                        <a href="javascript:;" onclick="OpenAll()" class="text-primary text-decoration-none"><i class='bx bx-expand-alt'></i> Open</a>
+                        <span class="text-muted">|</span>
+                        <a href="javascript:;" onclick="CloseAll()" class="text-secondary text-decoration-none"><i class='bx bx-collapse-alt'></i> Close</a>
+                        <span class="text-muted ms-auto">
+                            <a href="javascript:;" onclick="ReLoodTree()" class="text-info text-decoration-none"><i class='bx bx-refresh'></i></a>
+                        </span>
+                    </div>
+                    <div class="jstree-container-modern custom-scrollbar" style="height: 550px; overflow-y: auto;">
+                        <div id="jstree-checkable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div class="card-modern">
+                <div class="card-body-modern p-0 modern-grid">
+                    @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.TreeBalance.ParentBalance>().ID("grd-ParentBalance")
+                        .ShowBorders(false)
+                        .Width("100%")
+                        .DataSource(d => d.WebApi()
+                        .Controller("ireports").Area("Accounting")
+                        .Key("Code")
+                        .LoadAction("ParentBalance")
+                        .LoadParams(new
                         {
-                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
-                            item.AddFor(m => m.Opening).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
-                            item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
-                            item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
-                            item.AddFor(m => m.Balance).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
-                        });
-                        tot.Texts(txt => { txt.Sum(""); });
-                    })
-                    .Pager(pg =>
-                    {
-                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
-                        pg.ShowNavigationButtons(true);
-                        pg.ShowPageSizeSelector(true);
-                        pg.ShowInfo(true);
-                        pg.InfoText("{0} of {1} | {2} Rows");
-                    })
-                    .Paging(p => { p.PageSize(50); })
-                    .FilterRow(f => f.Visible(true))
-                    .HeaderFilter(f => f.Visible(true))
-                    .SearchPanel(sp =>
-                    {
-                        sp.Width(250);
-                        sp.Visible(true);
-                    })
-                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1235", "Income Statment Report")))
-                    .RowAlternationEnabled(true)
-                    .RtlEnabled(devRtl)
-                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                            Account = new JS("getAccount"),
+                            First = new JS("getFirst"),
+                            Last = new JS("getLast"),
+                            ExpKind = new JS("getExpKind")
+                        }))
+                        .FocusedRowEnabled(true)
+                        .ColumnAutoWidth(true)
+                        .HoverStateEnabled(true)
+                        .RowAlternationEnabled(true)
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Code")).Width(110).CssClass("fw-bold");
+                            columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CssClass("fw-medium");
+                            columns.AddFor(m => m.Opening).Caption(iT.T(xLan, "2424", "Opening")).Width(120).Format("#,##0.##").CssClass("text-end text-muted");
+                            columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "2425", "Debit")).Width(120).Format("#,##0.##").CssClass("text-end text-primary");
+                            columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "2426", "Credit")).Width(120).Format("#,##0.##").CssClass("text-end text-danger");
+                            columns.AddFor(m => m.Balance).Caption(iT.T(xLan, "2427", "Balance")).Width(130).Format("#,##0.##").CssClass("text-end fw-bold");
+                        })
+                        .Summary(tot =>
+                        {
+                            tot.TotalItems(item =>
+                            {
+                                item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                                item.AddFor(m => m.Opening).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                                item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                                item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                                item.AddFor(m => m.Balance).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                            });
+                        })
+                        .Pager(pg =>
+                        {
+                            pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                            pg.ShowNavigationButtons(true);
+                            pg.ShowPageSizeSelector(true);
+                            pg.ShowInfo(true);
+                        })
+                        .Paging(p => { p.PageSize(50); })
+                        .FilterRow(f => f.Visible(true))
+                        .HeaderFilter(f => f.Visible(true))
+                        .SearchPanel(sp =>
+                        {
+                            sp.Width(250);
+                            sp.Visible(true);
+                            sp.Placeholder("Filter results...");
+                        })
+                        .Export(exp => exp.Enabled(true).Option("fileName", "TreeBalanceReport"))
+                        .RtlEnabled(devRtl)
+                        .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
                     )
-
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <script class="append-on-ajax-script">
     var key = '';
     $(document).ready(function () {
         LoodTree();
         $('#jstree-checkable').on('select_node.jstree', function (e, data) {
-
-            key = data.instance.get_node(data.selected[ 0 ]).id;
+            key = data.instance.get_node(data.selected[0]).id;
             RefreshGrid();
         });
         $("#txt-Search").keyup(function () {
             $('#jstree-checkable').jstree(true).search($(this).val(), true, true);
         });
     });
+
     function LoodTree () {
         $.ajax({
             type: "get",
@@ -152,31 +173,20 @@
             dataType: "json",
             success: function (response) {
                 $('#jstree-checkable').jstree({
-                    'plugins': [ "wholerow", "types", "search" ],
+                    'plugins': ["wholerow", "types", "search"],
                     'core': {
-                        "themes": {
-                            "responsive": false
-                        },
+                        "themes": { "responsive": false, "variant": "large" },
                         'data': response
                     },
                     "types": {
-                        "default": {
-                            "icon": "fa fa-folder text-primary fa-lg"
-                        },
-                        "file": {
-                            "icon": "fa fa-file text-success fa-lg"
-                        }
+                        "default": { "icon": "bx bxs-folder text-warning fs-5" },
+                        "file": { "icon": "bx bxs-file text-primary fs-5" }
                     }
                 });
-            },
-            failure: function (response) {
-                alert(response);
-            },
-            error: function (response) {
-                alert(response.responseText);
             }
         });
     }
+
     function ReLoodTree () {
         $.ajax({
             type: "get",
@@ -185,45 +195,20 @@
             success: function (response) {
                 $('#jstree-checkable').jstree(true).settings.core.data = response;
                 $('#jstree-checkable').jstree(true).refresh();
-            },
-            failure: function (response) {
-                alert(response);
-            },
-            error: function (response) {
-                alert(response.responseText);
             }
         });
     }
-    function OpenAll () {
-        $('#jstree-checkable').jstree(true).open_all();
-    }
-    function CloseAll () {
-        $('#jstree-checkable').jstree(true).close_all();
-    }
-    function RefreshGrid () {
-        
-        $('#grd-ParentBalance').dxDataGrid("instance").refresh();
-    }
-    function getAccount () {
-        return key;
-    }
-    function getYear () {
-        return $('#edYear').dxNumberBox('option', 'value')
-    }
-    function getFirst () {
-        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
-        return fd.toLocaleDateString();
-    }
-    function getLast () {
-        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
-        return ld.toLocaleDateString();
-    }
-  
+
+    function OpenAll () { $('#jstree-checkable').jstree(true).open_all(); }
+    function CloseAll () { $('#jstree-checkable').jstree(true).close_all(); }
+    function RefreshGrid () { $('#grd-ParentBalance').dxDataGrid("instance").refresh(); }
+    function getAccount () { return key; }
+    function getFirst () { return new Date($('#edFirstDate').dxDateBox('option', 'value')).toLocaleDateString(); }
+    function getLast () { return new Date($('#edLastDate').dxDateBox('option', 'value')).toLocaleDateString(); }
+    function getExpKind(){ return $('#ed-ExpensesDetails').dxCheckBox('option', 'value'); }
+    
     function ChangeYear () {
         $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
         $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
-    }
-        function getExpKind(){
-        return $('#ed-ExpensesDetails').dxCheckBox('option', 'value');
     }
 </script>

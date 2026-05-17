@@ -1,201 +1,158 @@
 @{
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
-    bool devRtl;
-    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
-    if (User.FindFirstValue("aiwLan") == "en")
-    {
-        devRtl = false;
-        devFixd = HorizontalEdge.Left;
-    }
-    else
-    {
-        devRtl = true;
-        devFixd = HorizontalEdge.Right;
-    }
+    bool devRtl = User.FindFirstValue("aiwLan") != "en";
 }
-<h1 class="page-header">@iT.T(xLan,"1170","Balance Sheet Items")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
-                    <button type="button" class="btn btn-yellow text-dark" onclick="GetDetails(null)">@iT.T(xLan, "1171","Create New Item")</button>
-                </div>
+
+<div class="modern-page animate__animated animate__fadeIn">
+    <div class="page-header-modern mb-4">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-spreadsheet'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"1170","Balance Sheet Items")</h1>
+                <p class="page-subtitle-modern">Classification management for financial statements</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.BalanceSheetItems>().ID("grd-BalanceSheetItems")
-                    .ShowBorders(true).Width("100%")
-                    .DataSource(d => d.WebApi()
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="GetItemDetails(null)">
+                <i class='bx bx-plus'></i> @iT.T(xLan, "1171","Create New Item")
+            </button>
+        </div>
+    </div>
+
+    <div class="card-modern border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.BalanceSheetItems>().ID("grd-BalanceSheetItems")
+                .ShowBorders(false)
+                .Width("100%")
+                .DataSource(d => d.WebApi()
                     .Controller("icards").Area("Accounting")
                     .Key("Key")
-                    .LoadAction("BalanceSheetItems"))
-                    .ColumnAutoWidth(true)
-                    .FocusedRowEnabled(true)
-                    .Columns(columns =>
-                    {
-                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(70).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
-                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(75).Lookup(L => L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind"));
-                        columns.AddFor(m => m.Transaction).Caption(iT.T(xLan, "1011", "Transaction")).Width(80).Lookup(L => L.DataSource(iReplacer.accBalanceItemKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Transaction"));
-                        columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1172", "Parent")).Lookup(L => L.DataSource(CLiAccounting.Selections.BalanceSheetItems.GetList(DB, xLan)).ValueExpr("Code").DisplayExpr("Display"));
-                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100);
-                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
-                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name"));
-                    })
-                    .Pager(pg =>
-                    {
-                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
-                        pg.ShowNavigationButtons(true);
-                        pg.ShowPageSizeSelector(true);
-                        pg.ShowInfo(true);
-                        pg.InfoText("{0} of {1} | {2} Rows");
-                    })
-                    .Paging(p => { p.PageSize(50); })
-                    .FilterRow(f => f.Visible(true))
-                    .HeaderFilter(f => f.Visible(true))
-                    .SearchPanel(sp =>
-                    {
-                        sp.Width(250);
-                        sp.Visible(true);
-                    })
-                    .Export(exp=>exp.Enabled(true).Texts(x=>x.ExportTo("DataExport")))
-                    .RowAlternationEnabled(true)
-                    .RtlEnabled(devRtl)
-                    )
-            </div>
+                    .LoadAction("BalanceSheetItems")
+                    .OnLoaded("onDataLoaded")
+                )
+                .ColumnAutoWidth(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+                .Columns(columns =>
+                {
+                    columns.Add().Name("act").Caption("#").Width(100).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(120).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Item Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(100).Lookup(L => L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Transaction).Caption(iT.T(xLan, "1011", "Transaction")).Width(120).Lookup(L => L.DataSource(iReplacer.accBalanceItemKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Transaction")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1172", "Parent Code")).Width(120).CssClass("text-muted small");
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search items...");
+                })
+                .RtlEnabled(devRtl)
+            )
         </div>
     </div>
 </div>
-<div id="mod-BalanceSheetItems" class="modal"><div class="modal-dialog" id="con-BalanceSheetItems"></div></div>
+
+<div id="mod-BalanceSheetItems" class="modal fade"><div class="modal-dialog modal-lg modal-dialog-centered" id="con-BalanceSheetItems"></div></div>
+
 <script class="append-on-ajax-script">
-    function ct4Action (container, options)
-    {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'edit' },
-                { icon: 'trash' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function (e)
-            {
-                switch (e.itemIndex)
-                {
-                    case 0:
-                        if (e.itemData.icon == 'edit')
-                        {
-                            GetDetails(options.data.Key);
-                        }
-                        break;
-                    case 1:
-                        if (e.itemData.icon == 'trash')
-                        {
-                            DeleteRow(options.data.Key, options.data.Name1);
-                        }
-                        break;
-                }
-            },
+    function decodeHtml(html) {
+        if (!html) return "";
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    function onDataLoaded(data) {
+        if (data && Array.isArray(data)) {
+            data.forEach(function(item) {
+                if (item.Name1) item.Name1 = decodeHtml(item.Name1);
+                if (item.Name2) item.Name2 = decodeHtml(item.Name2);
+            });
+        }
+    }
+
+    function ct4Action(container, options) {
+        var actionDiv = $('<div class="d-flex justify-content-center align-items-center gap-2"></div>');
+        var editBtn = $('<button type="button" class="grid-action-btn" title="Edit"><i class="bx bx-edit-alt"></i></button>');
+        editBtn.on('click', function() { GetItemDetails(options.data.Key); });
+        var delBtn = $('<button type="button" class="grid-action-btn delete" title="Delete"><i class="bx bx-trash"></i></button>');
+        delBtn.on('click', function() { DeleteItem(options.data.Key, options.data.Name1); });
+        actionDiv.append(editBtn).append(delBtn);
+        container.append(actionDiv);
+    }
+
+    function RefreshGrid() {
+        var grid = $("#grd-BalanceSheetItems").dxDataGrid("instance");
+        if(grid) grid.refresh();
+    }
+
+    function GetItemDetails(Key) {
+        $('#con-BalanceSheetItems').empty();
+        $("#con-BalanceSheetItems").load('/Accounting/Cards/GetBalanceSheetItems?Key=' + Key, function() {
+            $("#mod-BalanceSheetItems").modal({ backdrop: 'static' }).modal('show');
         });
     }
-    function RefreshGrid ()
-    {
-        $('#grd-BalanceSheetItems').dxDataGrid("instance").refresh();
-    }
-    function GetDetails (Key)
-    {
-        $('#con-BalanceSheetItems').empty();
-        $("#con-BalanceSheetItems").load('/Accounting/Cards/GetBalanceSheetItems?Key=' + Key);
-        $("#mod-BalanceSheetItems").modal({ backdrop: 'static' }).modal('toggle');
-    }
-    function DeleteRow (Key, Display)
-    {
-        $.confirm({
-            title: 'Confirm',
-            content: 'Are you sure to delete Account: ' + Display,
-            type: 'red',
-            buttons: {
-                Delete: {
-                    text: 'Delete',
-                    btnClass: 'btn-red',
-                    action: function ()
-                    {
-                        $.ajax({
-                            type: "Delete",
-                            url: "/api/acc/icards/DeleteRoot",
-                            data: { Key: Key },
-                            dataType: "json",
-                            success: function (response)
-                            {
-                                if (response == 0)
-                                {
-                                    $.alert({
-                                        title: 'Stop',
-                                        content: "Cannot delete account,It is have a child's",
-                                    });
-                                } else
-                                {
-                                    RefreshGrid();
-                                }
-                            },
-                            failure: function (response)
-                            {
-                                alert(response);
-                            },
-                            error: function (response)
-                            {
-                                alert(response.responseText);
-                            }
-                        });
+
+    function DeleteItem(Key, Display) {
+        Swal.fire({
+            title: 'Delete Item?',
+            text: "Are you sure you want to delete: " + Display,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "Delete",
+                    url: "/api/acc/icards/DeleteRoot",
+                    data: { Key: Key },
+                    success: function(response) {
+                        if (response == 0) {
+                            Swal.fire('Error', 'Cannot delete item with children.', 'error');
+                        } else {
+                            RefreshGrid();
+                            Swal.fire('Deleted!', 'Item has been deleted.', 'success');
+                        }
                     }
-                },
-                Cancel: {
-                    text: 'Cancel',
-                    action: function ()
-                    {
-                        return;
-                    }
-                }
+                });
             }
         });
     }
-    function ct4Kind (container, options)
-    {
-        var str = '';
-        switch (options.value)
-        {
-            case 0:
-                str = '<div class="text-center"><span class="badge bg-primary">' + options.text + '</span></div>';
-                break;
-            case 1:
-                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
-                break;
-            case 2:
-                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
-                break;
-            case 3:
-                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
-                break;
-            case 4:
-                str = '<div class="text-center"><span class="badge bg-warning text-dark">' + options.text + '</span></div>';
-                break;
+
+    function ct4Kind(container, options) {
+        var badgeClass = 'badge-modern badge-primary-modern';
+        switch (options.value) {
+            case 0: badgeClass = 'badge-modern badge-primary-modern'; break;
+            case 1: badgeClass = 'badge-modern badge-danger-modern'; break;
+            case 2: badgeClass = 'badge-modern badge-warning-modern'; break;
+            case 3: badgeClass = 'badge-modern badge-success-modern'; break;
         }
-        $(str).appendTo(container)
+        $('<div class="text-center"></div>').append($('<span class="' + badgeClass + '"></span>').text(options.text)).appendTo(container);
     }
-    function ct4Transaction (container, options)
-    {
-        var str = '';
-        switch (options.value)
-        {
-            case false:
-                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
-                break;
-            case true:
-                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
-                break;
-        }
-        $(str).appendTo(container)
+
+    function ct4Transaction(container, options) {
+        var badgeClass = options.value === true ? 'badge-warning-modern' : 'badge-secondary-modern';
+        $('<div class="text-center"></div>').append($('<span class="badge-modern ' + badgeClass + '">' + options.text + '</span>')).appendTo(container);
     }
 </script>

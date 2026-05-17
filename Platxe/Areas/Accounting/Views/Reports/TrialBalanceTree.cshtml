@@ -15,320 +15,280 @@
         devFixd = HorizontalEdge.Right;
     }
 }
-<style>
-    .acc .widget {
-        margin-bottom: 4px;
-    }
 
-    .acc hr {
-        margin-top: 8px;
-        margin-bottom: 8px;
-    }
-</style>
-<h1 class="page-header">@iT.T(xLan,"1237","Analytical Trial Balance")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1222","Year")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
-                    </div>
+<div class="modern-page">
+    <!-- Breadcrumb & Header -->
+    <div class="page-header-modern mb-4">
+        <div class="header-left-modern">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-2 small">
+                    <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">@iT.T(xLan,"1000","Accounting")</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">@iT.T(xLan,"1005","Reports")</a></li>
+                    <li class="breadcrumb-item active fw-bold text-primary" aria-current="page">@iT.T(xLan,"1237","Analytical Trial Balance (Tree)")</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center">
+                <div class="header-icon-modern">
+                    <i class='bx bx-sitemap'></i>
                 </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1224","First Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan,"1225","Last Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
-                    </div>
-                </div>
-            </div>
-             <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <div class="col-10">
-                        @Html.DevExtreme().CheckBox().ID("ed-HideZero").Text(iT.T(xLan,"2690","Show Zero"))
-                    </div>
-                </div>
-                <div class="form-group row" hidden>
-                    <div class="col-10">
-                        @Html.DevExtreme().CheckBox().ID("ed-ExpensesDetails").Text(iT.T(xLan,"2421","Show Expenses Details"))
-                    </div>
-                </div>
-          
-            </div>
-            <div class="col-lg-1"></div>
-            <div class="col-lg-5 col-md-6">
-                <div class="card border-0 mb-1 bg-yellow text-dark acc">
-                    <div class="card-body">
-
-                        <div class="d-flex">
-                            <h2 class="mb-0"><span id="txt-TotalTrial">0.00</span></h2>
-                        </div>
-                        <hr class="bg-white-transparent-2">
-                        <div class="row text-truncate">
-                            <div class="col-4">
-                                <div class="f-s-12 text-grey">@iT.T(xLan,"1007","Opening")</div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
-                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-oBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
-                            </div>
-                            <div class="col-4">
-                                <div class="f-s-12 text-grey">@iT.T(xLan,"1011","Transaction") </div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
-                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-tBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
-                            </div>
-                            <div class="col-4">
-                                <div class="f-s-12 text-grey">@iT.T(xLan,"1227","Balance") </div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bDebit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1008","Debit")</span></div>
-                                <div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bCredit">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1009","Credit")</span></div>
-                                @*<div class="f-s-14 m-b-2 p-b-1"><span class="me-2" id="txt-bBalance">0.00</span><span class="f-s-10 text-grey me-2">@iT.T(xLan,"1238","Diff.")</span></div>*@
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <h1 class="page-title-modern">@iT.T(xLan,"1237","Analytical Trial Balance (Tree)")</h1>
+                    <p class="page-subtitle-modern text-muted">Detailed hierarchical audit of ledger balances and net activity</p>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <hr />
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan,"1156","Refresh")</button>
-                    <button type="button" class="btn btn-gray btn-sm" onclick="PrintReport()">@iT.T(xLan, "1361","Print Report")</button>
-                </div>
-            </div>
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()" title="Reload Data">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="PrintReport()">
+                <i class='bx bx-printer'></i> @iT.T(xLan, "1361","Print")
+            </button>
         </div>
-        <div class="row">
-            <div class="col-12">
-                @(Html.DevExtreme().TreeList<CLiAccounting.Reports.TrialBalance>().ID("grd-TrialBalance")
-                    .ShowBorders(true).Width("100%")
-                    .DataSource(d => d.WebApi().Controller("ireports").Area("Accounting").Key("Key").LoadAction("TrialBalanceTree")
-                    .LoadParams(new
-                    {
-                        First = new JS("getFirst"),
-                        Last = new JS("getLast"),
-                        ExpKind = false  ,
-                        HideZero = new JS("getHideZero")
-                    }))
-                    .KeyExpr("Key")
-                    .ParentIdExpr("ParentKey")
-                    .DataStructure(TreeListDataStructure.Plain)
-                    .ColumnAutoWidth(true)
-                    .FocusedRowEnabled(true)
-                    .Columns(columns =>
-                    {
-                        columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code"));
-                        //columns.AddFor(m => m.ExpensesKind).Caption(iT.T(xLan, "2422", "Exp.Kind")).Width(70).Lookup(L => { L.DataSource(iReplacer.accExpKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); });
-                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
-                        columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
-                        columns.AddFor(m => m.oDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.oCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.tDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.tCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.tbDebit).Caption(iT.T(xLan, "1052", "Debit Balance")).Width(100).Format("0,###.##").Visible(true).CellTemplate(new JS("ct4CheckD"));
-                        columns.AddFor(m => m.tbCredit).Caption(iT.T(xLan, "1053", "Credit Balance")).Width(100).Format("0,###.##").Visible(true).CellTemplate(new JS("ct4CheckC"));
-                        columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##").CellTemplate(new JS("ct4CheckD"));
-                        columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##").CellTemplate(new JS("ct4CheckC"));
-                    })
-                    .SearchPanel(sp =>
-                    {
-                        sp.Width(250);
-                        sp.Visible(true);
-                    })
-                    .RowAlternationEnabled(true)
-                    .RtlEnabled(devRtl)
-                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
-                    )
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card-modern border-0 shadow-sm mb-4">
+        <div class="card-header-modern bg-white d-flex align-items-center py-3">
+            <h6 class="mb-0 fw-bold text-dark"><i class='bx bx-filter-alt me-2 text-primary'></i>@iT.T(xLan,"1221","Search & Filters")</h6>
+        </div>
+        <div class="card-body-modern p-4">
+            <div class="row g-4 align-items-end">
+                <div class="col-lg-2 col-md-4">
+                    <label class="form-label small fw-bold text-muted mb-2">@iT.T(xLan,"1222","Year")</label>
+                    @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <label class="form-label small fw-bold text-muted mb-2">@iT.T(xLan,"1224","From Date")</label>
+                    @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1)).OnValueChanged("RefreshGrid")
+                </div>
+                <div class="col-lg-3 col-md-4">
+                    <label class="form-label small fw-bold text-muted mb-2">@iT.T(xLan,"1225","To Date")</label>
+                    @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31)).OnValueChanged("RefreshGrid")
+                </div>
+                <div class="col-lg-4 col-md-12">
+                    <div class="d-flex gap-4 flex-wrap pb-2">
+                        <div class="d-flex align-items-center">
+                            @Html.DevExtreme().CheckBox().ID("ed-HideZero").Text(iT.T(xLan,"2690","Show Zero Balances")).Value(false).OnValueChanged("RefreshGrid")
+                        </div>
+                        <div class="d-flex align-items-center">
+                            @Html.DevExtreme().CheckBox().ID("ed-ExpensesDetails").Text(iT.T(xLan,"2421","Show Expenses Details")).Value(false).OnValueChanged("RefreshGrid")
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Summary KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="kpi-card-modern bg-white border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="kpi-icon-soft bg-success-soft text-success me-3">
+                        <i class='bx bx-plus-circle fs-4'></i>
+                    </div>
+                    <span class="text-muted small fw-bold">@iT.T(xLan,"1008","Total Debit")</span>
+                </div>
+                <h3 class="mb-0 fw-bold text-dark" id="txt-bDebit">0.00</h3>
+                <div class="mt-2 small text-muted">Cumulative opening + transactions</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card-modern bg-white border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="kpi-icon-soft bg-danger-soft text-danger me-3">
+                        <i class='bx bx-minus-circle fs-4'></i>
+                    </div>
+                    <span class="text-muted small fw-bold">@iT.T(xLan,"1009","Total Credit")</span>
+                </div>
+                <h3 class="mb-0 fw-bold text-dark" id="txt-bCredit">0.00</h3>
+                <div class="mt-2 small text-muted">Cumulative opening + transactions</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card-modern bg-white border-0 shadow-sm p-4 rounded-4 h-100">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="kpi-icon-soft bg-primary-soft text-primary me-3">
+                        <i class='bx bx-transfer fs-4'></i>
+                    </div>
+                    <span class="text-muted small fw-bold">@iT.T(xLan,"1011","Net Activity")</span>
+                </div>
+                <h3 class="mb-0 fw-bold text-dark" id="txt-TotalTrial">0.00</h3>
+                <div class="mt-2 small text-muted">Combined turnover for period</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="kpi-card-modern bg-primary-modern text-white border-0 shadow-lg p-4 rounded-4 h-100">
+                <div class="d-flex align-items-center mb-3 text-white-50">
+                    <div class="kpi-icon-soft bg-white-transparent-10 text-white me-3">
+                        <i class='bx bx-wallet fs-4'></i>
+                    </div>
+                    <span class="small fw-bold">@iT.T(xLan,"1227","Net Balance")</span>
+                </div>
+                <h3 class="mb-0 fw-bold" id="txt-bBalance">0.00</h3>
+                <div class="mt-2 small opacity-75">Final difference (DR - CR)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Grid Card -->
+    <div class="card-modern border-0 shadow-sm">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().TreeList<CLiAccounting.Reports.TrialBalance>().ID("grd-TrialBalance")
+                .ShowBorders(false)
+                .Width("100%")
+                .DataSource(d => d.WebApi().Controller("ireports").Area("Accounting").Key("Key").LoadAction("TrialBalanceTree")
+                .LoadParams(new
+                {
+                    First = new JS("getFirst"),
+                    Last = new JS("getLast"),
+                    ExpKind = new JS("getExpKind"),
+                    HideZero = new JS("getHideZero")
+                }))
+                .KeyExpr("Key")
+                .ParentIdExpr("ParentKey")
+                .DataStructure(TreeListDataStructure.Plain)
+                .ColumnAutoWidth(true)
+                .FocusedRowEnabled(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
+                .WordWrapEnabled(true)
+                .Scrolling(s => s.Mode(TreeListScrollingMode.Virtual).ScrollByContent(true).ScrollByThumb(true))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(150).CssClass("fw-bold text-dark").Fixed(true);
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CssClass("fw-medium");
+                    
+                    columns.Add().Caption(iT.T(xLan, "1007", "Opening")).Columns(c => {
+                        c.AddFor(m => m.oDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.00").Alignment(HorizontalAlignment.Right);
+                        c.AddFor(m => m.oCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.00").Alignment(HorizontalAlignment.Right);
+                    });
+
+                    columns.Add().Caption(iT.T(xLan, "1011", "Activity")).Columns(c => {
+                        c.AddFor(m => m.tDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.00").Alignment(HorizontalAlignment.Right);
+                        c.AddFor(m => m.tCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.00").Alignment(HorizontalAlignment.Right);
+                    });
+
+                    columns.Add().Caption(iT.T(xLan, "1227", "Closing")).Columns(c => {
+                        c.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.00").CellTemplate(new JS("ct4CheckD")).Alignment(HorizontalAlignment.Right);
+                        c.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.00").CellTemplate(new JS("ct4CheckC")).Alignment(HorizontalAlignment.Right);
+                    });
+                })
+                .SearchPanel(sp =>
+                {
+                    sp.Width(280);
+                    sp.Visible(true);
+                    sp.Placeholder("Search by name or code...");
+                })
+                .HeaderFilter(hf => hf.Visible(true))
+                .RtlEnabled(devRtl)
+                .OnContentReady("onGridContentReady")
+                .NoDataText("No financial records found for the selected period.")
+            )
+        </div>
+    </div>
 </div>
+
+<!-- Loading Spinner Overlay -->
+<div id="grid-loader" class="grid-loader-overlay d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
 <script class="append-on-ajax-script">
-    $(document).ready(function ()
-    {
+    $(document).ready(function () {
         LoadDash();
-    })
-    async function LoadDash ()
-    {
+    });
+
+    async function LoadDash() {
+        $('#grid-loader').removeClass('d-none');
         $.ajax({
             type: "Get",
             url: "/api/acc/ireports/BalanceTB",
             data: { First: getFirst(), Last: getLast() },
             dataType: "json",
-            success: function (response)
-            {
+            success: function (response) {
                 $('#txt-oDebit').text(comma(response.oDebit));
                 $('#txt-oCredit').text(comma(response.oCredit));
-                $('#txt-oBalance').text(comma(response.oDebit - response.oCredit));
                 $('#txt-tDebit').text(comma(response.TDebit));
                 $('#txt-tCredit').text(comma(response.TCredit));
-                $('#txt-tBalance').text(comma(response.TDebit - response.TCredit));
-                $('#txt-bDebit').text(comma(response.oDebit + response.TDebit));
-                $('#txt-bCredit').text(comma(response.oCredit + response.TCredit));
-                $('#txt-bBalance').text(comma((response.oDebit + response.TDebit) - (response.oCredit + response.TCredit)));
-                $('#txt-TotalTrial').text(comma(response.oDebit + response.TDebit));
+                
+                var totalDebit = response.oDebit + response.TDebit;
+                var totalCredit = response.oCredit + response.TCredit;
+                
+                $('#txt-bDebit').text(comma(totalDebit));
+                $('#txt-bCredit').text(comma(totalCredit));
+                $('#txt-bBalance').text(comma(totalDebit - totalCredit));
+                $('#txt-TotalTrial').text(comma(response.TDebit + response.TCredit));
+                
+                $('#grid-loader').addClass('d-none');
             },
-            failure: function (response)
-            {
-                alert(response);
-            },
-            error: function (response)
-            {
-                alert(response.responseText);
+            error: function (response) {
+                $('#grid-loader').addClass('d-none');
+                Swal.fire({ icon: 'error', title: 'Fetch Error', text: response.responseText || 'Failed to load summary.' });
             }
         });
     }
-    function ct4Action (container, options)
-    {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'tips' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function (e)
-            {
-                switch (e.itemIndex)
-                {
-                    case 0:
-                        if (e.itemData.icon == 'tips')
-                        {
-                            GetDetails(options.data.Key);
-                        }
-                        break;
-                }
-            },
-        });
+
+    function onGridContentReady(e) {
+        // Optional: adjust scroll position or formatting after load
     }
-    function RefreshGrid ()
-    {
+
+    function RefreshGrid() {
         LoadDash();
-        $('#grd-TrialBalance').dxTreeList("instance").refresh();
+        var grid = $('#grd-TrialBalance').dxTreeList("instance");
+        if(grid) grid.refresh();
     }
-    function getYear ()
-    {
-        return $('#edYear').dxNumberBox('option', 'value')
-    }
-    function getFirst ()
-    {
+
+    function getFirst() {
         var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
         return fd.toLocaleDateString();
     }
-    function getLast ()
-    {
+
+    function getLast() {
         var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
         return ld.toLocaleDateString();
     }
-   
-    function ChangeYear ()
-    {
-        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
-        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
-    }
-    function getHideZero ()
-    {
+
+    function getHideZero() {
         return $('#ed-HideZero').dxCheckBox('option', 'value');
     }
-    function ct4Kind (container, options)
-    {
-        var str = '';
-        switch (options.value)
-        {
-            case 0:
-                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
-                break;
-            case 1:
-                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
-                break;
-            case 2:
-                str = '<div class="text-center"><span class="badge bg-info text-dark">' + options.text + '</span></div>';
-                break;
-            case 3:
-                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
-                break;
-            case 4:
-                str = '<div class="text-center"><span class="badge bg-warning text-dark">' + options.text + '</span></div>';
-                break;
-        }
-        $(str).appendTo(container)
-    }
-    function ct4T (container, options)
-    {
-        var str = '';
-        if (options.data.Level == 1)
-        {
-            str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
-            $(str).appendTo(container)
-            return;
-        }
-        switch (options.value)
-        {
-            case 0:
-                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
-                break;
-            case 1:
-                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
-                break;
-        }
-        $(str).appendTo(container);
-    }
-    function PrintReport ()
-    {
-        window.open('/Print/Financial/TrialBalance?First=' + getFirst() + '&Last=' + getLast() + '&Level=' + getLevel() + '&TrialBalance=' + getExpKind());
-    }
-    function ct4CheckD (container, options)
-    {
-        if (options.data.DC == true && options.value > 0)
-        {
-            container.append('<div>' + options.text + '</div>')
-                .css('color', '#F6331A')
-                .css('font-weight', '600');
-        } else
-        {
-            container.append('<div>' + options.text + '</div>');
-        }
-    }
-    function ct4CheckC (container, options)
-    {
-        if (options.data.DC == false && options.value > 0)
-        {
-            container.append('<div>' + options.text + '</div>')
-                .css('color', '#F6331A')
-                .css('font-weight', '600');
-        }
-        else
-        {
-            container.append('<div>' + options.text + '</div>');
-        }
-    }
-        function ct4ExpensesKind (container, options)
-    {
-        var str = '';
-        switch (options.value)
-        {
-            case 0:
-                str = '<div class="text-center dx-dxtreelist"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
-                break;
-            case 1:
-                str = '<div class="text-center dx-dxtreelist"><span class="badge bg-info text-dark">' + options.text + '</span></div>';
-                break;
-            case 2:
-                str = '<div class="text-center dx-dxtreelist"><span class="badge bg-danger">' + options.text + '</span></div>';
-                break;
-            case -1:
-                str = '<div class="text-center dx-dxtreelist"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
-                break;
-        }
-        $(str).appendTo(container)
-    }
-    function getExpKind ()
-    {
+
+    function getExpKind() {
         return $('#ed-ExpensesDetails').dxCheckBox('option', 'value');
+    }
+
+    function ChangeYear() {
+        var year = $('#edYear').dxNumberBox('option', 'value');
+        $('#edFirstDate').dxDateBox('option', 'value', new Date(year, 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date(year, 11, 31));
+        RefreshGrid();
+    }
+
+    function ct4CheckD(container, options) {
+        var val = options.value || 0;
+        var text = options.text || "0.00";
+        if (options.data.DC == true && val > 0) {
+            $('<span class="fw-bold text-danger">').text(text).appendTo(container);
+        } else {
+            $('<span>').text(text).appendTo(container);
+        }
+    }
+
+    function ct4CheckC(container, options) {
+        var val = options.value || 0;
+        var text = options.text || "0.00";
+        if (options.data.DC == false && val > 0) {
+            $('<span class="fw-bold text-danger">').text(text).appendTo(container);
+        } else {
+            $('<span>').text(text).appendTo(container);
+        }
+    }
+
+    function PrintReport() {
+        window.open('/Print/Financial/TrialBalance?First=' + getFirst() + '&Last=' + getLast() + '&ExpKind=' + getExpKind());
     }
 </script>

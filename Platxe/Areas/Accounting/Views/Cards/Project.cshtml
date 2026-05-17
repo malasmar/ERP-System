@@ -14,89 +14,88 @@
         devFixd = HorizontalEdge.Right;
     }
 }
-<h1 class="page-header">@iT.T(xLan,"1182","Projects")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
-                    <button type="button" class="btn btn-yellow text-dark" onclick="GetDetails(null)">@iT.T(xLan, "1171","Create New Item")</button>
-                </div>
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-briefcase'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"1182","Projects")</h1>
+                <p class="page-subtitle-modern">Track and manage project-specific accounting and dimensions</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.Project>().ID("grd-Project")
-                .ShowBorders(true).Width("100%")
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+            <button type="button" class="btn-modern btn-primary-modern" onclick="GetDetails(null)">
+                <i class='bx bx-plus'></i> @iT.T(xLan, "1171","Create New Item")
+            </button>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.Project>().ID("grd-Project")
+                .ShowBorders(false)
+                .Width("100%")
                 .DataSource(d => d.WebApi()
                     .Controller("icards").Area("Accounting")
-                .Key("Key")
-                .LoadAction("Project"))
+                    .Key("Key")
+                    .LoadAction("Project"))
                 .ColumnAutoWidth(true)
-                    .FocusedRowEnabled(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
                 .Columns(columns =>
                 {
-                columns.Add().Name("act").Caption(iT.T(xLan,  "","#")).Width(70).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
-                columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164","Code")).Width(100);
-                columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1183","Project Name"));
-                columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name"));
-                columns.AddFor(m => m.ContractDate).Caption(iT.T(xLan, "1184","Contract Date")).Width(90).Format("dd.MM.yyyy");
-                columns.AddFor(m => m.StartDate).Caption(iT.T(xLan, "1185","Start Date")).Width(90).Format("dd.MM.yyyy");
-                columns.AddFor(m => m.EndDate).Caption(iT.T(xLan, "1186","End Date")).Width(90).Format("dd.MM.yyyy");
-                columns.AddFor(m => m.Price).Caption(iT.T(xLan, "1187","Price")).Width(90);
-                columns.AddFor(m => m.ContactPerson).Caption(iT.T(xLan, "1188","Contact Person"));
-                columns.AddFor(m => m.Mobile).Caption(iT.T(xLan, "1189","Mobile"));
-                 columns.AddFor(m => m.Phone).Caption(iT.T(xLan, "1190","Phone"));
+                    columns.Add().Name("act").Caption("#").Width(100).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164","Code")).Width(120).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1183","Project Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name")).CssClass("text-secondary");
+                    columns.AddFor(m => m.ContractDate).Caption(iT.T(xLan, "1184","Contract Date")).Width(110).Format("dd.MM.yyyy");
+                    columns.AddFor(m => m.StartDate).Caption(iT.T(xLan, "1185","Start Date")).Width(110).Format("dd.MM.yyyy");
+                    columns.AddFor(m => m.EndDate).Caption(iT.T(xLan, "1186","End Date")).Width(110).Format("dd.MM.yyyy");
+                    columns.AddFor(m => m.Price).Caption(iT.T(xLan, "1187","Price")).Width(100).Format("#,##0.##");
+                    columns.AddFor(m => m.ContactPerson).Caption(iT.T(xLan, "1188","Contact Person"));
+                    columns.AddFor(m => m.Mobile).Caption(iT.T(xLan, "1189","Mobile"));
+                    columns.AddFor(m => m.Phone).Caption(iT.T(xLan, "1190","Phone"));
                 })
                 .Pager(pg =>
                 {
-                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
-                pg.ShowNavigationButtons(true);
-                pg.ShowPageSizeSelector(true);
-                pg.ShowInfo(true);
-                pg.InfoText("{0} of {1} | {2} Rows");
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
                 })
                 .Paging(p => { p.PageSize(50); })
                 .FilterRow(f => f.Visible(true))
                 .HeaderFilter(f => f.Visible(true))
                 .SearchPanel(sp =>
                 {
-                sp.Width(250);
-                sp.Visible(true);
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search projects...");
                 })
-                .RowAlternationEnabled(true)
                 .RtlEnabled(devRtl)
-                )
-            </div>
+            )
         </div>
     </div>
 </div>
 <div id="mod-Project" class="modal"><div class="modal-dialog" id="con-Project"></div></div>
 <script class="append-on-ajax-script">
     function ct4Action(container, options) {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'edit' },
-                { icon: 'trash' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function(e) {
-                switch (e.itemIndex) {
-                    case 0:
-                        if (e.itemData.icon == 'edit') {
-                            GetDetails(options.data.Key);
-                        }
-                        break;
-                    case 1:
-                        if (e.itemData.icon == 'trash') {
-                            DeleteRow(options.data.Key, options.data.Name1);
-                        }
-                        break;
-                }
-            },
-        });
+        var actionDiv = $('<div class="d-flex justify-content-center align-items-center gap-2"></div>');
+        
+        var editBtn = $('<button type="button" class="grid-action-btn" title="Edit"><i class="bx bx-edit-alt"></i></button>');
+        editBtn.on('click', function() { GetDetails(options.data.Key); });
+
+        var delBtn = $('<button type="button" class="grid-action-btn delete" title="Delete"><i class="bx bx-trash"></i></button>');
+        delBtn.on('click', function() { DeleteRow(options.data.Key, options.data.Name1); });
+
+        actionDiv.append(editBtn).append(delBtn);
+        container.append(actionDiv);
     }
     function RefreshGrid() {
         $('#grd-Project').dxDataGrid("instance").refresh();

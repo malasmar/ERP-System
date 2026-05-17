@@ -2,252 +2,304 @@
 @{
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
+    bool isRtl = xLan == "ar";
 }
 
-<style>
-    .shl-invoice-header > span {
-        margin-left: 4px;
-        margin-right: 4px;
-    }
-    .shl-invoice-header > p {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-  /*  .xd > tr:hover .ccp {
-        display: block !important;
-    }
-    .xd > tr:hover {
-        cursor: pointer;
-        height: 85px;
-    }*/
-    .wd70 {
-        width: 65px !important;
-        min-width: 65px !important;
-        max-width: 65px !important;
-    }
-</style>
-<div class="invoice">
-    <div class="invoice-company">
-        <div class="float-end hidden-print">
-            <div class="btn-group">
-                <button type="button" class="btn btn-yellow mb-10px" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"","Save/Update")</button>
-                <button type="button" onclick="window.print()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+<div class="content-header mb-4">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="page-header h3 mb-1">
+                    @iT.T(xLan, "1209", "General Ledger")
+                    <span id="inf-Status" class="badge rounded-pill bg-info ms-2 fs-7 fw-medium">
+                        <i class="bx bxs-circle me-1 small"></i>
+                        <span id="txt-Status">New</span>
+                    </span>
+                    <span class="ms-2 text-muted fw-normal fs-6">#<span id="txt-VoucherNo">@Model.No</span></span>
+                </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="/Accounting">@iT.T(xLan, "1142", "Home")</a></li>
+                        <li class="breadcrumb-item"><a href="/Accounting/Documents/GeneralLedgerList">@iT.T(xLan, "1221", "General Ledger List")</a></li>
+                        <li class="breadcrumb-item active">@iT.T(xLan, "1209", "General Ledger")</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div class="btn-group shadow-sm">
+                    <button type="button" class="btn btn-primary" onclick="SaveGeneralLedger()">
+                        <i class="bx bx-save me-1"></i> @iT.T(xLan, "", "Save/Update")
+                    </button>
+                    <button type="button" onclick="window.print()" class="btn btn-light border">
+                        <i class="bx bx-printer me-1"></i> @iT.T(xLan, "1208", "Print")
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="shl-invoice-header">
-            @iT.T(xLan,"1209","General Ledger")<span id="inf-Status" class="badge bg-info text-dark"><small class="f-s-9 me-1">Status</small><span id="txt-Status" class="me-1">Update</span></span><span id="txt-VoucherNo" class="text-danger">#@Model.No </span><small class="f-s-11" hidden>Monthly No: 444</small>
-            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
-            <p class="f-s-10 mt-1" hidden><i class="fa fa-exclamation-circle text-danger"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id sagittis arcu.</p>
+    </div>
+</div>
+
+<div class="container-fluid" id="gl-entry-container">
+    <!-- Summary Cards -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-primary border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-muted small fw-bold text-uppercase">@iT.T(xLan, "1008", "Total Debit")</div>
+                            <div class="h4 mb-0 fw-bold" id="txt-Debit">0.00</div>
+                        </div>
+                        <div class="ms-3 bg-light rounded-circle p-3">
+                            <i class="bx bx-trending-up text-primary fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-danger border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-muted small fw-bold text-uppercase">@iT.T(xLan, "1009", "Total Credit")</div>
+                            <div class="h4 mb-0 fw-bold" id="txt-Credit">0.00</div>
+                        </div>
+                        <div class="ms-3 bg-light rounded-circle p-3">
+                            <i class="bx bx-trending-down text-danger fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm border-start border-warning border-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <div class="text-muted small fw-bold text-uppercase">@iT.T(xLan, "1217", "Balance / Difference")</div>
+                            <div class="h4 mb-0 fw-bold" id="txt-Diff">0.00</div>
+                        </div>
+                        <div class="ms-3 bg-light rounded-circle p-3">
+                            <i class="bx bx-calculator text-warning fs-3"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <form id="frm-Voucher">
-        @Html.HiddenFor(m=>m.OperationKey)
-        @Html.HiddenFor(m=>m.No)
-        <div class="invoice-header">
-            <div class="invoice-from">
-                <div class="row">
+
+    <!-- Header / Filter Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="card-title mb-0 fw-bold text-dark">
+                <i class="bx bx-info-circle me-2 text-primary"></i>@iT.T(xLan, "1225", "Document Information")
+            </h5>
+        </div>
+        <div class="card-body">
+            <form id="frm-Voucher">
+                @Html.HiddenFor(m => m.OperationKey)
+                @Html.HiddenFor(m => m.No)
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">@iT.T(xLan, "1210", "Date")</label>
+                        @Html.DevExtreme().DateBoxFor(m => m.Date).ID("frm-Date").Width("100%").DisplayFormat("dd.MM.yyyy").Value(DateTime.Now).ElementAttr("class", "modern-dx-box")
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label fw-semibold">@iT.T(xLan, "1211", "Document Kind")</label>
+                        @Html.DevExtreme().SelectBoxFor(m => m.DocumentKind).ID("frm-DocumentKind").DataSource(iReplacer.accGeneralLedgerKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width("100%").ElementAttr("class", "modern-dx-box")
+                    </div>
+                    <div class="col-lg-6 col-md-12">
+                        <label class="form-label fw-semibold">@iT.T(xLan, "1212", "Description")</label>
+                        @Html.DevExtreme().TextAreaFor(m => m.Description).ID("frm-Description").Height(36).Width("100%").Placeholder(iT.T(xLan, "", "Enter document description...")).ElementAttr("class", "modern-dx-box")
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card-footer bg-light-soft py-2 px-3">
+            <div class="d-flex align-items-center small text-muted">
+                <i class="bx bx-bulb me-2 text-warning fs-5"></i>
+                @iT.T(xLan, "", "Tip: Use General Ledger for opening balances and special adjustments only.")
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions Card -->
+    <div class="card border-0 shadow-sm mb-5">
+        <div class="card-header bg-white border-bottom py-3 d-flex align-items-center justify-content-between">
+            <h5 class="card-title mb-0 fw-bold text-dark">
+                <i class="bx bx-list-ul me-2 text-primary"></i>@iT.T(xLan, "1226", "Ledger Entries")
+            </h5>
+            <button type="button" class="btn btn-sm btn-yellow text-dark fw-bold px-3 shadow-sm" onclick="AddNewRow()">
+                <i class="bx bx-plus me-1"></i> @iT.T(xLan, "1214", "Add New Row")
+            </button>
+        </div>
+        <div class="card-body p-0">
+            <!-- Loading Spinner Area -->
+            <div id="gl-loading" class="text-center py-5 d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2 text-muted">@iT.T(xLan, "", "Processing data...")</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="gl-table">
+                    <thead class="bg-light sticky-top">
+                        <tr>
+                            <th class="ps-3" style="width:120px">@iT.T(xLan, "1215", "Actions")</th>
+                            <th style="width:100px">@iT.T(xLan, "1158", "Kind")</th>
+                            <th style="width:120px">@iT.T(xLan, "1164", "Code")</th>
+                            <th style="width:250px">@iT.T(xLan, "1216", "Account Name")</th>
+                            <th class="min-w-200">@iT.T(xLan, "1212", "Description")</th>
+                            <th class="text-end" style="width:120px">@iT.T(xLan, "1008", "Debit")</th>
+                            <th class="text-end pe-3" style="width:120px">@iT.T(xLan, "1009", "Credit")</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-rows">
+                        <!-- Rows populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State Area -->
+            <div id="gl-empty" class="text-center py-5 @(Model.OperationKey == Guid.Empty ? "" : "d-none")">
+                <i class="bx bx-collection display-4 text-muted opacity-25"></i>
+                <p class="text-muted mt-2">@iT.T(xLan, "", "No entries added yet.")</p>
+            </div>
+        </div>
+        <div class="card-footer bg-white border-top py-3 text-end">
+             <div class="d-inline-block">
+                 <span class="text-muted me-3">@iT.T(xLan, "1120", "Total"):</span>
+                 <span class="h4 mb-0 fw-bold text-primary" id="txt-Total">0.00</span>
+             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Row Details Modal -->
+<div id="mod-Row" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="bx bx-edit-alt me-2"></i>@iT.T(xLan, "1218", "Row Details")
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">@iT.T(xLan, "1219", "Account")</label>
+                    @Html.DevExtreme().Lookup().ID("row-Account").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").SearchEnabled(true).Placeholder(iT.T(xLan, "", "Search account...")).ElementAttr("class", "modern-dx-box")
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">@iT.T(xLan, "1212", "Description")</label>
+                    @Html.DevExtreme().TextBox().ID("row-Description").Placeholder(iT.T(xLan, "", "Entry description...")).ElementAttr("class", "modern-dx-box")
+                </div>
+                <div class="row g-3 mb-3">
                     <div class="col-6">
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-sm-12">@iT.T(xLan,"1210","Date")</label>
-                            <div class="col-lg-10 col-sm-12">
-                                @Html.DevExtreme().DateBoxFor(m => m.Date).ID("frm-Date").Width(120).DisplayFormat("dd.MM.yyyy").Value(DateTime.Now)
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-sm-12">@iT.T(xLan,"1211","Document Kind")</label>
-                            <div class="col-lg-10 col-sm-12">
-                                @Html.DevExtreme().SelectBoxFor(m => m.DocumentKind).ID("frm-DocumentKind").DataSource(iReplacer.accGeneralLedgerKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(120)
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-lg-2 col-sm-12">@iT.T(xLan,"1212","Description")</label>
-                            <div class="col-lg-10 col-sm-12">
-                                @Html.DevExtreme().TextAreaFor(m => m.Description).ID("frm-Description").Height(80).Width(350)
-                            </div>
-                        </div>
+                        <label class="form-label fw-bold">@iT.T(xLan, "1008", "Debit")</label>
+                        @Html.DevExtreme().NumberBox().ID("row-Debit").ShowSpinButtons(true).Width("100%").Min(0).OnValueChanged("ChangeDebit").ElementAttr("class", "modern-dx-box text-primary fw-bold")
                     </div>
-                    <div class="col-1">
-                    </div>
-                    <div class="col-5">
-                        <div class="note note-warning note-with-end-icon mb-2">
-                            <div class="note-icon"><i class="fa fa-lightbulb"></i></div>
-                            <div class="note-content text-start">
-                                <h4><b>Important Note!</b></h4>
-                                <p>
-                                  @iT.T(xLan,"","Please don't use General Ledger for financial transaction")
-                                  <br />
-                                    @iT.T(xLan,"1213","The GL use first time of use ERP for opening balance.")
-                                </p>
-                            </div>
-                        </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">@iT.T(xLan, "1009", "Credit")</label>
+                        @Html.DevExtreme().NumberBox().ID("row-Credit").ShowSpinButtons(true).Width("100%").Min(0).OnValueChanged("ChangeCredit").ElementAttr("class", "modern-dx-box text-danger fw-bold")
                     </div>
                 </div>
-            </div>
-        </div>
-    </form>
-    <div class="invoice-content mt-3">
-        <div class="sticky">
-            <button type="button" id="btn-add" class="btn btn-yellow btn-sm text-dark" onclick="AddNewRow()">@iT.T(xLan,"1214","Add New Row")</button>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-invoice table-hover">
-                <thead>
-                    <tr>
-                        <th style="width:100px;max-width:100px">@iT.T(xLan,"1215","Actions")</th>
-                        <th style="width:60px;min-width:60px;max-width:60px">@iT.T(xLan,"1158","Kind")</th>
-                        <th style="width:70px;min-width:70px;max-width:70px">@iT.T(xLan,"1164","Code")</th>
-                        <th style="width:30%;min-width:150px">@iT.T(xLan,"1216","Name")</th>
-                        <th style="width:70%">@iT.T(xLan,"1212","Description")</th>
-                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1008","Debit")</th>
-                        <th style="width:100px;min-width:100px;max-width:100px">@iT.T(xLan,"1009","Credit")</th>
-                    </tr>
-                </thead>
-                <tbody class="xd" id="tb-rows">
-                </tbody>
-            </table>
-        </div>
-        <div class="invoice-price">
-            <div class="invoice-price-left">
-                <div class="invoice-price-row">
-                    <div class="sub-price">
-                        <small>@iT.T(xLan,"1008","Debit")</small>
-                        <span id="txt-Debit" class="text-dark">0.00</span>
-                    </div>
-                    <div class="sub-price">
-                        <small>@iT.T(xLan,"1009","Credit")</small>
-                        <span id="txt-Credit" class="text-dark">0.00</span>
-                    </div>
-                    <div class="sub-price">
-                        <small>@iT.T(xLan,"1217","Difference")</small>
-                        <span id="txt-Diff" class="text-red">0.00</span>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">@iT.T(xLan, "1199", "Cost Center")</label>
+                    @Html.DevExtreme().Lookup().ID("row-Costcenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true).Placeholder(iT.T(xLan, "", "Optional...")).ElementAttr("class", "modern-dx-box")
+                </div>
+                <div class="mb-0">
+                    <label class="form-label fw-bold">@iT.T(xLan, "1220", "Project")</label>
+                    @Html.DevExtreme().Lookup().ID("row-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB, xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true).Placeholder(iT.T(xLan, "", "Optional...")).ElementAttr("class", "modern-dx-box")
                 </div>
             </div>
-            <div class="invoice-price-right">
-                <small>@iT.T(xLan,"1120","Total")</small> <span class="fw-bold" id="txt-Total">0.00</span>
-            </div>
-        </div>
-    </div>
-    <div class="invoice-note">
-        <hr>
-        <div class="text-left">
-            <div class="btn-group">
-                <button type="button" class="btn btn-yellow mb-10px" onclick="SaveGeneralLedger()"><i class="fa fa-save t-plus-1 text-dark fa-fw fa-lg"></i> @iT.T(xLan,"","Save/Update")</button>
-                <button type="button" onclick="window.print()" class="btn btn-white mb-10px"><i class="fa fa-print t-plus-1 fa-fw fa-lg"></i> @iT.T(xLan,"1208","Print")</button>
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">@iT.T(xLan, "1198", "Cancel")</button>
+                <button type="button" class="btn btn-primary px-4 shadow-sm" onclick="SaveRowChange()">
+                    <i class="bx bx-check me-1"></i> @iT.T(xLan, "1197", "Apply Change")
+                </button>
             </div>
         </div>
     </div>
 </div>
-<div id="mod-Row" class="modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">@iT.T(xLan,"1218","Row Details")</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group row">
-                    <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1219","Account")</label>
-                    <div class="col-lg-9 col-sm-12">
-                        @Html.DevExtreme().Lookup().ID("row-Account").DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3">@iT.T(xLan,"1212","Description")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().TextBox().ID("row-Description")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3">@iT.T(xLan,"1008","Debit")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().NumberBox().ID("row-Debit").ShowSpinButtons(true).Width(130).Min(0).OnValueChanged("ChangeDebit")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3">@iT.T(xLan,"1009","Credit")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().NumberBox().ID("row-Credit").ShowSpinButtons(true).Width(130).Min(0).OnValueChanged("ChangeCredit")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3">@iT.T(xLan,"1199","Cost Center")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().Lookup().ID("row-Costcenter").DataSource(CLiAccounting.Selections.CostCenter.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3">@iT.T(xLan,"1220","Project")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().Lookup().ID("row-Project").DataSource(CLiAccounting.Selections.Project.FullList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").ShowClearButton(true)
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-yellow text-dark" onclick="SaveRowChange()">@iT.T(xLan,"1197","Save Change")</button>
-                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+<style>
+    .bg-light-soft { background-color: #f8fafc; }
+    .fs-7 { font-size: 0.85rem; }
+    .badg-soft-primary { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    .badg-soft-danger { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
+    .modern-dx-box .dx-texteditor-input { padding: 8px 12px; }
+    .sticky-top { top: -1px; z-index: 100; }
+    #gl-table thead th { border-top: 0; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #64748b; }
+    .btn-yellow { background-color: #fbbf24; border-color: #fbbf24; }
+    .btn-yellow:hover { background-color: #f59e0b; border-color: #f59e0b; }
+    
+    /* Soft shadows and rounded corners */
+    .card { border-radius: 12px; }
+    .btn { border-radius: 8px; }
+    
+    /* RTL adjustments */
+    [dir="rtl"] .ms-2 { margin-right: 0.5rem !important; margin-left: 0 !important; }
+    [dir="rtl"] .me-2 { margin-left: 0.5rem !important; margin-right: 0 !important; }
+    [dir="rtl"] .text-end { text-align: left !important; }
+    [dir="rtl"] .ps-3 { padding-right: 1rem !important; padding-left: 0 !important; }
+</style>
+
 <script class="append-on-ajax-script">
     var clcDebitCredit = 0;
     var isNewRow;
     var currentRow;
     var opk = null;
     var VoucherStatus = false;
+
     $(document).ready(function() {
         if ('@ViewBag.Status' == 'True') {
             opk = '@Model.OperationKey';
             VoucherStatus = false;
-            $('#inf-Status').removeClass('bg-info');
-            $('#inf-Status').addClass('bg-danger');
-           $('#txt-Status').text(iShll.update);
+            $('#inf-Status').removeClass('bg-info').addClass('bg-warning text-dark');
+            $('#txt-Status').text(iShll.update || 'Update');
             LoadData(opk);
         } else {
             $('#inf-Status').addClass('bg-info');
-            $('#inf-Status').removeClass('bg-danger');
             $('#txt-Status').text('New');
             VoucherStatus = true;
         }
+
         $('#tb-rows').on('click', '#btn-edit', function() {
-            $('#tb-rows').find('[id="tr-' + $(this).data('key') + '"]').each(function() {
-                $('#row-Account').dxLookup('option', 'value', $(this).find('[id="td-Account"]').data('value'));
-                $('#row-Description').dxTextBox('option', 'value', $(this).find('[id="td-Description"]').data('value'));
-                $('#row-Debit').dxNumberBox('option', 'value', $(this).find('[id="td-Debit"]').data('value'));
-                $('#row-Credit').dxNumberBox('option', 'value', $(this).find('[id="td-Credit"]').data('value'));
-                $('#row-Costcenter').dxLookup('option', 'value', $(this).find('[id="td-Costcenter"]').data('value'));
-                $('#row-Project').dxLookup('option', 'value', $(this).find('[id="td-Project"]').data('value'));
-            });
-            currentRow = $(this).data('key');
+            var key = $(this).data('key');
+            var tr = $('#tr-' + key);
+            
+            $('#row-Account').dxLookup('option', 'value', tr.find('#td-Account').data('value'));
+            $('#row-Description').dxTextBox('option', 'value', tr.find('#td-Description').data('value'));
+            $('#row-Debit').dxNumberBox('option', 'value', tr.find('#td-Debit').data('value'));
+            $('#row-Credit').dxNumberBox('option', 'value', tr.find('#td-Credit').data('value'));
+            $('#row-Costcenter').dxLookup('option', 'value', tr.find('#td-Costcenter').data('value'));
+            $('#row-Project').dxLookup('option', 'value', tr.find('#td-Project').data('value'));
+            
+            currentRow = key;
             isNewRow = false;
-            $("#mod-Row").modal({ backdrop: 'static' }).modal('toggle');
+            $("#mod-Row").modal('show');
         });
+
         $('#tb-rows').on('click', '#btn-delete', function() {
             DeleteRow($(this).data('key'));
         });
     });
 
     function ChangeDebit() {
-        if (clcDebitCredit == 1) {
-            return;
-        }
-
+        if (clcDebitCredit == 1) return;
         clcDebitCredit = 1;
         $('#row-Credit').dxNumberBox('option', 'value', 0);
         clcDebitCredit = 0;
-
     }
+
     function ChangeCredit() {
-        if (clcDebitCredit == 1) {
-            return;
-        }
+        if (clcDebitCredit == 1) return;
         clcDebitCredit = 1;
         $('#row-Debit').dxNumberBox('option', 'value', 0);
         clcDebitCredit = 0;
-
     }
 
     function AddNewRow() {
@@ -258,292 +310,150 @@
         $('#row-Credit').dxNumberBox('option', 'value', 0);
         $('#row-Costcenter').dxLookup('reset');
         $('#row-Project').dxLookup('reset');
-        $("#mod-Row").modal({ backdrop: 'static' }).modal('toggle');
+        $("#mod-Row").modal('show');
     }
+
     function SaveRowChange() {
         if ($('#row-Account').dxLookup('option', 'value') == null) {
-            $.alert({
-                title: 'Stop',
-                content: "Please select account.",
-            });
-            $('#row-Account').dxLookup('focus');
+            $.alert({ title: 'Attention', content: "Please select an account.", theme: 'material' });
             return;
         }
         if ($('#row-Debit').dxNumberBox('option', 'value') + $('#row-Credit').dxNumberBox('option', 'value') == 0) {
-            $.alert({
-                title: 'Stop',
-                content: "Please add debit or credit value!",
-            });
-            $('#row-Debit').dxNumberBox('focus');
+            $.alert({ title: 'Attention', content: "Please enter a Debit or Credit value.", theme: 'material' });
             return;
         }
-        if ($('#row-Description').dxTextBox('option', 'value') == '') {
-            $.alert({
-                title: 'Stop',
-                content: "Please add description.",
-            });
-            $('#row-Description').dxTextBox('focus');
-            return;
-        }
-        if (isNewRow == true) {
-            InsertNewRow();
-        } else {
-            SaveRowEdit();
-        }
+        
+        if (isNewRow) InsertNewRow(); else SaveRowEdit();
+        $('#gl-empty').addClass('d-none');
     }
+
+    function GetRowHtml(count, account, description, debit, credit, costcenter, project, costcenterText, projectText) {
+        var kindHtml = GetAccountKind(account.Kind);
+        var trId = 'tr-' + count;
+        var str = '<tr id="' + trId + '" class="row-entry animation-fade-in">';
+        str += '<td class="ps-3"><div class="btn-group btn-group-sm rounded-pill border bg-white shadow-xs p-1">';
+        str += '<button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-link btn-sm text-primary p-1"><i class="bx bx-edit fs-6"></i></button>';
+        str += '<button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-link btn-sm text-danger p-1"><i class="bx bx-trash fs-6"></i></button>';
+        str += '</div></td>';
+        str += '<td>' + kindHtml + '</td>';
+        str += '<td><code class="text-dark fw-medium">' + account.Code + '</code></td>';
+        str += '<td><div class="fw-bold text-dark">' + (account.Name1 || account.Display) + '</div></td>';
+        str += '<td><div class="text-muted small">' + description + '</div>';
+        if (costcenterText || projectText) {
+            str += '<div class="mt-1 d-flex gap-2">';
+            if (costcenterText) str += '<span class="badge bg-light text-dark border-0 fs-8"><i class="bx bx-target-lock me-1"></i>' + costcenterText + '</span>';
+            if (projectText) str += '<span class="badge bg-light text-dark border-0 fs-8"><i class="bx bx-briefcase me-1"></i>' + projectText + '</span>';
+            str += '</div>';
+        }
+        str += '</td>';
+        str += '<td class="text-end fw-bold text-primary">' + comma(debit) + '</td>';
+        str += '<td class="text-end pe-3 fw-bold text-danger">' + comma(credit) + '</td>';
+        
+        // Hidden data fields for form submission and editing
+        str += '<td hidden id="td-Account" data-value="' + account.Key + '"></td>';
+        str += '<td hidden id="td-Description" data-value="' + description + '"></td>';
+        str += '<td hidden id="td-Debit" data-value="' + debit + '"></td>';
+        str += '<td hidden id="td-Credit" data-value="' + credit + '"></td>';
+        str += '<td hidden id="td-Costcenter" data-value="' + costcenter + '"></td>';
+        str += '<td hidden id="td-Project" data-value="' + project + '"></td>';
+        str += '</tr>';
+        return str;
+    }
+
     function InsertNewRow() {
-        var selectedAccount = $("#row-Account").dxLookup('instance').option('selectedItem');
+        var account = $("#row-Account").dxLookup('instance').option('selectedItem');
         var count = $('#tb-rows tr').length + 1;
-        var str = '';
-        str += '  <tr id="tr-' + count + '">'
-        str += '      <td>'
-        str += '          <div class="d-flex align-items-center">'
-        str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
-        str += '              <div class="btn-group">'
-        str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
-        str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
-        str += '              </div>'
-        str += '          </div>'
-        str += '          <div class="ccp position-absolute d-none mt-1">'
-        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Cost Center:</b>' + $('#row-Costcenter').dxLookup('option', 'text') + '</p>'
-        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Project:</b>' + $('#row-Project').dxLookup('option', 'text') + '</p>'
-        str += '          </div>'
-        str += '      </td>'
-        str += '      <td>' + GetAccountKind(selectedAccount.Kind) + '</td>'
-        str += '      <td><span class="text-dark">' + selectedAccount.Code + '</span></td>'
-        str += '      <td>'
-        str += '          <span class="text-dark">' + selectedAccount.Name1 + '</span>'
-        str += '      </td>'
-        str += '      <td>' + $('#row-Description').dxTextBox('option', 'text') + '</td>'
-        str += '      <td>' + comma($('#row-Debit').dxNumberBox('option', 'value')) + '</td>'
-        str += '      <td>' + comma($('#row-Credit').dxNumberBox('option', 'value')) + '</td>'
-        str += '<td hidden id="td-Account" data-value="' + $('#row-Account').dxLookup('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Description" data-value="' + $('#row-Description').dxTextBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Debit" data-value="' + $('#row-Debit').dxNumberBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Credit" data-value="' + $('#row-Credit').dxNumberBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Costcenter" data-value="' + $('#row-Costcenter').dxLookup('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Project" data-value="' + $('#row-Project').dxLookup('option', 'value') + '"></td>'
-        str += '  </tr>'
-        $("#tb-rows").append(str);
-        $("#mod-Row").modal('toggle');
+        var html = GetRowHtml(count, account, $('#row-Description').dxTextBox('option', 'value'), $('#row-Debit').dxNumberBox('option', 'value'), $('#row-Credit').dxNumberBox('option', 'value'), $('#row-Costcenter').dxLookup('option', 'value'), $('#row-Project').dxLookup('option', 'value'), $('#row-Costcenter').dxLookup('option', 'text'), $('#row-Project').dxLookup('option', 'text'));
+        
+        $("#tb-rows").append(html);
+        $("#mod-Row").modal('hide');
         CalcAmount();
     }
+
     function SaveRowEdit() {
-        var selectedAccount = $("#row-Account").dxLookup('instance').option('selectedItem');
-        $('#tr-' + currentRow).empty();
-        var str = '';
-        str += '      <td>'
-        str += '          <div class="d-flex align-items-center">'
-        str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + currentRow + '</small>'
-        str += '              <div class="btn-group">'
-        str += '                  <button id="btn-edit" data-key="' + currentRow + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
-        str += '                  <button id="btn-delete" data-key="' + currentRow + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
-        str += '              </div>'
-        str += '          </div>'
-        str += '          <div class="ccp position-absolute d-none mt-1">'
-        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Cost Center:</b>' + $('#row-Costcenter').dxLookup('option', 'text') + '</p>'
-        str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Project:</b>' + $('#row-Project').dxLookup('option', 'text') + '</p>'
-        str += '          </div>'
-        str += '      </td>'
-        str += '      <td>' + GetAccountKind(selectedAccount.Kind) + '</td>'
-        str += '      <td><span class="text-dark">' + selectedAccount.Code + '</span></td>'
-        str += '      <td>'
-        str += '          <span class="text-dark">' + selectedAccount.Name1 + '</span>'
-        str += '      </td>'
-        str += '      <td>' + $('#row-Description').dxTextBox('option', 'text') + '</td>'
-        str += '      <td>' + comma($('#row-Debit').dxNumberBox('option', 'value')) + '</td>'
-        str += '      <td>' + comma($('#row-Credit').dxNumberBox('option', 'value')) + '</td>'
-        str += '<td hidden id="td-Account" data-value="' + $('#row-Account').dxLookup('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Description" data-value="' + $('#row-Description').dxTextBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Debit" data-value="' + $('#row-Debit').dxNumberBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Credit" data-value="' + $('#row-Credit').dxNumberBox('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Costcenter" data-value="' + $('#row-Costcenter').dxLookup('option', 'value') + '"></td>'
-        str += '<td hidden id="td-Project" data-value="' + $('#row-Project').dxLookup('option', 'value') + '"></td>'
-        $('#tr-' + currentRow).append(str);
-        $("#mod-Row").modal('toggle');
+        var account = $("#row-Account").dxLookup('instance').option('selectedItem');
+        var html = GetRowHtml(currentRow, account, $('#row-Description').dxTextBox('option', 'value'), $('#row-Debit').dxNumberBox('option', 'value'), $('#row-Credit').dxNumberBox('option', 'value'), $('#row-Costcenter').dxLookup('option', 'value'), $('#row-Project').dxLookup('option', 'value'), $('#row-Costcenter').dxLookup('option', 'text'), $('#row-Project').dxLookup('option', 'text'));
+        
+        $('#tr-' + currentRow).replaceWith(html);
+        $("#mod-Row").modal('hide');
         CalcAmount();
     }
+
     function LoadData(key) {
+        $('#gl-loading').removeClass('d-none');
         $.ajax({
             type: "get",
             url: "/api/acc/idocuments/LoadGeneralLedger",
             data: { key: key },
-            dataType: "json",
             success: function(response) {
+                $('#gl-loading').addClass('d-none');
                 var count = 1;
                 for (const item of response) {
-                    var str = '';
-                    str += '<tr id="tr-' + count + '">'
-                    str += '      <td>'
-                    str += '          <div class="d-flex align-items-center">'
-                    str += '              <small style="margin-left:4px;margin-right:4px;min-width:30px;max-width:30px">' + count + '</small>'
-                    str += '              <div class="btn-group">'
-                    str += '                  <button id="btn-edit" data-key="' + count + '" type="button" class="btn btn-white btn-sm"><i class="fa fa-pen-square"></i></button>'
-                    str += '                  <button id="btn-delete" data-key="' + count + '" type="button" class="btn btn-white btn-sm text-red"><i class="fa fa-trash-alt"></i></button>'
-                    str += '              </div>'
-                    str += '          </div>'
-                    str += '          <div class="ccp position-absolute d-none mt-1">'
-                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Cost Center:</b>' + item.jnCostCenter.Display + '</p>'
-                    str += '              <p class="f-s-10 p-0 m-0 mt-1"><b class="me-1">Project:</b>' + item.jnProject.Display + '</p>'
-                    str += '          </div>'
-                    str += '      </td>'
-                    str += '      <td>' + GetAccountKind(item.jnAccount.Kind) + '</td>'
-                    str += '      <td><span class="text-dark">' + item.jnAccount.Code + '</span></td>'
-                    str += '      <td>'
-                    str += '          <span class="text-dark">' + item.jnAccount.Display + '</span>'
-                    str += '      </td>'
-                    str += '      <td>' + item.Description + '</td>'
-                    str += '      <td>' + comma(item.Debit) + '</td>'
-                    str += '      <td>' + comma(item.Credit) + '</td>'
-                    str += '<td hidden id="td-Account" data-value="' + item.Account + '"></td>'
-                    str += '<td hidden id="td-Description" data-value="' + item.Description + '"></td>'
-                    str += '<td hidden id="td-Debit" data-value="' + item.Debit + '"></td>'
-                    str += '<td hidden id="td-Credit" data-value="' + item.Credit + '"></td>'
-                    str += '<td hidden id="td-Costcenter" data-value="' + item.CostCenter + '"></td>'
-                    str += '<td hidden id="td-Project" data-value="' + item.Project + '"></td>'
-                    str += '</tr>'
-                    $("#tb-rows").append(str);
-                    count += 1;
+                    var account = item.jnAccount;
+                    account.Key = item.Account; // Standardize for GetRowHtml
+                    var html = GetRowHtml(count, account, item.Description, item.Debit, item.Credit, item.CostCenter, item.Project, item.jnCostCenter.Display, item.jnProject.Display);
+                    $("#tb-rows").append(html);
+                    count++;
                 }
+                if (count > 1) $('#gl-empty').addClass('d-none');
                 CalcAmount();
-            },
-            failure: function(response) {
-                alert(response);
-            },
-            error: function(response) {
-                alert(response.responseText);
             }
         });
     }
+
     function DeleteRow(key) {
         $.confirm({
-            title: 'Confirm',
-            content: 'Are you sure to delete row?',
+            title: 'Delete Entry?',
+            content: 'Are you sure you want to remove this row from the ledger?',
             type: 'red',
             buttons: {
-                Delete: {
-                    text: 'Delete',
-                    btnClass: 'btn-red',
-                    action: function() {
-                        $('#tr-' + key).remove();
-                        CalcAmount();
-                    }
-                },
-                Cancel: {
-                    text: 'Cancel',
-                    action: function() {
-                        return;
-                    }
-                }
+                Delete: { btnClass: 'btn-danger', action: function() { $('#tr-' + key).remove(); CalcAmount(); if ($('#tb-rows tr').length == 0) $('#gl-empty').removeClass('d-none'); } },
+                Cancel: { action: function() {} }
             }
         });
     }
+
     function CalcAmount() {
-        var db = 0;
-        var cr = 0;
-        $('#tb-rows').find('tr').each(function() {
-            db += $(this).find('[id="td-Debit"]').data('value');
-            cr += $(this).find('[id="td-Credit"]').data('value');
+        var db = 0, cr = 0;
+        $('#tb-rows tr').each(function() {
+            db += parseFloat($(this).find('#td-Debit').data('value')) || 0;
+            cr += parseFloat($(this).find('#td-Credit').data('value')) || 0;
         });
-        $('#txt-Diff').text(comma(db - cr));
+        $('#txt-Diff').text(comma(db - cr)).toggleClass('text-danger', (db - cr) != 0).toggleClass('text-success', (db - cr) == 0);
         $('#txt-Debit').text(comma(db));
         $('#txt-Credit').text(comma(cr));
         $('#txt-Total').text(comma(db));
     }
+
     function GetAccountKind(kind) {
-        switch (kind) {
-            case 0:
-                return '<div class="wd70"><span class="badge bg-yellow text-dark" style="width:100%">' + 'Assets' + '</span></div>';
-                break;
-            case 1:
-                return '<div class="wd70"><span class="badge bg-danger text-dark" style="width:100%">' + 'Liability' + '</span></div>';
-                break;
-            case 2:
-                return '<div class="wd70"><span class="badge bg-info text-dark" style="width:100%">' + 'Equity' + '</span></div>';
-                break;
-            case 3:
-                return '<div class="wd70"><span class="badge bg-success text-dark" style="width:100%">' + 'Revenue' + '</span></div>';
-                break;
-            case 4:
-                return '<div class="wd70"><span class="badge bg-warning text-dark" style="width:100%">' + 'Expenses' + '</span></div>';
-                break;
-        }
+        var labels = ['Assets', 'Liability', 'Equity', 'Revenue', 'Expenses'];
+        var colors = ['bg-primary', 'bg-danger', 'bg-info text-dark', 'bg-success', 'bg-warning text-dark'];
+        return '<span class="badge ' + colors[kind] + ' w-100 opacity-75">' + labels[kind] + '</span>';
     }
-    function ValidateSave() {
-        var rowscount = $('#tb-rows tr').length;
-        if (rowscount == 0) {
-            $.alert({
-                title: 'Stop',
-                icon: 'fa fa-warning',
-                type: 'red',
-                content: 'There is no data in General Ledger!',
-                buttons: {
-                    Ok: {
-                        text: 'ok'
-                    }
-                }
-            });
-            return false;
-        }
-        var db = 0;
-        var cr = 0;
-        $('#tb-rows').find('tr').each(function() {
-            db += $(this).find('[id="td-Debit"]').data('value');
-            cr += $(this).find('[id="td-Credit"]').data('value');
-        });
-        //if ((db - cr) != 0) {
-        //    $.alert({
-        //        title: 'Stop',
-        //        icon: 'fa fa-warning',
-        //        type: 'red',
-        //        content: 'There is difference between debit and credit,Difference is : ' + comma(db - cr),
-        //        buttons: {
-        //            Ok: {
-        //                text: 'ok'
-        //            }
-        //        }
-        //    });
-        //    return false;
-        //}
-        //if ($('#frm-Description').dxTextBox('option', 'text') == '') {
-        //    $.alert({
-        //        title: 'Stop',
-        //        icon: 'fa fa-warning',
-        //        type: 'red',
-        //        content: 'Please add GL description!',
-        //        buttons: {
-        //            Ok: {
-        //                text: 'ok'
-        //            }
-        //        }
-        //    });
-            return false;
-        }
-        return true;
-    }
+
     function SaveGeneralLedger() {
-        //if (ValidateSave() == false) {
-        //    return;
-        //}
+        if ($('#tb-rows tr').length == 0) {
+            $.alert({ title: 'Error', content: 'There is no data to save!', type: 'red' });
+            return;
+        }
+
         $.confirm({
-            title: 'Confirm',
-            content: 'Save and update General Ledger confirmation?',
-            type: 'red',
+            title: 'Save Changes?',
+            content: 'Save and update this General Ledger document?',
+            type: 'blue',
             buttons: {
-                Delete: {
-                    text: 'Save/Update GL',
-                    btnClass: 'btn-red',
+                Save: {
+                    btnClass: 'btn-primary',
                     action: function() {
-                        //Start Update
                         var values = [];
-                        $('#tb-rows').find('tr').each(function() {
+                        $('#tb-rows tr').each(function() {
                             values.push({
-                                Account: $(this).find('[id="td-Account"]').data('value'),
-                                Description: $(this).find('[id="td-Description"]').data('value'),
-                                Debit: $(this).find('[id="td-Debit"]').data('value'),
-                                Credit: $(this).find('[id="td-Credit"]').data('value'),
-                                CostCenter: $(this).find('[id="td-CostCenter"]').data('value'),
-                                Project: $(this).find('[id="td-Project"]').data('value')
+                                Account: $(this).find('#td-Account').data('value'),
+                                Description: $(this).find('#td-Description').data('value'),
+                                Debit: $(this).find('#td-Debit').data('value'),
+                                Credit: $(this).find('#td-Credit').data('value'),
+                                CostCenter: $(this).find('#td-Costcenter').data('value'),
+                                Project: $(this).find('#td-Project').data('value')
                             });
                         });
                         var voucher = $('#frm-Voucher').serialize();
@@ -551,37 +461,23 @@
                             type: "post",
                             url: "/api/acc/idocuments/UpdateGeneralLedger",
                             data: voucher + '&Data=' + JSON.stringify(values) + '&isNew=' + VoucherStatus,
-                            dataType: "json",
                             success: function(response) {
-                                if (response.Status == true) {
+                                if (response.Status == true) { // Error
                                     exDocumentError(response);
                                     return;
                                 }
-                                $('#No').text(response.VoucherNo);
+                                $('#txt-VoucherNo').text(response.VoucherNo);
                                 $('#OperationKey').val(response.OperationKey);
-                                $('#inf-Status').removeClass('bg-info');
-                                $('#inf-Status').addClass('bg-danger');
-                               $('#txt-Status').text(iShll.update);
+                                $('#inf-Status').removeClass('bg-info').addClass('bg-warning text-dark');
+                                $('#txt-Status').text(iShll.update || 'Update');
                                 opk = response.OperationKey;
                                 VoucherStatus = false;
-                                //ShowPrintTemplate();
-                            },
-                            failure: function(response) {
-                                alert(response);
-                            },
-                            error: function(response) {
-                                alert(response.responseText);
+                                $.alert({ title: 'Success', content: 'Document saved successfully!', type: 'green' });
                             }
                         });
-                        //End Update
                     }
                 },
-                Cancel: {
-                    text: 'Cancel',
-                    action: function() {
-                        return;
-                    }
-                }
+                Cancel: {}
             }
         });
     }

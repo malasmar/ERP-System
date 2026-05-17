@@ -1,0 +1,151 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-calendar-check'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan, "1241", "Full Yearly Statement")</h1>
+                <p class="page-subtitle-modern">Complete fiscal year overview of all ledger transactions</p>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="card-modern h-100">
+                <div class="card-header-modern">
+                    <h6 class="mb-0 fw-bold"><i class='bx bx-calendar me-2'></i>Fiscal Period</h6>
+                </div>
+                <div class="card-body-modern">
+                    <label class="form-label small text-muted">@iT.T(xLan, "1222","Select Year")</label>
+                    @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card-modern h-100 bg-primary-modern text-white border-0 shadow-sm">
+                <div class="card-body-modern p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <span class="text-white-50 small d-block mb-1">@iT.T(xLan,"1227","Net Balance")</span>
+                            <h2 class="display-5 fw-bold mb-0" id="txt-Balance">0.00</h2>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex gap-4">
+                                <div>
+                                    <span class="text-white-50 small d-block mb-1">@iT.T(xLan, "1052","Total Dr.")</span>
+                                    <div class="h4 fw-bold mb-0" id="txt-Debit">0.00</div>
+                                </div>
+                                <div class="border-start border-white border-opacity-25 ps-4">
+                                    <span class="text-white-50 small d-block mb-1">@iT.T(xLan, "1053","Total Cr.")</span>
+                                    <div class="h4 fw-bold mb-0" id="txt-Credit">0.00</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.ParentStatment>().ID("grd-CurrentAccount")
+                .ShowBorders(false)
+                .Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("ireports").Area("Accounting")
+                .Key("Key")
+                .LoadAction("YearlyStatement")
+                .LoadParams(new { Year = new JS("getYear") }))
+                .ColumnAutoWidth(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100).CssClass("fw-bold");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1216", "Account Name")).MinWidth(200);
+                    columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1975", "Doc Type")).Width(120).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan, true)).ValueExpr("Value").DisplayExpr("Display")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1210", "Date")).Width(110).Format("dd.MM.yyyy").Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.No).Caption(iT.T(xLan, "1265", "No.")).Width(90).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).MinWidth(250).CssClass("text-muted small");
+                    columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(120).Format("#,##0.##").CssClass("text-end");
+                    columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(120).Format("#,##0.##").CssClass("text-end");
+                    columns.AddFor(m => m.DebitBalance).Caption(iT.T(xLan, "1052", "Dr. Balance")).Width(120).Format("#,##0.##").CssClass("text-end text-primary fw-medium");
+                    columns.AddFor(m => m.CreditBalance).Caption(iT.T(xLan, "1053", "Cr. Balance")).Width(120).Format("#,##0.##").CssClass("text-end text-danger fw-medium");
+                })
+                .Summary(tot =>
+                {
+                    tot.TotalItems(item =>
+                    {
+                        item.AddFor(m => m.DocumentKind).SummaryType(SummaryType.Count);
+                        item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                        item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                    });
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search annual records...");
+                })
+                .Export(exp => exp.Enabled(true).Option("fileName", "YearlyStatement"))
+                .RtlEnabled(devRtl)
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+            )
+        </div>
+    </div>
+</div>
+
+<script class="append-on-ajax-script">
+    function RefreshGrid ()
+    {
+        $('#grd-CurrentAccount').dxDataGrid("instance").refresh().done(function ()
+        {
+            var dataGrid = $('#grd-CurrentAccount').dxDataGrid("instance");
+            var debit = dataGrid.getTotalSummaryValue('Debit');
+            var credit = dataGrid.getTotalSummaryValue('Credit');
+            $('#txt-Debit').text(comma(debit));
+            $('#txt-Credit').text(comma(credit));
+            $('#txt-Balance').text(comma(Math.abs(debit - credit)));
+        });
+    }
+    function getYear() { return $('#edYear').dxNumberBox('option', 'value'); }
+    function ChangeYear () { RefreshGrid(); }
+</script>

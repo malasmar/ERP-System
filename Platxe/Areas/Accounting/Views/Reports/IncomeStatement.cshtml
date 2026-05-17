@@ -28,11 +28,11 @@
     <div class="page-header-modern">
         <div class="header-left-modern">
             <div class="header-icon-modern">
-                <i class='bx bx-pie-chart-alt-2'></i>
+                <i class='bx bx-trending-up'></i>
             </div>
             <div>
-                <h1 class="page-title-modern">@iT.T(xLan,"1231","Balance Statement Report")</h1>
-                <p class="page-subtitle-modern">Analyze asset, liability, and equity distributions over a period</p>
+                <h1 class="page-title-modern">@iT.T(xLan,"1235","Income Statement Report")</h1>
+                <p class="page-subtitle-modern">Track revenue, expenses, and net profit over a specific timeframe</p>
             </div>
         </div>
         
@@ -81,12 +81,12 @@
         <div class="col-lg-4">
             <div class="card-modern h-100 bg-primary-modern text-white">
                 <div class="card-body-modern d-flex flex-column justify-content-center p-4">
-                    <p class="text-white-50 small mb-1">@iT.T(xLan,"1234","Statement Net Balance")</p>
+                    <p class="text-white-50 small mb-1">@iT.T(xLan,"1236","Net Income Balance")</p>
                     <div class="d-flex align-items-baseline gap-3 mb-2">
                         <h2 class="mb-0 display-6 fw-bold" id="txt-Total">0.00</h2>
                         <span class="badge-modern bg-white text-primary" id="txt-ProfitStatus">Profit</span>
                     </div>
-                    <p class="small opacity-75 mb-0">Calculated based on current income and expense variance.</p>
+                    <p class="small opacity-75 mb-0">Total revenue minus total expenses for the selected period.</p>
                 </div>
             </div>
         </div>
@@ -94,13 +94,13 @@
 
     <div class="card-modern">
         <div class="card-body-modern p-0 modern-grid">
-            @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.BalanceStatment>().ID("grd-BalanceStatment")
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.IncomeStatment>().ID("grd-IncomeStatment")
                 .ShowBorders(false)
                 .Width("100%")
                 .DataSource(d => d.WebApi()
                 .Controller("ireports").Area("Accounting")
                 .Key("Code")
-                .LoadAction("BalanceStatment")
+                .LoadAction("IncomeStatement")
                 .LoadParams(new
                 {
                     First = new JS("getFirst"),
@@ -113,12 +113,19 @@
                 .RowAlternationEnabled(true)
                 .Columns(columns =>
                 {
-                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(100).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.T).Caption(iT.T(xLan, "1161", "Trans.")).Width(90).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T")).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Lv.")).Width(70).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(120).CssClass("fw-bold text-dark");
-                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CssClass("fw-medium");
-                    columns.AddFor(m => m.Amount).Caption(iT.T(xLan, "1077", "Amount")).Width(130).Format("#,##0.##").CssClass("fw-bold");
+                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan,"1158","Kind")).Width(100).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.T).Caption(iT.T(xLan,"1161","Trans.")).Width(90).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Level).Caption(iT.T(xLan,"1163","Lv.")).Width(70).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan,"1228","Code")).Width(120).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan,"1165","Account Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Amount).Caption(iT.T(xLan,"1077","Amount")).Width(130).Format("#,##0.##").CssClass("fw-bold text-primary");
+                })
+                .Summary(tot =>
+                {
+                    tot.TotalItems(item =>
+                    {
+                        item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
+                    });
                 })
                 .Pager(pg =>
                 {
@@ -136,7 +143,7 @@
                     sp.Visible(true);
                     sp.Placeholder("Search results...");
                 })
-                .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1231", "Balance Statement Report")))
+                .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1235", "Income Statement Report")))
                 .RtlEnabled(devRtl)
                 .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
             )
@@ -178,38 +185,12 @@
             }
         });
     }
-    function ct4Action (container, options)
-    {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'tips' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function (e)
-            {
-                switch (e.itemIndex)
-                {
-                    case 0:
-                        if (e.itemData.icon == 'tips')
-                        {
-                            GetDetails(options.data.Key);
-                        }
-                        break;
-                }
-            },
-        });
-    }
     function RefreshGrid ()
     {
-        $('#grd-BalanceStatment').dxDataGrid("instance").refresh().done(function ()
+        $('#grd-IncomeStatment').dxDataGrid("instance").refresh().done(function ()
         {
             CalcTotal();
         });
-    }
-    function getYear ()
-    {
-        return $('#edYear').dxNumberBox('option', 'value')
     }
     function getFirst ()
     {
@@ -240,19 +221,19 @@
         switch (options.value)
         {
             case 0:
-                str = '<div class="text-center"><span class="badge bg-yellow text-dark">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-yellow-soft text-yellow-dark">' + options.text + '</span></div>';
                 break;
             case 1:
-                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-danger-soft text-danger">' + options.text + '</span></div>';
                 break;
             case 2:
-                str = '<div class="text-center"><span class="badge bg-info text-dark">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-info-soft text-info">' + options.text + '</span></div>';
                 break;
             case 3:
-                str = '<div class="text-center"><span class="badge bg-success text-dark">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-success-soft text-success">' + options.text + '</span></div>';
                 break;
             case 4:
-                str = '<div class="text-center"><span class="badge bg-warning text-dark">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-warning-soft text-warning">' + options.text + '</span></div>';
                 break;
         }
         $(str).appendTo(container)
@@ -262,17 +243,17 @@
         var str = '';
         if (options.data.Level == 1)
         {
-            str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
+            str = '<div class="text-center"><span class="badge-modern bg-danger-soft text-danger">' + options.text + '</span></div>';
             $(str).appendTo(container)
             return;
         }
         switch (options.value)
         {
             case 0:
-                str = '<div class="text-center"><span class="badge bg-info">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-info-soft text-info">' + options.text + '</span></div>';
                 break;
             case 1:
-                str = '<div class="text-center"><span class="badge bg-gray">' + options.text + '</span></div>';
+                str = '<div class="text-center"><span class="badge-modern bg-secondary-soft text-secondary">' + options.text + '</span></div>';
                 break;
         }
         $(str).appendTo(container);

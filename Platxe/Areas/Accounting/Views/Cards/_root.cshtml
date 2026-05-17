@@ -3,53 +3,73 @@
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
 }
-<div class="modal-content">
-    <div class="modal-header">
-        <h4 class="modal-title">@iT.T(xLan,"1207","Roots (Accounts)")</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+<div class="modal-content border-0 shadow-lg modern-modal-content">
+    <div class="modal-header border-bottom-0 pb-0">
+        <div class="d-flex align-items-center">
+            <div class="bg-primary-soft p-2 rounded-3 me-3">
+                <i class='bx bx-git-repo-forked text-primary fs-4'></i>
+            </div>
+            <div>
+                <h5 class="modal-title fw-bold mb-0">@iT.T(xLan,"1207","Root Account Details")</h5>
+                <p class="text-muted small mb-0">Define top-level accounting categories</p>
+            </div>
+        </div>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
-    <form id="frm-Root" data-parsley-validate="true">
-        <div class="modal-body">
+
+    <form id="frm-Root" data-parsley-validate="true" class="modern-form">
+        <div class="modal-body p-4">
             @Html.HiddenFor(m => m.Key)
-            <div class="form-group row">
-                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1164","Code")</label>
-                <div class="col-lg-9 col-sm-12">
-                    @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true)
+            
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern required">@iT.T(xLan,"1164","Code")</label>
+                        @Html.DevExtreme().TextBoxFor(m => m.Code).ID("cnt-Code").InputAttr("required", true).Placeholder("Enter root code...")
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1165","Account Name")</label>
-                <div class="col-lg-9 col-sm-12">
-                    @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true)
+
+                <div class="col-md-6">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern required">@iT.T(xLan,"1165","Account Name (Local)")</label>
+                        @Html.DevExtreme().TextBoxFor(m => m.Name1).ID("cnt-Name1").InputAttr("required", true).Placeholder("Local name...")
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1166","English Name")</label>
-                <div class="col-lg-9 col-sm-12">
-                    @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2")
+
+                <div class="col-md-6">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">@iT.T(xLan,"1166","English Name")</label>
+                        @Html.DevExtreme().TextBoxFor(m => m.Name2).ID("cnt-Name2").Placeholder("International name...")
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"2323","DC Kind")</label>
-                <div class="col-lg-9 col-sm-12">
-                    @Html.DevExtreme().SelectBoxFor(m => m.DC).ID("cnt-DC").DataSource(iReplacer.accDCKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(130)
+
+                <div class="col-md-6">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">@iT.T(xLan,"2323","DC Kind")</label>
+                        @Html.DevExtreme().SelectBoxFor(m => m.DC).ID("cnt-DC").DataSource(iReplacer.accDCKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width("100%").Placeholder("Select side...")
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-lg-3 col-sm-12">@iT.T(xLan,"1158","Kind")</label>
-                <div class="col-lg-9 col-sm-12">
-                    @Html.DevExtreme().SelectBoxFor(m => m.Kind).ID("cnt-Kind").DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width(130)
+
+                <div class="col-md-6">
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">@iT.T(xLan,"1158","Account Type")</label>
+                        @Html.DevExtreme().SelectBoxFor(m => m.Kind).ID("cnt-Kind").DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display").Width("100%").Placeholder("Select type...")
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <div class="btn-group">
-                <button type="submit" class="btn btn-yellow text-dark">@iT.T(xLan,"1197","Save Change")</button>
-                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" aria-hidden="true">@iT.T(xLan,"1198","Cancel")</button>
-            </div>
+
+        <div class="modal-footer border-top-0 pt-0 p-4">
+            <button type="button" class="btn-modern btn-secondary-modern w-100 mb-2 mb-sm-0 w-sm-auto" data-bs-dismiss="modal">
+                @iT.T(xLan,"1198","Cancel")
+            </button>
+            <button type="submit" class="btn-modern btn-primary-modern w-100 w-sm-auto">
+                <i class='bx bx-save me-1'></i> @iT.T(xLan,"1197","Save Root")
+            </button>
         </div>
     </form>
 </div>
+
 <script class="append-on-ajax-script">
     $(document).ready(function() {
         $("#frm-Root").submit(function(event) {
@@ -57,15 +77,17 @@
             SaveRoot();
         });
     });
+
     function SaveRoot() {
         if ($('#cnt-Code').dxTextBox('option', 'text') == "") {
-            alert('Please enter Code!');
+            Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter Code!' });
             return;
         }
         if ($('#cnt-Name1').dxTextBox('option', 'text') == "") {
-            alert('Please enter name (Display) !');
+            Swal.fire({ icon: 'warning', title: 'Validation Error', text: 'Please enter Account Name!' });
             return;
         }
+
         var data = $('#frm-Root').serialize();
         $.ajax({
             type: "POST",
@@ -73,14 +95,13 @@
             data: data,
             dataType: "json",
             success: function(response) {
-                $("#mod-Root").modal('toggle');
-                RefreshGrid();
-            },
-            failure: function(response) {
-                alert(response);
+                $("#mod-Root").modal('hide');
+                if (typeof RefreshGrid === "function") {
+                    RefreshGrid();
+                }
             },
             error: function(response) {
-                alert(response.responseText);
+                Swal.fire({ icon: 'error', title: 'System Error', text: response.responseText || 'An error occurred while saving.' });
             }
         });
     }

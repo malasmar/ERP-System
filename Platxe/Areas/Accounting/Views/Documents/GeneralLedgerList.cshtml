@@ -2,132 +2,181 @@
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
     int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
-    bool devRtl;
-    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
-    if (User.FindFirstValue("aiwLan") == "en")
-    {
-        devRtl = false;
-        devFixd = HorizontalEdge.Left;
-    }
-    else
-    {
-        devRtl = true;
-        devFixd = HorizontalEdge.Right;
-    }
+    bool devRtl = User.FindFirstValue("aiwLan") == "ar";
 }
-<h1 class="page-header">@iT.T(xLan,"1221","General Ledger List")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="d-flex align-items-center">
-            <div class="f-s-11 f-w-500 me-3">@iT.T(xLan, "1222","Year")</div>
-            <div class="input-group">
-                @Html.DevExtreme().NumberBox().ID("num-Year").ShowSpinButtons(true).Width(90).Value(Year)
-                <span class="input-group-append">
-                    <button type="button" class="btn btn-default btn-white" onclick="RefreshGrid()" title="@iT.T(xLan,"1156","Refresh")" style="height:36px"><i class="fa fa-sync-alt" style="width:15px;min-width:15px"></i></button>
-                </span>
+
+<div class="content-header mb-4">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="page-header h3 mb-1">@iT.T(xLan, "1221", "General Ledger List")</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/Accounting">@iT.T(xLan, "1142", "Home")</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@iT.T(xLan, "1221", "General Ledger List")</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <a href="/Accounting/Documents/GeneralLedger" data-ajax="true" data-ajax-update="#content" class="btn btn-primary shadow-sm">
+                    <i class="fa fa-plus me-1"></i> @iT.T(xLan, "1218", "New Ledger Entry")
+                </a>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
+    </div>
+</div>
+
+<div class="container-fluid">
+    <!-- Toolbar Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label class="form-label mb-0 fw-semibold me-2">@iT.T(xLan, "1222", "Year")</label>
+                </div>
+                <div class="col-auto">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        @Html.DevExtreme().NumberBox().ID("num-Year").ShowSpinButtons(true).Value(Year).Width(100)
+                        <button type="button" class="btn btn-outline-secondary" onclick="RefreshGrid()" title="@iT.T(xLan, "1156", "Refresh")">
+                            <i class="fa fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col text-end">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="ExportGrid()">
+                            <i class="fa fa-file-export me-1"></i> @iT.T(xLan, "1208", "Export")
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Grid Card -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div id="grid-container" class="modern-grid">
                 @(
                     Html.DevExtreme().DataGrid<CLiAccounting.Documents.Transaction>().ID("grd-Transaction")
-                    .ShowBorders(true).Width("100%")
+                    .ShowBorders(false)
+                    .Width("100%")
                     .DataSource(d => d.WebApi()
-                    .Controller("idocuments").Area("Accounting")
-                    .Key("OperationKey")
-                    .LoadAction("DocumentsList").LoadParams(new { Year = new JS("GetYear") })).DataSourceOptions(x=>x.Paginate(true).PageSize(50))
+                        .Controller("idocuments").Area("Accounting")
+                        .Key("OperationKey")
+                        .LoadAction("DocumentsList").LoadParams(new { Year = new JS("GetYear") }))
+                    .DataSourceOptions(x => x.Paginate(true).PageSize(50))
                     .ColumnAutoWidth(true)
+                    .RowAlternationEnabled(true)
+                    .HoverStateEnabled(true)
+                    .ShowRowLines(true)
+                    .RtlEnabled(devRtl)
+                    .SearchPanel(s => s.Visible(true).Width(240).Placeholder(iT.T(xLan, "1140", "Search...")))
                     .Columns(columns =>
                     {
-                        columns.Add().Name("act").Caption(iT.T(xLan, "", "#")).Width(45).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
-                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1269", "GL Kind")).Width(55).Lookup(L => L.DataSource(iReplacer.accGeneralLedgerKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4DocumentKind"));
-                        columns.AddFor(m => m.Document).Caption(iT.T(xLan, "1160", "Financial")).Width(110).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan)).ValueExpr("Value").DisplayExpr("Display"));
-                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1268", "Voucher No")).Width(100);
-                       
-                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1270", "GL Date")).Width(100).Format("dd.MM.yyyy");
-                        columns.AddFor(m => m.No).Caption(iT.T(xLan, "1271", "GL No")).Width(75);
-                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description"));
-                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(100).Format("0,###.##");
-                        columns.AddFor(m => m.Rows).Caption(iT.T(xLan, "1272", "Rows")).Width(100);
+                        columns.Add().Name("act").Caption("#").Width(60).Alignment(HorizontalAlignment.Center).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
+                        columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1269", "GL Kind")).Width(100).Lookup(L => L.DataSource(iReplacer.accGeneralLedgerKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4DocumentKind"));
+                        columns.AddFor(m => m.Document).Caption(iT.T(xLan, "1160", "Financial")).Width(140).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan)).ValueExpr("Value").DisplayExpr("Display"));
+                        columns.AddFor(m => m.VoucherNo).Caption(iT.T(xLan, "1268", "Voucher No")).Width(120);
+                        columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1270", "GL Date")).Width(110).Format("dd.MM.yyyy");
+                        columns.AddFor(m => m.No).Caption(iT.T(xLan, "1271", "GL No")).Width(80);
+                        columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).MinWidth(200);
+                        columns.AddFor(m => m.Total).Caption(iT.T(xLan, "1120", "Total")).Width(120).Format("#,##0.##").Alignment(HorizontalAlignment.Right);
+                        columns.AddFor(m => m.Rows).Caption(iT.T(xLan, "1272", "Rows")).Width(80).Alignment(HorizontalAlignment.Center);
                     })
                     .Summary(tot =>
                     {
                         tot.TotalItems(item =>
                         {
                             item.AddFor(m => m.DocumentKind).SummaryType(SummaryType.Count);
-                            item.AddFor(m => m.Total).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
+                            item.AddFor(m => m.Total).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
                         });
-                        tot.Texts(txt => { txt.Sum(""); });
                     })
                     .Pager(pg =>
                     {
-                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                        pg.AllowedPageSizes(new[] { 50, 100, 200 });
                         pg.ShowNavigationButtons(true);
                         pg.ShowPageSizeSelector(true);
                         pg.ShowInfo(true);
-                        pg.InfoText("{0} of {1} | {2} Rows");
+                        pg.InfoText("{0} / {1} ({2} Items)");
                     })
-                    .Paging(p => { p.PageSize(50); })
+                    .Paging(p => p.PageSize(50))
                     .FilterRow(f => f.Visible(true))
                     .HeaderFilter(f => f.Visible(true))
-                    .SearchPanel(sp =>
-                    {
-                        sp.Width(250);
-                        sp.Visible(true);
-                    })
-                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1221", "General Ledger List")))
-                    .RowAlternationEnabled(true)
-                    .RtlEnabled(devRtl)
-                    )
+                )
+            </div>
+            
+            <!-- Empty State Illustration (Hidden when data exists) -->
+            <div id="no-data-display" class="text-center py-5 d-none">
+                <i class="bx bx-file-blank display-1 text-muted opacity-25 mb-3"></i>
+                <h5 class="text-secondary">@iT.T(xLan, "1223", "No Ledger Entries Found")</h5>
+                <p class="text-muted">@iT.T(xLan, "1224", "Adjust your filters or create a new entry.")</p>
             </div>
         </div>
     </div>
 </div>
- 
-<script class="append-on-ajax-script">
-    function ct4Action (container, options)
-    {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'tips' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function (e)
-            {
-                switch (e.itemIndex)
-                {
-                    case 0:
-                        if (e.itemData.icon == 'tips')
-                        {
-                            ViewGeneralLedger(options.data.OperationKey);
-                        }
-                        break;
-               
-                }
-            },
-        });
+
+<style>
+    .modern-grid .dx-datagrid {
+        background-color: transparent;
     }
-    function RefreshGrid ()
-    {
+    .modern-grid .dx-datagrid-headers {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+    }
+    .modern-grid .dx-datagrid-rowsview .dx-row-focused.dx-data-row {
+        background-color: rgba(37, 99, 235, 0.1);
+    }
+    .page-header {
+        color: #1e293b;
+        font-weight: 700;
+    }
+</style>
+
+<script class="append-on-ajax-script">
+    function ct4Action(container, options) {
+        $('<div class="d-flex justify-content-center">')
+            .appendTo(container)
+            .append(
+                $('<button class="btn btn-link btn-sm p-0 text-primary" title="View">')
+                    .append($('<i class="bx bx-show fs-5"></i>'))
+                    .on('click', function() { ViewGeneralLedger(options.data.OperationKey); })
+            )
+            .append(
+                $('<button class="btn btn-link btn-sm p-0 text-danger ms-2" title="Delete">')
+                    .append($('<i class="bx bx-trash fs-5"></i>'))
+                    .on('click', function() { /* Delete logic */ })
+            );
+    }
+
+    function RefreshGrid() {
         $('#grd-Transaction').dxDataGrid("instance").refresh();
     }
-    function GetYear ()
-    {
+
+    function GetYear() {
         return $('#num-Year').dxNumberBox('option', 'value');
     }
-    function ct4DocumentKind (container, options)
-    {
-        var str = '';
-        switch (options.value)
-        {
-            case 0:
-                str = '<div class="text-center"><span class="badge bg-primary">' + options.text + '</span></div>';
-                break;
-            case 1:
-                str = '<div class="text-center"><span class="badge bg-danger">' + options.text + '</span></div>';
-                break;
-        }
-        $(str).appendTo(container)
+
+    function ExportGrid() {
+        $('#grd-Transaction').dxDataGrid("instance").exportToExcel();
     }
+
+    function ct4DocumentKind(container, options) {
+        var badgeClass = options.value === 0 ? 'bg-soft-primary text-primary' : 'bg-soft-danger text-danger';
+        var style = 'padding: 0.35em 0.65em; font-size: 0.75em; font-weight: 700; border-radius: 0.25rem;';
+        
+        // Simulating soft background via inline style since we might not have it in CSS
+        var bg = options.value === 0 ? 'rgba(13, 110, 253, 0.1)' : 'rgba(220, 53, 69, 0.1)';
+        var color = options.value === 0 ? '#0d6efd' : '#dc3545';
+
+        $('<div class="text-center">')
+            .append($('<span class="badge">')
+                .css({'background-color': bg, 'color': color})
+                .text(options.text))
+            .appendTo(container);
+    }
+
+    $(document).ready(function() {
+        // Initial check for data can be added here if needed
+    });
 </script>

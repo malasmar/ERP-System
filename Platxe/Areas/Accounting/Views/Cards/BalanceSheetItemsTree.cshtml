@@ -1,118 +1,214 @@
 @{
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
-    bool devRtl;
-    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
-    if (User.FindFirstValue("aiwLan") == "en")
-    {
-        devRtl = false;
-        devFixd = HorizontalEdge.Left;
-    }
-    else
-    {
-        devRtl = true;
-        devFixd = HorizontalEdge.Right;
-    }
+    bool devRtl = User.FindFirstValue("aiwLan") != "en";
 }
-<h1 class="page-header">@iT.T(xLan,"1173","Balance Sheet Items Tree")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
-                    <button type="button" class="btn btn-yellow text-dark" onclick="GetDetails(null)">@iT.T(xLan, "1171","Create New Item")</button>
-                </div>
+
+<div class="modern-page animate__animated animate__fadeIn">
+    <!-- Page Header -->
+    <div class="page-header-modern mb-4">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-network-chart'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"1173","Balance Sheet Tree")</h1>
+                <p class="page-subtitle-modern">@iT.T(xLan, "1972", "Classification Tree") - @iT.T(xLan, "2026", "Hierarchical financial statement categories")</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="col-4">
-                    <p style="margin-bottom:15px;margin-top:15px">
-                        @iT.T(xLan,"1972","Folders Tree")
-                        <small> <a href="javascript:;" onclick="ReLoodTree()" class="text-danger">@iT.T(xLan,"1156","Refresh")</a></small>
-                        <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="CloseAll()">@iT.T(xLan,"1174","Open All")</a></small>
-                        <small style="margin-left:2px;margin-right:2px"> <a href="javascript:;" onclick="OpenAll()">@iT.T(xLan,"1174","Open All")</a></small>
-                    </p>
-                    <div style="margin:1px;width:100%" class="mb-1">
-                        <input id="txt-Search" type="text" class="form-control form-control-sm" placeholder="@iT.T(xLan,"1175","Search files...")">
-                    </div>
-                    <div id="jstree-checkable"></div>
-                </div>
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-outline-modern" onclick="RefreshBalanceTree()">
+                <i class='bx bx-refresh me-1'></i> @iT.T(xLan, "1156", "Refresh")
+            </button>
+            <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+                <button type="button" class="btn btn-primary-modern border-end" onclick="ExpandBalanceNodes()" title="@iT.T(xLan,"1174","Open All")">
+                    <i class='bx bx-expand-alt'></i>
+                </button>
+                <button type="button" class="btn btn-primary-modern" onclick="CollapseBalanceNodes()" title="@iT.T(xLan,"1175","Close All")">
+                    <i class='bx bx-collapse-alt'></i>
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- Tree Card -->
+    <div class="card-modern border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header-modern bg-white border-bottom p-3 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <h6 class="mb-0 fw-bold text-dark"><i class='bx bx-list-ul me-2 text-primary'></i>@iT.T(xLan, "1972", "Classification Tree")</h6>
+                <div class="search-wrapper-modern d-none d-md-flex align-items-center">
+                    <i class='bx bx-search text-muted'></i>
+                    <input type="text" id="balance-tree-search" class="form-control-modern" placeholder="@iT.T(xLan,"1179","Search account...")" onkeyup="HandleBalanceSearch(this.value)">
+                </div>
+            </div>
+            <div class="header-badge">
+                <span class="badge bg-primary-soft text-primary rounded-pill px-3" id="balance-node-count">-- Nodes</span>
+            </div>
+        </div>
+        
+        <div class="card-body-modern p-0 modern-grid" style="min-height: 600px;">
+            <div id="balance-treelist"></div>
+        </div>
+    </div>
 </div>
-<div id="mod-BalanceSheetItems" class="modal"><div class="modal-dialog" id="con-BalanceSheetItems"></div></div>
+
+<style>
+    .search-wrapper-modern {
+        background: var(--erp-gray-soft);
+        border-radius: 8px;
+        padding: 4px 12px;
+        width: 300px;
+        border: 1px solid var(--erp-border);
+        transition: all 0.2s;
+    }
+    .search-wrapper-modern:focus-within {
+        background: #fff;
+        border-color: var(--erp-primary);
+        box-shadow: 0 0 0 3px rgba(var(--erp-primary-rgb), 0.1);
+    }
+    .form-control-modern {
+        border: none;
+        background: transparent;
+        font-size: 0.875rem;
+        padding: 4px 8px;
+        width: 100%;
+        outline: none;
+    }
+    .badge-primary-soft {
+        background-color: rgba(var(--erp-primary-rgb), 0.1);
+        color: var(--erp-primary);
+    }
+</style>
+
 <script class="append-on-ajax-script">
+    var balanceTreeInstance = null;
+
+    function decodeHtml(html) {
+        if (!html) return "";
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    function processTreeData(items) {
+        if (!items) return;
+        items.forEach(function(item) {
+            item.text = decodeHtml(item.text);
+            if (item.children) processTreeData(item.children);
+        });
+    }
+
     $(document).ready(function() {
-        LoodTree();
-        $('#jstree-checkable').on('select_node.jstree', function(e, data) {
-            //var i, j, r = [];
-            //for (i = 0, j = data.selected.length; i < j; i++) {
-            //    r.push(data.instance.get_node(data.selected[i]).text);
-            //}
-            //$('#event_result').html('Selected: ' + r.join(', '));
-            Key = data.instance.get_node(data.selected[0]).id;
-            $('#txt-SelectedItem').text(data.instance.get_node(data.selected[0]).text);
-        });
-        $("#txt-Search").keyup(function() {
-            $('#jstree-checkable').jstree(true).search($(this).val(), true, true);
-        });
+        InitializeBalanceTree();
     });
-    function LoodTree() {
-        $.ajax({
-            type: "get",
-            url: "/api/acc/icards/TreeBalanceItem",
-            dataType: "json",
-            success: function(response) {
-                $('#jstree-checkable').jstree({
-                    'plugins': ["wholerow", "types", "search"],
-                    'core': {
-                        "themes": {
-                            "responsive": false
-                        },
-                        'data': response
-                    },
-                    "types": {
-                        "default": {
-                            "icon": "fa fa-folder text-primary fa-lg"
-                        },
-                        "file": {
-                            "icon": "fa fa-file text-success fa-lg"
-                        }
+
+    function InitializeBalanceTree() {
+        var container = $("#balance-treelist");
+        
+        if (container.data("dxTreeList")) {
+            container.dxTreeList("dispose");
+            container.empty();
+        }
+
+        balanceTreeInstance = container.dxTreeList({
+            dataSource: new DevExpress.data.DataSource({
+                load: function() {
+                    var d = $.Deferred();
+                    $.getJSON("/api/acc/icards/TreeBalanceItem")
+                        .done(function(data) {
+                            processTreeData(data);
+                            d.resolve(data);
+                        })
+                        .fail(function() { d.reject("Failed to load data"); });
+                    return d.promise();
+                }
+            }),
+            dataStructure: "tree",
+            itemsExpr: "children",
+            keyExpr: "id",
+            focusedRowEnabled: false,
+            autoExpandAll: false,
+            showBorders: false,
+            showRowLines: true,
+            columnAutoWidth: true,
+            wordWrapEnabled: false,
+            hoverStateEnabled: true,
+            scrolling: { mode: "virtual" },
+            height: "calc(100vh - 350px)",
+            loadPanel: { enabled: true, text: "@iT.T(xLan, "1100", "Loading Classification Tree...")" },
+            rtlEnabled: @(devRtl ? "true" : "false"),
+            columns: [
+                {
+                    dataField: "text",
+                    caption: "@iT.T(xLan, "1165", "Item Name")",
+                    minWidth: 400,
+                    cellTemplate: function(container, options) {
+                        var hasChildren = options.data.children && options.data.children.length > 0;
+                        var icon = hasChildren ? "bx bxs-folder text-warning" : "bx bxs-file text-primary";
+                        var html = `<div class="d-flex align-items-center py-1">
+                                        <i class='${icon} fs-4 me-3' style="width: 24px;"></i>
+                                        <span class="${hasChildren ? 'fw-bold text-dark' : 'text-muted'}">${options.text}</span>
+                                    </div>`;
+                        container.append(html);
                     }
-                });
-            },
-            failure: function(response) {
-                alert(response);
-            },
-            error: function(response) {
-                alert(response.responseText);
+                },
+                {
+                    dataField: "id",
+                    caption: "@iT.T(xLan, "1164", "Item Code")",
+                    width: 160,
+                    alignment: "center",
+                    cssClass: "fw-bold text-muted small"
+                }
+            ],
+            onContentReady: function(e) {
+                var count = e.component.getVisibleRows().length;
+                $("#balance-node-count").text(count + " @iT.T(xLan, "2025", "Nodes")");
             }
+        }).dxTreeList("instance");
+    }
+
+    function HandleBalanceSearch(val) {
+        if (balanceTreeInstance) balanceTreeInstance.searchByText(val);
+    }
+
+    function RefreshBalanceTree() {
+        if (balanceTreeInstance) balanceTreeInstance.refresh();
+    }
+
+    function ExpandBalanceNodes() {
+        if (!balanceTreeInstance) return;
+        balanceTreeInstance.beginUpdate();
+        balanceTreeInstance.getRootNode().children.forEach(function(node) {
+            expandBalanceRecursive(node);
         });
+        balanceTreeInstance.endUpdate();
     }
-    function ReLoodTree() {
-        $.ajax({
-            type: "get",
-            url: "/api/acc/icards/TreeBalanceItem",
-            dataType: "json",
-            success: function(response) {
-                $('#jstree-checkable').jstree(true).settings.core.data = response;
-                $('#jstree-checkable').jstree(true).refresh();
-            },
-            failure: function(response) {
-                alert(response);
-            },
-            error: function(response) {
-                alert(response.responseText);
-            }
+
+    function expandBalanceRecursive(node) {
+        balanceTreeInstance.expandRow(node.key);
+        if (node.children && node.children.length) {
+            node.children.forEach(function(child) {
+                expandBalanceRecursive(child);
+            });
+        }
+    }
+
+    function CollapseBalanceNodes() {
+        if (!balanceTreeInstance) return;
+        balanceTreeInstance.beginUpdate();
+        balanceTreeInstance.getRootNode().children.forEach(function(node) {
+            collapseBalanceRecursive(node);
         });
+        balanceTreeInstance.endUpdate();
     }
-    function OpenAll() {
-        $('#jstree-checkable').jstree(true).open_all();
-    }
-    function CloseAll() {
-        $('#jstree-checkable').jstree(true).close_all();
+
+    function collapseBalanceRecursive(node) {
+        if (node.children && node.children.length) {
+            node.children.forEach(function(child) {
+                collapseBalanceRecursive(child);
+            });
+            balanceTreeInstance.collapseRow(node.key);
+        }
     }
 </script>

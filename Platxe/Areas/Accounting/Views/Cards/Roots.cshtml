@@ -14,83 +14,95 @@
         devFixd = HorizontalEdge.Right;
     }
 }
-<h1 class="page-header">@iT.T(xLan,"1191","Accounts Roots")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-12">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-dark" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
-                    <button type="button" class="btn btn-yellow text-dark" onclick="GetDetails(null)">@iT.T(xLan, "1192","Create New Root")</button>
-                </div>
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-category'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"1191","Accounts Roots")</h1>
+                <p class="page-subtitle-modern">Manage high-level account roots and classifications</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.Root>().ID("grd-Roots")
-                .ShowBorders(true).Width("100%")
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+            <button type="button" class="btn-modern btn-primary-modern" onclick="GetDetails(null)">
+                <i class='bx bx-plus'></i> @iT.T(xLan, "1192","Create New Root")
+            </button>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.Root>().ID("grd-Roots")
+                .ShowBorders(false)
+                .Width("100%")
                 .DataSource(d => d.WebApi()
                     .Controller("icards").Area("Accounting")
-                .Key("Key")
-                .LoadAction("AccountsRoot"))
+                    .Key("Key")
+                    .LoadAction("AccountsRoot"))
                 .ColumnAutoWidth(true)
-                    .FocusedRowEnabled(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
                 .Columns(columns =>
                 {
-                columns.Add().Name("act").Caption(iT.T(xLan,  "","#")).Width(70).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action"));
-                columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164","Code")).Width(200);
-                columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165","Account Name"));
-                columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name"));
-                columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158","Kind")).Width(100).Lookup(L=>L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"));
+                    columns.Add().Name("act").Caption("#").Width(100).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164","Code")).Width(150).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165","Account Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166","English Name")).CssClass("text-secondary");
+                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158","Kind")).Width(120).Lookup(L=>L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
                 })
                 .Pager(pg =>
                 {
-                pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
-                pg.ShowNavigationButtons(true);
-                pg.ShowPageSizeSelector(true);
-                pg.ShowInfo(true);
-                pg.InfoText("{0} of {1} | {2} Rows");
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
                 })
                 .Paging(p => { p.PageSize(50); })
                 .FilterRow(f => f.Visible(true))
                 .HeaderFilter(f => f.Visible(true))
                 .SearchPanel(sp =>
                 {
-                sp.Width(250);
-                sp.Visible(true);
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search roots...");
                 })
-                .RowAlternationEnabled(true)
                 .RtlEnabled(devRtl)
-                )
-            </div>
+            )
         </div>
     </div>
 </div>
 <div id="mod-Root" class="modal"><div class="modal-dialog" id="con-Root"></div></div>
 <script class="append-on-ajax-script">
     function ct4Action(container, options) {
-        $('<div>').appendTo(container).dxMenu({
-            items: [
-                { icon: 'edit' },
-                { icon: 'trash' }
-            ],
-            showFirstSubmenuMode: 'onClick',
-            hideSubmenuOnMouseLeave: false,
-            onItemClick: function(e) {
-                switch (e.itemIndex) {
-                    case 0:
-                        if (e.itemData.icon == 'edit') {
-                            GetDetails(options.data.Key);
-                        }
-                        break;
-                    case 1:
-                        if (e.itemData.icon == 'trash') {
-                            DeleteRow(options.data.Key, options.data.Name1);
-                        }
-                        break;
-                }
-            },
-        });
+        var actionDiv = $('<div class="d-flex justify-content-center align-items-center gap-2"></div>');
+        
+        var editBtn = $('<button type="button" class="grid-action-btn" title="Edit"><i class="bx bx-edit-alt"></i></button>');
+        editBtn.on('click', function() { GetDetails(options.data.Key); });
+
+        var delBtn = $('<button type="button" class="grid-action-btn delete" title="Delete"><i class="bx bx-trash"></i></button>');
+        delBtn.on('click', function() { DeleteRow(options.data.Key, options.data.Name1); });
+
+        actionDiv.append(editBtn).append(delBtn);
+        container.append(actionDiv);
+    }
+
+    function ct4Kind (container, options) {
+        var text = options.text || '';
+        var badgeClass = 'badge-modern';
+        switch (options.value) {
+            case 0: badgeClass += ' badge-warning-modern'; break;
+            case 1: badgeClass += ' badge-danger-modern'; break;
+            case 2: badgeClass += ' badge-primary-modern'; break;
+            case 3: badgeClass += ' badge-success-modern'; break;
+            default: badgeClass += ' badge-primary-modern';
+        }
+        $('<div class="text-center"></div>').append($('<span class="' + badgeClass + '"></span>').text(text)).appendTo(container);
     }
     function RefreshGrid() {
         $('#grd-Roots').dxDataGrid("instance").refresh();

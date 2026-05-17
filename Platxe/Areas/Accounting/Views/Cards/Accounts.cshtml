@@ -1,238 +1,55 @@
 @{
     string xLan = User.FindFirstValue("aiwLan");
     string DB = User.FindFirstValue("aiwDB");
-    bool devRtl;
-    
-    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
-    if (User.FindFirstValue("aiwLan") == "en")
-    {
-        devRtl = false;
-        devFixd = HorizontalEdge.Left;
-    }
-    else
-    {
-        devRtl = true;
-        devFixd = HorizontalEdge.Right;
-    }
+    bool devRtl = User.FindFirstValue("aiwLan") != "en";
 }
 
-<style>
-    /* Modern Typography & Theme */
-    body {
-        background-color: #F8FAFC;
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        color: #0F172A;
-    }
-    
-    .modern-page {
-        width: 100%;
-        max-width: 100%;
-        padding: 12px 16px;
-    }
-
-    /* Page Header */
-    .page-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-    
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-    }
-    
-    .header-icon {
-        width: 48px;
-        height: 48px;
-        background-color: #EFF6FF;
-        color: #3B82F6;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-    }
-    
-    .page-title {
-        color: #0F172A;
-        font-size: 22px;
-        font-weight: 700;
-        margin: 0;
-    }
-
-    .page-subtitle {
-        color: #475569;
-        font-size: 14px;
-        margin: 2px 0 0 0;
-    }
-
-    /* Modern Buttons */
-    .btn-modern {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 16px;
-        font-size: 14px;
-        font-weight: 500;
-        border-radius: 8px;
-        transition: all 0.2s ease;
-        border: 1px solid transparent;
-        cursor: pointer;
-    }
-    .btn-modern i { font-size: 16px; }
-    
-    .btn-primary { background-color: #3B82F6; color: #FFFFFF; }
-    .btn-primary:hover { background-color: #2563EB; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2); }
-    
-    .btn-danger-soft { background-color: #FEF2F2; color: #EF4444; border-color: #FECACA; }
-    .btn-danger-soft:hover { background-color: #FEE2E2; }
-    
-    .btn-secondary { background-color: #FFFFFF; color: #0F172A; border-color: #E2E8F0; }
-    .btn-secondary:hover { background-color: #F8FAFC; }
-
-    /* Card Layout */
-    .card {
-        background: #FFFFFF;
-        border: 1px solid #E2E8F0;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        overflow: hidden;
-        margin-bottom: 0;
-    }
-
-    /* DevExtreme Grid Redesign */
-    .dx-datagrid {
-        font-family: 'Inter', 'Segoe UI', sans-serif;
-        color: #0F172A;
-        font-size: 14px;
-        border: 1px solid #E2E8F0;
-        border-top: none;
-        width: 100% !important;
-    }
-    .dx-datagrid-headers {
-        background-color: #F1F5F9 !important;
-        border-bottom: 1px solid #E2E8F0;
-    }
-    .dx-datagrid .dx-header-row > td {
-        color: #0F172A;
-        font-weight: 600;
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-        padding: 10px 12px;
-        border-right: 1px solid #E2E8F0;
-    }
-    .dx-datagrid-borders > .dx-datagrid-header-panel {
-        border-bottom: 0;
-        padding: 12px 16px;
-    }
-    .dx-datagrid .dx-row > td {
-        padding: 8px 12px;
-        vertical-align: middle;
-        font-size: 14px;
-        border-bottom: 1px solid #E2E8F0;
-        border-right: 1px solid #E2E8F0;
-        height: 44px;
-    }
-    .dx-datagrid .dx-row-alt > td {
-        background-color: #F8FAFC;
-    }
-    .dx-datagrid .dx-row:hover > td {
-        background-color: #F1F5F9 !important;
-        transition: background-color 0.15s ease;
-    }
-    
-    /* Action Icons in Grid */
-    .grid-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 13px;
-        font-weight: 500;
-        border: 1px solid transparent;
-        background: transparent;
-        transition: all 0.2s;
-        cursor: pointer;
-    }
-    .grid-btn i { font-size: 15px; }
-    .grid-btn-edit { color: #3B82F6; }
-    .grid-btn-edit:hover { background-color: #EFF6FF; border-color: #BFDBFE; }
-    .grid-btn-delete { color: #EF4444; }
-    .grid-btn-delete:hover { background-color: #FEF2F2; border-color: #FECACA; }
-
-    /* Badges */
-    .badge-modern {
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap;
-    }
-</style>
-
-<div class="modern-page">
-    <div class="page-header">
-        <div class="header-left">
-            <div class="header-icon">
+<div class="modern-page animate__animated animate__fadeIn">
+    <div class="page-header-modern mb-4">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
                 <i class='bx bx-book-content'></i>
             </div>
             <div>
-                <h1 class="page-title">@iT.T(xLan,"1155","Chart of Accounts")</h1>
-                <p class="page-subtitle">Manage your financial account hierarchy</p>
+                <h1 class="page-title-modern">@iT.T(xLan,"1155","Chart of Accounts")</h1>
+                <p class="page-subtitle-modern">Financial ledger management and organization</p>
             </div>
         </div>
         
         <div class="header-actions d-flex gap-2">
-            <button type="button" class="btn-modern btn-secondary" onclick="RefreshGrid()">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()">
                 <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
             </button>
-            <button type="button" class="btn-modern btn-danger-soft" onclick="GetDetailsRoot(null)">
-                <i class='bx bx-folder-plus'></i> @iT.T(xLan, "1192","New Root")
-            </button>
-            <button type="button" class="btn-modern btn-primary" onclick="GetDetails(null)">
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="GetAccountDetails(null)">
                 <i class='bx bx-plus'></i> @iT.T(xLan, "1157","New Account")
             </button>
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-body p-0">
+    <div class="card-modern border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body-modern p-0 modern-grid">
             @(Html.DevExtreme().DataGrid<CLiAccounting.Cards.ChartofAccounts>().ID("grd-Accounts")
-                .ShowBorders(true)
-                .ShowColumnLines(true)
-                .ShowRowLines(true)
+                .ShowBorders(false)
                 .Width("100%")
                 .DataSource(d => d.WebApi()
-                .Controller("icards").Area("Accounting")
-                .Key("Key")
-                .LoadAction("ChartofAccount"))
+                    .Controller("icards").Area("Accounting")
+                    .Key("Key")
+                    .LoadAction("ChartofAccount")
+                    .OnLoaded("onDataLoaded")
+                )
                 .ColumnAutoWidth(true)
                 .HoverStateEnabled(true)
                 .RowAlternationEnabled(true)
-                .NoDataText("No accounts found. Create a new account to get started.")
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
                 .Columns(columns =>
                 {
-                    columns.Add().Name("act").Caption(iT.T(xLan, "", "Actions")).Width(180).Fixed(true).FixedPosition((HorizontalEdge)devFixd).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action")).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(110).CssClass("text-dark fw-bold");
-                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CellTemplate(new JS("ctWordWrap")).CssClass("fw-medium");
-                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(110).Lookup(L => L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
+                    columns.Add().Name("act").Caption("#").Width(100).AllowExporting(false).AllowFiltering(false).CellTemplate(new JS("ct4Action")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(120).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(100).Lookup(L => L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
                     columns.AddFor(m => m.isParent).Caption(iT.T(xLan, "1159", "Type")).Width(100).Lookup(L => L.DataSource(iReplacer.accParent(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4isParent")).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Financial).Caption(iT.T(xLan, "1160", "Financial")).Width(100).Lookup(L => L.DataSource(iReplacer.accFinancial(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Financial")).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Category).Caption(iT.T(xLan, "1162", "Category")).Width(110).Lookup(L => L.DataSource(iReplacer.accCategory(xLan)).ValueExpr("Value").DisplayExpr("Display")).CellTemplate(new JS("ct4Category"));
-                    columns.AddFor(m => m.Transactions).Caption(iT.T(xLan, "1161", "Trans.")).Width(80).CellTemplate(new JS("ct4Transactions")).Alignment(HorizontalAlignment.Center);
                     columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Level")).Width(70).Alignment(HorizontalAlignment.Center);
-                    columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).CellTemplate(new JS("ctWordWrap")).CssClass("text-secondary");
-                    columns.AddFor(m => m.Parent).Caption(iT.T(xLan, "1167", "Parent Code")).Width(100).CssClass("text-secondary");
-                    columns.AddFor(m => m.ParentName1).Caption(iT.T(xLan, "1168", "Parent Name")).Width(150).CellTemplate(new JS("ctWordWrap"));
-                    columns.AddFor(m => m.ParentName2).Caption(iT.T(xLan, "1169", "Parent English")).Visible(false);
+                    columns.AddFor(m => m.ParentName1).Caption(iT.T(xLan, "1168", "Parent Account")).MinWidth(150).CssClass("text-muted small");
                 })
                 .Pager(pg =>
                 {
@@ -240,19 +57,16 @@
                     pg.ShowNavigationButtons(true);
                     pg.ShowPageSizeSelector(true);
                     pg.ShowInfo(true);
-                    pg.InfoText("{0} of {1} | {2} Rows");
                 })
                 .Paging(p => { p.PageSize(50); })
                 .FilterRow(f => f.Visible(true))
                 .HeaderFilter(f => f.Visible(true))
                 .SearchPanel(sp =>
                 {
-                    sp.Width(300);
+                    sp.Width(250);
                     sp.Visible(true);
                     sp.Placeholder("Search accounts...");
                 })
-                .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1155", "Chart of Accounts")))
-                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
                 .RtlEnabled(devRtl)
             )
         </div>
@@ -260,186 +74,89 @@
 </div>
 
 <div id="mod-Account" class="modal fade"><div class="modal-dialog modal-lg modal-dialog-centered" id="con-Account"></div></div>
-<div id="mod-Root" class="modal fade"><div class="modal-dialog modal-dialog-centered" id="con-Root"></div></div>
 
 <script class="append-on-ajax-script">
-    function xxxxx(){ return document.title; }
+    function decodeHtml(html) {
+        if (!html) return "";
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
 
-    function ct4Action (container, options) {
+    function onDataLoaded(data) {
+        if (data && Array.isArray(data)) {
+            data.forEach(function(item) {
+                if (item.Name1) item.Name1 = decodeHtml(item.Name1);
+                if (item.Name2) item.Name2 = decodeHtml(item.Name2);
+                if (item.ParentName1) item.ParentName1 = decodeHtml(item.ParentName1);
+            });
+        }
+    }
+
+    function ct4Action(container, options) {
         var actionDiv = $('<div class="d-flex justify-content-center align-items-center gap-2"></div>');
-        
-        var editBtn = $('<button type="button" class="grid-btn grid-btn-edit" title="Edit"><i class="bx bx-edit-alt"></i> Edit</button>');
-        editBtn.on('click', function(e) {
-            e.stopPropagation();
-            if (options.data.Level == 1) {
-                $.alert({
-                    title: 'Notice',
-                    content: "Cannot open root account here. Please use the New Root option to edit it.",
-                    type: 'blue',
-                    theme: 'modern'
-                });
-                return;
-            }
-            GetDetails(options.data.Key);
-        });
-
-        var delBtn = $('<button type="button" class="grid-btn grid-btn-delete" title="Delete"><i class="bx bx-trash"></i> Delete</button>');
-        delBtn.on('click', function(e) {
-            e.stopPropagation();
-            DeleteRow(options.data.Key, options.data.Name1);
-        });
-
+        var editBtn = $('<button type="button" class="grid-action-btn" title="Edit"><i class="bx bx-edit-alt"></i></button>');
+        editBtn.on('click', function() { GetAccountDetails(options.data.Key); });
+        var delBtn = $('<button type="button" class="grid-action-btn delete" title="Delete"><i class="bx bx-trash"></i></button>');
+        delBtn.on('click', function() { DeleteAccount(options.data.Key, options.data.Name1); });
         actionDiv.append(editBtn).append(delBtn);
         container.append(actionDiv);
     }
 
-    function RefreshGrid () {
-        $('#grd-Accounts').dxDataGrid("instance").refresh();
+    function RefreshGrid() {
+        var grid = $("#grd-Accounts").dxDataGrid("instance");
+        if(grid) grid.refresh();
     }
 
-    function GetDetails (Key) {
+    function GetAccountDetails(Key) {
         $('#con-Account').empty();
-        $("#con-Account").load('/Accounting/Cards/GetAccount?Key=' + Key);
-        $("#mod-Account").modal({ backdrop: 'static' }).modal('toggle');
+        $("#con-Account").load('/Accounting/Cards/GetAccount?Key=' + Key, function() {
+            $("#mod-Account").modal({ backdrop: 'static' }).modal('show');
+        });
     }
 
-    function GetDetailsRoot (Key) {
-        $('#con-Root').empty();
-        $("#con-Root").load('/Accounting/Cards/GetRoot?Key=' + Key);
-        $("#mod-Root").modal({ backdrop: 'static' }).modal('toggle');
-    }
-
-    function DeleteRow (Key, Display) {
-        $.confirm({
-            title: 'Confirm Deletion',
-            content: 'Are you sure you want to delete Account: <strong class="text-danger">' + Display + '</strong>?',
-            type: 'red',
-            theme: 'modern',
-            icon: 'bx bx-error-circle',
-            buttons: {
-                Delete: {
-                    text: 'Delete',
-                    btnClass: 'btn-danger',
-                    action: function () {
-                        $.ajax({
-                            type: "Delete",
-                            url: "/api/acc/icards/DeleteRoot",
-                            data: { Key: Key },
-                            dataType: "json",
-                            success: function (response) {
-                                if (response == 0) {
-                                    $.alert({
-                                        title: 'Action Denied',
-                                        content: "Cannot delete this account because it has active child accounts.",
-                                        type: 'red',
-                                        theme: 'modern'
-                                    });
-                                } else {
-                                    RefreshGrid();
-                                }
-                            },
-                            error: function (response) {
-                                alert(response.responseText);
-                            }
-                        });
+    function DeleteAccount(Key, Display) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Delete account: " + Display,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: "Delete",
+                    url: "/api/acc/icards/DeleteRoot",
+                    data: { Key: Key },
+                    success: function(response) {
+                        if (response == 0) {
+                            Swal.fire('Error', 'Cannot delete account with children.', 'error');
+                        } else {
+                            RefreshGrid();
+                            Swal.fire('Deleted!', 'Account has been deleted.', 'success');
+                        }
                     }
-                },
-                Cancel: {
-                    text: 'Cancel',
-                    btnClass: 'btn-light'
-                }
+                });
             }
         });
     }
 
-    function ct4Kind (container, options) {
-        var str = '';
-        var text = options.text || '';
+    function ct4Kind(container, options) {
+        var badgeClass = 'badge-modern';
         switch (options.value) {
-            case 0: /* Assets - Warning Yellow */
-                str = '<span class="badge-modern" style="background-color: #FFFBEB; color: #D97706; border: 1px solid #FEF3C7;">' + text + '</span>';
-                break;
-            case 1: /* Liability - Danger Red */
-                str = '<span class="badge-modern" style="background-color: #FEF2F2; color: #EF4444; border: 1px solid #FECACA;">' + text + '</span>';
-                break;
-            case 2: /* Equity - Primary Blue */
-                str = '<span class="badge-modern" style="background-color: #EFF6FF; color: #3B82F6; border: 1px solid #BFDBFE;">' + text + '</span>';
-                break;
-            case 3: /* Revenue - Success Green */
-                str = '<span class="badge-modern" style="background-color: #F0FDF4; color: #22C55E; border: 1px solid #BBF7D0;">' + text + '</span>';
-                break;
-            case 4: /* Expenses - Neutral Dark */
-                str = '<span class="badge-modern" style="background-color: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0;">' + text + '</span>';
-                break;
-            default:
-                str = '<span class="badge-modern" style="background-color: #F8FAFC; color: #0F172A; border: 1px solid #E2E8F0;">' + text + '</span>';
+            case 0: badgeClass += ' badge-primary-modern'; break;
+            case 1: badgeClass += ' badge-danger-modern'; break;
+            case 2: badgeClass += ' badge-warning-modern'; break;
+            case 3: badgeClass += ' badge-success-modern'; break;
+            default: badgeClass += ' badge-primary-modern';
         }
-        $('<div class="w-100 text-center"></div>').append(str).appendTo(container);
+        $('<div class="text-center"></div>').append($('<span class="' + badgeClass + '"></span>').text(options.text)).appendTo(container);
     }
 
-    function ct4isParent (container, options) {
-        var str = '';
-        var text = options.text || '';
-        if (options.data.Level == 1) {
-            str = '<span class="badge-modern" style="background-color: #FEF2F2; color: #EF4444; border: 1px solid #FECACA;"><i class="bx bx-folder me-1"></i> Root</span>';
-            $('<div class="w-100 text-center"></div>').append(str).appendTo(container);
-            return;
-        }
-        switch (options.value) {
-            case false: /* Child */
-                str = '<span class="badge-modern" style="background-color: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0;"><i class="bx bx-file me-1"></i> Account</span>';
-                break;
-            case true: /* Parent */
-                str = '<span class="badge-modern" style="background-color: #EFF6FF; color: #3B82F6; border: 1px solid #BFDBFE;"><i class="bx bx-folder me-1"></i> Parent</span>';
-                break;
-        }
-        $('<div class="w-100 text-center"></div>').append(str).appendTo(container);
-    }
-
-    function ct4Financial (container, options) {
-        var str = '';
-        var text = options.text || '';
-        switch (options.value) {
-            case false:
-                str = '<span class="badge-modern" style="background-color: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0;">' + text + '</span>';
-                break;
-            case true:
-                str = '<span class="badge-modern" style="background-color: #F0FDF4; color: #22C55E; border: 1px solid #BBF7D0;">' + text + '</span>';
-                break;
-        }
-        $('<div class="w-100 text-center"></div>').append(str).appendTo(container);
-    }
-
-    function ct4Transactions (container, options) {
-        var val = options.value || 0;
-        var text = options.text || '0';
-        var wrapper = $('<div class="badge-modern"></div>').text(text);
-        
-        if (val > 0) {
-            wrapper.css({
-                'background-color': '#F8FAFC',
-                'color': '#0F172A',
-                'border': '1px solid #E2E8F0'
-            });
-        } else {
-            wrapper.css({
-                'background-color': 'transparent',
-                'color': '#94A3B8',
-                'border': '1px solid transparent'
-            });
-        }
-        $('<div class="w-100 text-center"></div>').append(wrapper).appendTo(container);
-    }
-
-    function ct4Category (container, options) {
-        var text = options.text || '';
-        var wrapper = $('<div></div>').text(text).css({'font-weight': '500', 'font-size': '13px'});
-        
-        if (options.value == 1) {
-            wrapper.css('color', '#EF4444');
-        } else {
-            wrapper.css('color', '#0F172A');
-        }
-        container.append(wrapper);
+    function ct4isParent(container, options) {
+        var badgeClass = options.value ? 'badge-primary-modern' : 'badge-secondary-modern';
+        var icon = options.value ? 'bx-folder' : 'bx-file';
+        $('<div class="text-center"></div>').append($('<span class="badge-modern ' + badgeClass + '"><i class="bx ' + icon + ' me-1"></i>' + options.text + '</span>')).appendTo(container);
     }
 </script>

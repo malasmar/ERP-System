@@ -43,17 +43,17 @@ namespace Platxe.Areas.Accounting.Controllers.api
             return DataSourceLoader.Load(new CLiAccounting.Reports.TrialBalance().GetTreeList(DB, First, Last, ExpKind, HideZero), loadOptions);
         }
         [HttpGet]
-        public object IncomeStatment(DateTime First, DateTime Last, int GroupLevel, int TransactionLevel, DataSourceLoadOptions loadOptions)
+        public object IncomeStatement(DateTime First, DateTime Last, int GroupLevel, int TransactionLevel, DataSourceLoadOptions loadOptions)
         {
             return DataSourceLoader.Load(new CLiAccounting.Reports.IncomeStatment().GetList(DB, First, Last,GroupLevel, TransactionLevel), loadOptions);
         }
         [HttpGet]
-        public object IncomeStatmentExpKind(DateTime First, DateTime Last, bool ExpKind, DataSourceLoadOptions loadOptions)
+        public object IncomeStatementExpKind(DateTime First, DateTime Last, bool ExpKind, DataSourceLoadOptions loadOptions)
         {
             return DataSourceLoader.Load(new CLiAccounting.Reports.IncomeStatment().GetList(DB, First, Last, ExpKind), loadOptions);
         }
         [HttpGet]
-        public object BalanceStatment(DateTime First, DateTime Last, int GroupLevel, int TransactionLevel, DataSourceLoadOptions loadOptions)
+        public object BalanceStatement(DateTime First, DateTime Last, int GroupLevel, int TransactionLevel, DataSourceLoadOptions loadOptions)
         {
             return DataSourceLoader.Load(new CLiAccounting.Reports.BalanceStatment().GetList(DB, First, Last, GroupLevel, TransactionLevel), loadOptions);
         }
@@ -69,17 +69,17 @@ namespace Platxe.Areas.Accounting.Controllers.api
             return new CLiAccounting.Reports.BalanceTB().GetItem(DB, First, Last);
         }
         [HttpGet]
-        public object AccountStatment(Guid? Key,DateTime FirstDate, DateTime LastDate, bool Opening, DataSourceLoadOptions loadOptions)
+        public object AccountStatement(Guid? Key,DateTime FirstDate, DateTime LastDate, bool Opening, DataSourceLoadOptions loadOptions)
         {
             return DataSourceLoader.Load(new CLiAccounting.Reports.AccountStatment().GetList(DB, Key, FirstDate, LastDate, Opening), loadOptions);
         }
         [HttpGet]
-        public object ParentStatment(string Key, DateTime FirstDate, DateTime LastDate, DataSourceLoadOptions loadOptions)
+        public object ParentStatement(string Key, DateTime FirstDate, DateTime LastDate, DataSourceLoadOptions loadOptions)
         {
             return DataSourceLoader.Load(new CLiAccounting.Reports.ParentStatment().GetList(DB, Key, FirstDate, LastDate), loadOptions);
         }
         [HttpGet]
-        public object YearlyStatment(int Year, DataSourceLoadOptions loadOptions)
+        public object YearlyStatement(int Year, DataSourceLoadOptions loadOptions)
         {
             DateTime FirstDate=new DateTime(Year,1,1);
             DateTime LastDate=new DateTime(Year,12,31);   

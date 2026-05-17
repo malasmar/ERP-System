@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -32,19 +32,19 @@ namespace Platxe.Areas.Accounting.Controllers
         {
             return View();
         }
-        public IActionResult IncomeStatment()
+        public IActionResult IncomeStatement()
         {
             return View();
         }
-        public IActionResult BalanceStatment()
+        public IActionResult BalanceStatement()
         {
             return View();
         }
-        public IActionResult AccountStatment()
+        public IActionResult AccountStatement()
         {
             return View();
         }
-        public IActionResult ParentStatment()
+        public IActionResult ParentStatement()
         {
             return View();
         }
@@ -52,7 +52,7 @@ namespace Platxe.Areas.Accounting.Controllers
         {
             return View();
         }
-        public IActionResult IncomeStatmentv2()
+        public IActionResult IncomeStatementv2()
         {
             return View();
         }
@@ -61,7 +61,7 @@ namespace Platxe.Areas.Accounting.Controllers
             ViewBag.Code = Code;
             return PartialView("_InteractiveTrial");
         }
-        public IActionResult YearlyStatment()
+        public IActionResult YearlyStatement()
         {
             return View();
         }

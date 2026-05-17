@@ -24,126 +24,129 @@
         margin-bottom: 8px;
     }
 </style>
-<h1 class="page-header">@iT.T(xLan,"1235","Income Statment Report")</h1>
-<div class="panel panel-inverse">
-    <div class="panel-body">
-        <div class="row">
-            <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan, "1222","Year")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width(130).Value(Year).OnValueChanged("ChangeYear")
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan, "1224","First Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edFirstDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-3 ">@iT.T(xLan, "1225","Last Date")</label>
-                    <div class="col-9">
-                        @Html.DevExtreme().DateBox().ID("edLastDate").Width(130).DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
-                    </div>
-                </div>
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-trending-up'></i>
             </div>
-            <div class="col-lg-3 col-md-12">
-                <div class="form-group row">
-                    <div class="col-4">
-                        @Html.DevExtreme().NumberBox().ID("cnt-GroupLevel").ShowSpinButtons(true).Width(80).Min(0).Value(2)
-                    </div>
-                    <label class="col-8">@iT.T(xLan, "1232","Group Level")</label>
-                </div>
-                <div class="form-group row">
-                    <div class="col-4">
-                        @Html.DevExtreme().NumberBox().ID("cnt-TransactionLevel").ShowSpinButtons(true).Width(80).Min(0).Value(3)
-                    </div>
-                    <label class="col-8">@iT.T(xLan, "1233","Transaction Level")</label>
-                </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan,"1235","Income Statement Report")</h1>
+                <p class="page-subtitle-modern">Track revenue, expenses, and net profit over a specific timeframe</p>
             </div>
-            <div class="col-lg-2"></div>
-            <div class="col-lg-4 col-md-6">
-                <div class="card border-0 mb-1 bg-yellow text-dark acc">
-                    <div class="card-body">
-                        <div class="text-grey">
-                            <b>@iT.T(xLan,"1236","Income Balance")</b>
+        </div>
+        
+        <div class="header-actions d-flex gap-2">
+            <button type="button" class="btn-modern btn-secondary-modern" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+            <button type="button" class="btn-modern btn-primary-modern" onclick="window.print()">
+                <i class='bx bx-printer'></i> @iT.T(xLan, "1361","Print")
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card-modern h-100">
+                <div class="card-header-modern">
+                    <h6 class="mb-0 fw-bold"><i class='bx bx-filter-alt me-2'></i>Report Filters</h6>
+                </div>
+                <div class="card-body-modern">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1222","Year")</label>
+                            @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
                         </div>
-                        <div class="d-flex">
-                            <h2 class="mb-0"><span id="txt-Total" class="me-2">0.00</span><span class="me-1 f-s-10" id="txt-ProfitStatus"></span></h2>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1224","First Date")</label>
+                            @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
                         </div>
-                        <hr class="bg-white-transparent-2">
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1225","Last Date")</label>
+                            @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1232","Group Level")</label>
+                            @Html.DevExtreme().NumberBox().ID("cnt-GroupLevel").ShowSpinButtons(true).Width("100%").Min(0).Value(2)
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1233","Transaction Level")</label>
+                            @Html.DevExtreme().NumberBox().ID("cnt-TransactionLevel").ShowSpinButtons(true).Width("100%").Min(0).Value(3)
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <hr />
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="RefreshGrid()">@iT.T(xLan, "1156","Refresh")</button>
-               
+        <div class="col-lg-4">
+            <div class="card-modern h-100 bg-primary-modern text-white">
+                <div class="card-body-modern d-flex flex-column justify-content-center p-4">
+                    <p class="text-white-50 small mb-1">@iT.T(xLan,"1236","Net Income Balance")</p>
+                    <div class="d-flex align-items-baseline gap-3 mb-2">
+                        <h2 class="mb-0 display-6 fw-bold" id="txt-Total">0.00</h2>
+                        <span class="badge-modern bg-white text-primary" id="txt-ProfitStatus">Profit</span>
+                    </div>
+                    <p class="small opacity-75 mb-0">Total revenue minus total expenses for the selected period.</p>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.IncomeStatment>().ID("grd-IncomeStatment")
-                    .ShowBorders(true).Width("100%")
-                    .DataSource(d => d.WebApi()
-                    .Controller("ireports").Area("Accounting")
-                    .Key("Code")
-                    .LoadAction("IncomeStatment")
-                    .LoadParams(new
+    </div>
+
+    <div class="card-modern">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.IncomeStatment>().ID("grd-IncomeStatment")
+                .ShowBorders(false)
+                .Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("ireports").Area("Accounting")
+                .Key("Code")
+                .LoadAction("IncomeStatement")
+                .LoadParams(new
+                {
+                    First = new JS("getFirst"),
+                    Last = new JS("getLast"),
+                    GroupLevel = new JS("getGroupLevel"),
+                    TransactionLevel = new JS("getTransactionLevel")
+                }))
+                .ColumnAutoWidth(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Kind).Caption(iT.T(xLan,"1158","Kind")).Width(100).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.T).Caption(iT.T(xLan,"1161","Trans.")).Width(90).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Level).Caption(iT.T(xLan,"1163","Lv.")).Width(70).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan,"1228","Code")).Width(120).CssClass("fw-bold text-dark");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan,"1165","Account Name")).CssClass("fw-medium");
+                    columns.AddFor(m => m.Amount).Caption(iT.T(xLan,"1077","Amount")).Width(130).Format("#,##0.##").CssClass("fw-bold text-primary");
+                })
+                .Summary(tot =>
+                {
+                    tot.TotalItems(item =>
                     {
-                        First = new JS("getFirst"),
-                        Last = new JS("getLast"),
-                        GroupLevel = new JS("getGroupLevel"),
-                        TransactionLevel = new JS("getTransactionLevel")
-                    })
-                    )
-                    .FocusedRowEnabled(true)
-                    .ColumnAutoWidth(true)
-                    .Columns(columns =>
-                    {
-                        columns.AddFor(m => m.Kind).Caption(iT.T(xLan,"1158","Kind")).Width(70).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind"));
-                        columns.AddFor(m => m.T).Caption(iT.T(xLan,"1161","Trans.")).Width(70).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T"));
-                        columns.AddFor(m => m.Level).Caption(iT.T(xLan,"1163","Level")).Width(60);
-                        columns.AddFor(m => m.Code).Caption(iT.T(xLan,"1228","Account Code")).Width(90);
-                        columns.AddFor(m => m.Name1).Caption(iT.T(xLan,"1165","Account Name"));
-                        columns.AddFor(m => m.Amount).Caption(iT.T(xLan,"1077","Amount")).Width(100).Format("0,###.##");
-                    })
-                    .Summary(tot =>
-                    {
-                        tot.TotalItems(item =>
-                        {
-                            item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
-                            item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("0,###.##");
-                        });
-                        tot.Texts(txt => { txt.Sum(""); });
-                    })
-                    .Pager(pg =>
-                    {
-                        pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
-                        pg.ShowNavigationButtons(true);
-                        pg.ShowPageSizeSelector(true);
-                        pg.ShowInfo(true);
-                        pg.InfoText("{0} of {1} | {2} Rows");
-                    })
-                    .Paging(p => { p.PageSize(50); })
-                    .FilterRow(f => f.Visible(true))
-                    .HeaderFilter(f => f.Visible(true))
-                    .SearchPanel(sp =>
-                    {
-                        sp.Width(250);
-                        sp.Visible(true);
-                    })
-                    .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1235", "Income Statment Report")))
-                    .RowAlternationEnabled(true)
-                    .RtlEnabled(devRtl)
-                    .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
-                    )
-            </div>
+                        item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
+                    });
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search results...");
+                })
+                .Export(exp => exp.Enabled(true).Option("fileName", iT.T(xLan, "1235", "Income Statement Report")))
+                .RtlEnabled(devRtl)
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+            )
         </div>
     </div>
 </div>
@@ -165,13 +168,11 @@
                 if (response < 0)
                 {
                     $('#txt-ProfitStatus').text('Profit');
-                    $('#txt-ProfitStatus').removeClass('text-red');
-                    $('#txt-ProfitStatus').addClass('text-success');
+                    $('#txt-ProfitStatus').removeClass('badge-danger-modern').addClass('badge-success-modern');
                 } else
                 {
                     $('#txt-ProfitStatus').text('Loss');
-                    $('#txt-ProfitStatus').addClass('text-red');
-                    $('#txt-ProfitStatus').removeClass('text-success');
+                    $('#txt-ProfitStatus').removeClass('badge-success-modern').addClass('badge-danger-modern');
                 }
             },
             failure: function (response)

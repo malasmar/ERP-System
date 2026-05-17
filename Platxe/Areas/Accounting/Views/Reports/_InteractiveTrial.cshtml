@@ -25,48 +25,56 @@
         margin-bottom: 8px;
     }
 </style>
-<div class="modal-content">
-    <div class="modal-header">
-        <h4 class="modal-title">@iT.T(xLan,"1006","Trial Balance")</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
+<div class="modal-header border-bottom-0 pb-0">
+    <div class="d-flex align-items-center">
+        <div class="bg-primary-soft p-2 rounded-3 me-3">
+            <i class='bx bx-git-branch text-primary fs-4'></i>
+        </div>
+        <div>
+            <h5 class="modal-title fw-bold mb-0">@iT.T(xLan,"1006","Trial Balance Drill-down")</h5>
+            <p class="text-muted small mb-0">Sub-accounts for @Code</p>
+        </div>
     </div>
-    <div class="modal-body">
+    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body p-4">
         <div class="row">
             <div class="col-12">
                 @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.TrialBalance>().ID("grd-InteractiveTrial-" + Code)
-                    .ShowBorders(true).Width("100%")
+                    .ShowBorders(false)
+                    .Width("100%")
                     .ColumnAutoWidth(true)
+                    .HoverStateEnabled(true)
+                    .RowAlternationEnabled(true)
                     .Columns(c =>
                     {
-                        c.Add().Caption("Home").AllowExporting(false).Fixed(true).FixedPosition((HorizontalEdge)devFixd).AllowFiltering(false).AllowFixing(true).Columns(columns =>
+                        c.Add().Name("act").Caption("#").Width(70).CellTemplate(new JS("ct4Action")).AllowExporting(false).Fixed(true).FixedPosition((HorizontalEdge)devFixd).Alignment(HorizontalAlignment.Center);
+                        
+                        c.Add().Caption("Account Details").Columns(columns =>
                         {
-                            columns.Add().Caption("Action").Width(40).CellTemplate(new JS("ct4Action"));
-                            columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(70).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind"));
-                            columns.AddFor(m => m.T).Caption(iT.T(xLan, "1161", "Trans.")).Width(70).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T"));
+                            columns.AddFor(m => m.Kind).Caption(iT.T(xLan, "1158", "Kind")).Width(90).Lookup(L => { L.DataSource(iReplacer.accAccountKind(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4Kind")).Alignment(HorizontalAlignment.Center);
+                            columns.AddFor(m => m.T).Caption(iT.T(xLan, "1161", "Trans.")).Width(90).Lookup(L => { L.DataSource(iReplacer.accTransaction(xLan)).ValueExpr("Value").DisplayExpr("Display"); }).CellTemplate(new JS("ct4T")).Alignment(HorizontalAlignment.Center);
+                            columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Lv.")).Width(60).Alignment(HorizontalAlignment.Center);
+                            columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Code")).Width(120).CssClass("fw-bold text-dark");
+                            columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name")).CssClass("fw-medium");
                         });
-                        c.Add().Caption("General Details").Columns(columns =>
-                        {
-                            columns.AddFor(m => m.Level).Caption(iT.T(xLan, "1163", "Level")).Width(60);
-                            columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1228", "Account Code")).Width(90);
-                            columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1165", "Account Name"));
-                            columns.AddFor(m => m.Name2).Caption(iT.T(xLan, "1166", "English Name")).Visible(false);
-                        });
+
                         c.Add().Caption(iT.T(xLan, "1007", "Opening")).Columns(columns =>
                         {
-                            columns.AddFor(m => m.oDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
-                            columns.AddFor(m => m.oCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.oDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.##");
+                            columns.AddFor(m => m.oCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.##");
                         });
+
                         c.Add().Caption(iT.T(xLan, "1011", "Transaction")).Columns(columns =>
                         {
-                            columns.AddFor(m => m.tDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
-                            columns.AddFor(m => m.tCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
-                            columns.AddFor(m => m.tbDebit).Caption(iT.T(xLan, "1052", "Debit Balance")).Width(100).Format("0,###.##").Visible(true);
-                            columns.AddFor(m => m.tbCredit).Caption(iT.T(xLan, "1053", "Credit Balance")).Width(100).Format("0,###.##").Visible(true);
+                            columns.AddFor(m => m.tDebit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.##");
+                            columns.AddFor(m => m.tCredit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.##");
                         });
+
                         c.Add().Caption(iT.T(xLan, "1227", "Balance")).Columns(columns =>
                         {
-                            columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(100).Format("0,###.##");
-                            columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(100).Format("0,###.##");
+                            columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(110).Format("#,##0.##").CssClass("fw-bold");
+                            columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(110).Format("#,##0.##").CssClass("fw-bold");
                         });
                     })
                     .Pager(pg =>
@@ -75,7 +83,6 @@
                         pg.ShowNavigationButtons(true);
                         pg.ShowPageSizeSelector(true);
                         pg.ShowInfo(true);
-                        pg.InfoText("{0} of {1} | {2} Rows");
                     })
                     .Paging(p => { p.PageSize(50); })
                     .FilterRow(f => f.Visible(true))
@@ -99,10 +106,11 @@
     </div>
 </div>
 <script class="append-on-ajax-script">
-    $(document).reasy(function ()
+    $(document).ready(function ()
     {
-        $('#grd-InteractiveTrial-1').dxDataGrid({
-            dataSource: TrialBalanceData
+        var xData = TrialBalanceData.filter(function (el) { return el.Parent == '@Code'; });
+        $('#grd-InteractiveTrial-@Code').dxDataGrid({
+            dataSource: xData
         });
     })
 </script>

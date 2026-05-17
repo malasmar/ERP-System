@@ -1,0 +1,194 @@
+@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    int Year = Convert.ToInt32(User.FindFirstValue("aiwYear"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+
+<div class="modern-page">
+    <div class="page-header-modern">
+        <div class="header-left-modern">
+            <div class="header-icon-modern">
+                <i class='bx bx-sitemap'></i>
+            </div>
+            <div>
+                <h1 class="page-title-modern">@iT.T(xLan, "1259", "Parent Account Statement")</h1>
+                <p class="page-subtitle-modern">Consolidated transaction history for account groups and parent levels</p>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <button type="button" class="btn-modern btn-primary-modern shadow-sm" onclick="RefreshGrid()">
+                <i class='bx bx-refresh'></i> @iT.T(xLan, "1156","Refresh")
+            </button>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="card-modern h-100">
+                <div class="card-header-modern">
+                    <h6 class="mb-0 fw-bold"><i class='bx bx-filter-alt me-2'></i>Selection Criteria</h6>
+                </div>
+                <div class="card-body-modern">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1219","Select Parent Account")</label>
+                            @Html.DevExtreme().Lookup().ID("edKey").Width("100%").DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(CLiAccounting.Selections.AccountsParentLevel.GetList(DB,xLan)).ValueExpr("Code").DisplayExpr("Display").OnValueChanged("ChangeAccount").Placeholder("Search for a parent account...")
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1222","Fiscal Year")</label>
+                            @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1224","From")</label>
+                            @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted">@iT.T(xLan, "1225","To")</label>
+                            @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card-modern h-100 bg-primary-modern text-white border-0 shadow-sm">
+                <div class="card-body-modern p-4 d-flex flex-column h-100">
+                    <div class="mb-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-white-50 small">@iT.T(xLan, "1227","Closing Balance")</span>
+                            <span class="badge-modern bg-white-transparent-20" id="txt-Code">---</span>
+                        </div>
+                        <h2 class="display-5 fw-bold mb-0" id="txt-Balance">0.00</h2>
+                        <div class="mt-2 text-white-50 small text-truncate" id="txt-Arabic">Please select an account</div>
+                    </div>
+                    
+                    <hr class="my-3 opacity-25">
+                    
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-white-transparent-10">
+                                <div class="text-white-50 small mb-1">@iT.T(xLan, "1052","Total Debit")</div>
+                                <div class="fw-bold" id="txt-Debit">0.00</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-white-transparent-10">
+                                <div class="text-white-50 small mb-1">@iT.T(xLan, "1053","Total Credit")</div>
+                                <div class="fw-bold" id="txt-Credit">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-modern">
+        <div class="card-body-modern p-0 modern-grid">
+            @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.ParentStatment>().ID("grd-CurrentAccount")
+                .ShowBorders(false)
+                .Width("100%")
+                .DataSource(d => d.WebApi()
+                .Controller("ireports").Area("Accounting")
+                .LoadAction("ParentStatement")
+                .Key("Key")
+                .LoadParams(new
+                {
+                    Key = new JS("getKey"),
+                    FirstDate = new JS("getFirst"),
+                    LastDate = new JS("getLast")
+                }))
+                .ColumnAutoWidth(true)
+                .HoverStateEnabled(true)
+                .RowAlternationEnabled(true)
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.Code).Caption(iT.T(xLan, "1164", "Code")).Width(100).CssClass("fw-bold");
+                    columns.AddFor(m => m.Name1).Caption(iT.T(xLan, "1216", "Account Name")).MinWidth(200);
+                    columns.AddFor(m => m.DocumentKind).Caption(iT.T(xLan, "1975", "Doc Type")).Width(120).Lookup(L => L.DataSource(iReplacer.DocumentsName(xLan, true)).ValueExpr("Value").DisplayExpr("Display")).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Date).Caption(iT.T(xLan, "1210", "Date")).Width(110).Format("dd.MM.yyyy").Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.No).Caption(iT.T(xLan, "1265", "No.")).Width(90).Alignment(HorizontalAlignment.Center);
+                    columns.AddFor(m => m.Description).Caption(iT.T(xLan, "1212", "Description")).MinWidth(250).CssClass("text-muted small");
+                    columns.AddFor(m => m.Debit).Caption(iT.T(xLan, "1008", "Debit")).Width(120).Format("#,##0.##").CssClass("text-end");
+                    columns.AddFor(m => m.Credit).Caption(iT.T(xLan, "1009", "Credit")).Width(120).Format("#,##0.##").CssClass("text-end");
+                    columns.AddFor(m => m.DebitBalance).Caption(iT.T(xLan, "1052", "Dr. Balance")).Width(120).Format("#,##0.##").CssClass("text-end text-primary fw-medium");
+                    columns.AddFor(m => m.CreditBalance).Caption(iT.T(xLan, "1053", "Cr. Balance")).Width(120).Format("#,##0.##").CssClass("text-end text-danger fw-medium");
+                })
+                .Summary(tot =>
+                {
+                    tot.TotalItems(item =>
+                    {
+                        item.AddFor(m => m.Code).SummaryType(SummaryType.Count);
+                        item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                        item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##");
+                    });
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder("Search transactions...");
+                })
+                .Export(exp => exp.Enabled(true).Option("fileName", "ParentStatement"))
+                .RtlEnabled(devRtl)
+                .Scrolling(s => s.ScrollByContent(true).ScrollByThumb(true))
+            )
+        </div>
+    </div>
+</div>
+
+<script class="append-on-ajax-script">
+    function RefreshGrid ()
+    {
+        $('#grd-CurrentAccount').dxDataGrid("instance").refresh().done(function ()
+        {
+            var debit = 0;
+            var credit = 0;
+            var dataGridInstance = $('#grd-CurrentAccount').dxDataGrid("instance");
+            debit = dataGridInstance.getTotalSummaryValue('Debit');
+            credit = dataGridInstance.getTotalSummaryValue('Credit');
+            $('#txt-Debit').text(comma(debit));
+            $('#txt-Credit').text(comma(credit));
+            $('#txt-Balance').text(comma(Math.abs(debit - credit)));
+        });
+    }
+    function getKey () { return $('#edKey').dxLookup('option', 'value') }
+    function getFirst () { return new Date($('#edFirstDate').dxDateBox('option', 'value')).toLocaleDateString(); }
+    function getLast () { return new Date($('#edLastDate').dxDateBox('option', 'value')).toLocaleDateString(); }
+    function ChangeYear () {
+        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
+        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+    }
+    function ChangeAccount () {
+        var AccountSelection = $("#edKey").dxLookup('instance').option('selectedItem');
+        if(AccountSelection) {
+            $('#txt-Code').text(AccountSelection.Code);
+            $('#txt-Arabic').text(AccountSelection.Name1);
+            RefreshGrid();
+        }
+    }
+</script>

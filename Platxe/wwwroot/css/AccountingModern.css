@@ -1,0 +1,406 @@
+/* =============================================================
+   PLATXE ERP — ACCOUNTING MODULE MODERN DESIGN SYSTEM
+   Common styles for all accounting pages
+   ============================================================= */
+
+:root {
+    --erp-primary: #1E3A8A;
+    --erp-accent: #2563EB;
+    --erp-accent-soft: rgba(37, 99, 235, 0.1);
+    --erp-danger: #EF4444;
+    --erp-danger-soft: rgba(239, 68, 68, 0.1);
+    --erp-success: #22C55E;
+    --erp-success-soft: rgba(34, 197, 94, 0.1);
+    --erp-warning: #F59E0B;
+    --erp-warning-soft: rgba(245, 158, 11, 0.1);
+    --erp-gray: #64748B;
+    --erp-gray-soft: #F1F5F9;
+    --erp-border: #E2E8F0;
+    --erp-card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --erp-radius: 12px;
+    --erp-radius-sm: 8px;
+}
+
+/* Page Structure */
+.modern-page {
+    padding: 1.5rem;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header Section */
+.page-header-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.header-left-modern {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-icon-modern {
+    width: 48px;
+    height: 48px;
+    background: var(--erp-accent-soft);
+    color: var(--erp-accent);
+    border-radius: var(--erp-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.page-title-modern {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0;
+}
+
+.page-subtitle-modern {
+    font-size: 0.875rem;
+    color: var(--erp-gray);
+    margin: 0.25rem 0 0 0;
+}
+
+/* Cards */
+.card-modern {
+    background: #FFFFFF;
+    border: 1px solid var(--erp-border);
+    border-radius: var(--erp-radius);
+    box-shadow: var(--erp-card-shadow);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.card-header-modern {
+    padding: 1rem 1.25rem;
+    background: #FFFFFF;
+    border-bottom: 1px solid var(--erp-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-body-modern {
+    padding: 1.25rem;
+}
+
+/* Buttons */
+.btn-modern {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    border-radius: var(--erp-radius-sm);
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+}
+
+.btn-modern i { font-size: 1.1rem; }
+
+.btn-primary-modern {
+    background: var(--erp-accent);
+    color: #FFFFFF;
+}
+
+.btn-primary-modern:hover {
+    background: #1D4ED8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-secondary-modern {
+    background: #FFFFFF;
+    border-color: var(--erp-border);
+    color: #0F172A;
+}
+
+.btn-secondary-modern:hover {
+    background: var(--erp-gray-soft);
+}
+
+.btn-danger-soft-modern {
+    background: var(--erp-danger-soft);
+    color: var(--erp-danger);
+}
+
+.btn-danger-soft-modern:hover {
+    background: #FEE2E2;
+}
+
+/* DataGrid Customization */
+.modern-grid .dx-datagrid {
+    border: none;
+    background: transparent;
+}
+
+.modern-grid .dx-datagrid-headers {
+    background: var(--erp-gray-soft) !important;
+    border-bottom: 1px solid var(--erp-border);
+}
+
+.modern-grid .dx-header-row > td {
+    color: #475569 !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+}
+
+.modern-grid .dx-row > td {
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid var(--erp-border);
+}
+
+.modern-grid .dx-row-alt > td {
+    background-color: #FAFAFB;
+}
+
+/* Action Buttons in Grid */
+.grid-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--erp-border);
+    background: #FFFFFF;
+    color: var(--erp-gray);
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none !important;
+}
+
+.grid-action-btn:hover {
+    background: var(--erp-accent-soft);
+    color: var(--erp-accent);
+    border-color: var(--erp-accent);
+}
+
+.grid-action-btn.delete:hover {
+    background: var(--erp-danger-soft);
+    color: var(--erp-danger);
+    border-color: var(--erp-danger);
+}
+
+/* Compact Modern Sidebar */
+.modern-sidebar-menu {
+    padding-top: 0.5rem;
+}
+
+.modern-sidebar-menu .menu-header {
+    margin-top: 1rem !important;
+    margin-bottom: 0.25rem !important;
+    padding: 0 1.25rem !important;
+    font-size: 0.65rem !important;
+    letter-spacing: 0.08em;
+    color: var(--erp-gray);
+    opacity: 0.6;
+}
+
+.modern-sidebar-menu .menu-item .menu-link {
+    padding: 0.4rem 1.25rem !important;
+    font-size: 0.85rem !important;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+}
+
+.modern-sidebar-menu .menu-icon {
+    width: 22px !important;
+    height: 22px !important;
+    font-size: 1.1rem !important;
+    margin-right: 0.75rem !important;
+}
+
+.modern-sidebar-menu .menu-caret {
+    font-size: 0.75rem;
+}
+
+/* Sidebar Scrollbar & Compact Logic */
+.modern-sidebar {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 100vh;
+    padding-bottom: 2rem;
+}
+
+.modern-sidebar::-webkit-scrollbar {
+    width: 3px;
+}
+
+.modern-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+}
+
+.modern-sidebar-menu .menu-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.015);
+    padding: 0 !important;
+}
+
+.modern-sidebar-menu .menu-item.expand > .menu-submenu {
+    max-height: 500px; /* Large enough to fit content */
+}
+
+.modern-sidebar-menu .menu-caret {
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.modern-sidebar-menu .menu-item.expand > .menu-link .menu-caret {
+    transform: rotate(90deg);
+}
+
+/* Active & Hover States */
+.modern-sidebar-menu .menu-item.active > .menu-link {
+    background: var(--erp-accent-soft);
+    color: var(--erp-accent) !important;
+    font-weight: 600;
+}
+
+.modern-sidebar-menu .menu-item.active > .menu-link .menu-icon {
+    color: var(--erp-accent) !important;
+}
+
+.modern-sidebar-menu .menu-item:not(.active) > .menu-link:hover {
+    background: #F8FAFC;
+    color: #0F172A;
+}
+
+/* RTL Adjustments */
+[dir="rtl"] .modern-sidebar-menu .menu-icon {
+    margin-right: 0 !important;
+    margin-left: 0.75rem !important;
+}
+
+[dir="rtl"] .modern-sidebar-menu .menu-submenu .menu-item .menu-link {
+    padding-left: 1.25rem !important;
+    padding-right: 3.25rem !important;
+}
+
+/* Badges & Soft Colors */
+.bg-primary-soft { background-color: rgba(37, 99, 235, 0.1) !important; color: #2563EB !important; }
+.bg-success-soft { background-color: rgba(34, 197, 94, 0.1) !important; color: #22C55E !important; }
+.bg-danger-soft { background-color: rgba(239, 68, 68, 0.1) !important; color: #EF4444 !important; }
+.bg-warning-soft { background-color: rgba(245, 158, 11, 0.1) !important; color: #F59E0B !important; }
+.bg-info-soft { background-color: rgba(6, 182, 212, 0.1) !important; color: #06B6D4 !important; }
+.bg-yellow-soft { background-color: rgba(253, 224, 71, 0.2) !important; color: #854D0E !important; }
+.bg-secondary-soft { background-color: rgba(100, 116, 139, 0.1) !important; color: #64748B !important; }
+.bg-white-transparent-10 { background-color: rgba(255, 255, 255, 0.1) !important; }
+.bg-white-transparent-20 { background-color: rgba(255, 255, 255, 0.2) !important; }
+
+/* KPI Cards */
+.kpi-card-modern {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.kpi-icon-soft {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-modern {
+    background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%) !important;
+}
+
+/* Grid & TreeList Enhancements */
+.modern-grid .dx-treelist-headers {
+    background: var(--erp-gray-soft) !important;
+    border-bottom: 1px solid var(--erp-border);
+}
+
+.modern-grid .dx-header-row > td {
+    padding: 1rem !important;
+    color: #334155 !important;
+    font-size: 0.8rem !important;
+}
+
+.modern-grid .dx-row-focused > td {
+    background-color: rgba(37, 99, 235, 0.08) !important;
+    color: var(--erp-accent) !important;
+}
+
+/* Loader */
+.grid-loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+}
+
+/* Dashboard Specifics */
+.action-card-modern {
+    background: #FFFFFF;
+    border: 1px solid var(--erp-border) !important;
+    transition: all 0.3s ease;
+}
+
+.action-card-modern:hover {
+    background: #F8FAFC;
+    border-color: var(--erp-accent) !important;
+    transform: translateX(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.action-card-modern:hover .icon-box {
+    transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header-modern {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .header-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .kpi-card-modern {
+        margin-bottom: 1rem;
+    }
+}

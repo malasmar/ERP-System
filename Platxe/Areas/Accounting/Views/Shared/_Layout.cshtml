@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="~/css/typography.css?version=3.019" />
     <link rel="stylesheet" href="~/css/devextreme-overrides.css?version=3.019" />
     <link href="~/css/layoutstyle.css" rel="stylesheet" />
+    <link href="~/css/AccountingModern.css" rel="stylesheet" />
     <style>        .modern-sidebar {
                 width: 280px !important;
         }</style>
@@ -57,10 +58,12 @@
 
         <!-- Modern Sidebar -->
         <aside id="sidebar" class="modern-sidebar">
-            <div class="sidebar-brand">
+        <a href="/">
+            <div class="sidebar-brand" >
                 <i class='bx bx-cube-alt'></i>
                 <span>ERP</span>
             </div>
+        </a>
             <div class="sidebar-menu px-2">
                 @{
                     await Html.RenderPartialAsync("_sidebar");

@@ -2,151 +2,220 @@
     string xLan = User.FindFirstValue("aiwLan");
     string currentPath = Context.Request.Path.Value.ToLower();
 }
+<style>
+.modern-sidebar-menu .has-sub > .menu-submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block !important;
+    opacity: 0;
+    pointer-events: none;
+}
 
-<div class="menu">
+.modern-sidebar-menu .has-sub.expand > .menu-submenu {
+    max-height: 1500px;
+    opacity: 1;
+    pointer-events: all;
+    margin-bottom: 10px;
+}
+</style>
+<div class="menu modern-sidebar-menu">
 
-    <!-- SEARCH -->
-    <div class="menu-search mb-3 px-3">
-        <div class="position-relative">
-            <i class="fa fa-search position-absolute text-muted"
-               style="top:50%;left:15px;transform:translateY(-50%);z-index:10;"></i>
-
-            <input type="text"
-                   class="form-control rounded-pill bg-light border-0 ps-5"
-                   placeholder="@iT.T(xLan, "1140", "Search menu...")"
-                   data-sidebar-search="true" />
-        </div>
-    </div>
-
-    <!-- MAIN -->
-    <div class="menu-header">@iT.T(xLan, "1141", "Main")</div>
-
-    <div class="menu-item @(currentPath == "/accounting" ? "active" : "")">
-        <a href="/Accounting"
-               class="menu-link"
-               data-ajax="true"
-               data-ajax-update="#content"
-               data-ajax-complete="PushStatus($(this))">
-            <div class="menu-icon"><i class="fa fa-home"></i></div>
-            <div class="menu-text">@iT.T(xLan, "1142", "Home")</div>
+    <!-- DASHBOARD -->
+    <div class="menu-item @(currentPath == "/accounting" || currentPath == "/accounting/home/index" ? "active" : "")">
+        <a href="/Accounting/Home/Index" class="menu-link" data-ajax="true" data-ajax-update="#content" data-ajax-complete="PushStatus($(this))">
+            <div class="menu-icon"><i class="bx bxs-dashboard"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1142", "Dashboard")</div>
         </a>
     </div>
 
-    <!-- ACCOUNTS -->
-    <div class="menu-header">@iT.T(xLan, "1244", "Accounting Cards")</div>
-
-    <div class="menu-item @(currentPath.Contains("/roots") ? "active" : "")">
-        <a href="/Accounting/Cards/Roots?fastlink=1"
-               class="menu-link"
-               data-ajax="true"
-               data-ajax-update="#content">
-            <div class="menu-icon"><i class="fa fa-folder-open"></i></div>
-            <div class="menu-text">@iT.T(xLan, "1245", "Root Accounts")</div>
-        </a>
-    </div>
-
-    <div class="menu-item @(currentPath.Contains("/accounts") ? "active" : "")">
-        <a href="/Accounting/Cards/Accounts?fastlink=1"
-               class="menu-link"
-               data-ajax="true"
-               data-ajax-update="#content">
-            <div class="menu-icon"><i class="fa fa-address-card"></i></div>
-            <div class="menu-text">@iT.T(xLan, "1246", "Accounts Cards")</div>
-        </a>
-    </div>
-
-    <div class="menu-item @(currentPath.Contains("accountstree") ? "active" : "")">
-        <a href="/Accounting/Cards/AccountsTree"
-               class="menu-link"
-               data-ajax="true"
-               data-ajax-update="#content">
-            <div class="menu-icon"><i class="fa fa-sitemap"></i></div>
-            <div class="menu-text">@iT.T(xLan, "2428", "Accounts Tree")</div>
-        </a>
-    </div>
-
-    <!-- SUB MENU -->
-    <div class="menu-header">@iT.T(xLan, "1247", "Definitions & Operations")</div>
-
-    <div class="menu-item has-sub">
+    <!-- 1. CARDS -->
+    <div class="menu-item has-sub @(currentPath.Contains("/cards") ? "expand active" : "")">
         <a href="javascript:;" class="menu-link">
-            <div class="menu-icon"><i class="fa fa-layer-group"></i></div>
-            <div class="menu-text">@iT.T(xLan, "1155", "Chart of Accounts")</div>
+            <div class="menu-icon"><i class="bx bxs-book-content"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1244", "Cards")</div>
             <div class="menu-caret"></div>
         </a>
-
         <div class="menu-submenu">
-
-            <div class="menu-item">
-                <a href="/Accounting/Cards/Roots"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "1249", "Roots")</div>
+            <div class="menu-item @(currentPath.Contains("/roots") ? "active" : "")">
+                <a href="/Accounting/Cards/Roots" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1249", "Account Roots")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/accounts") && !currentPath.Contains("tree") ? "active" : "")">
+                <a href="/Accounting/Cards/Accounts" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1246", "Account Cards")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/chartofaccounttree") ? "active" : "")">
+                <a href="/Accounting/Cards/ChartofAccountTree" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1250", "Hierarchy Explorer")</div>
                 </a>
             </div>
 
-            <div class="menu-item">
-                <a href="/Accounting/Cards/Accounts"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "1155", "Chart of Accounts")</div>
+                <div class="menu-item @(currentPath.Contains("/AccountsTree") ? "active" : "")">
+                <a href="/Accounting/Cards/AccountsTree" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1250", "Account Tree")</div>
+                </a>
+            </div>
+@*    <div class="menu-item @(currentPath.Contains("/BalanceSheetItems") ? "active" : "")">
+                <a href="/Accounting/Cards/BalanceSheetItems" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1250", "Balance Sheet Items")</div>
                 </a>
             </div>
 
-            <div class="menu-item">
-                <a href="/Accounting/Cards/ChartofAccountTree"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "1250", "Accounts Tree")</div>
+               <div class="menu-item @(currentPath.Contains("/BalanceSheetItemsTree") ? "active" : "")">
+                <a href="/Accounting/Cards/BalanceSheetItemsTree" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1250", "Balance Sheet Items Tree")</div>
+                </a>
+            </div> *@
+
+             <div class="menu-item @(currentPath.Contains("/bulkedit") ? "active" : "")">
+                <a href="/Accounting/Cards/BulkEdit" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1251", "Mass Update")</div>
                 </a>
             </div>
-
-            <div class="menu-item">
-                <a href="/Accounting/Cards/BulkEdit"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "1251", "Bulk Edit")</div>
+             <div class="menu-item @(currentPath.Contains("/costcenter") ? "active" : "")">
+                <a href="/Accounting/Cards/CostCenter" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1199", "Cost Centers")</div>
                 </a>
             </div>
-
+            <div class="menu-item @(currentPath.Contains("/project") ? "active" : "")">
+                <a href="/Accounting/Cards/Project" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1203", "Project Tracking")</div>
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- FINANCIAL -->
-    <div class="menu-header">@iT.T(xLan, "1253", "Reporting & Analysis")</div>
-
-    <div class="menu-item has-sub">
+    <!-- 2. DOCUMENTS -->
+    <div class="menu-item has-sub @(currentPath.Contains("/documents") ? "expand active" : "")">
         <a href="javascript:;" class="menu-link">
-            <div class="menu-icon"><i class="fa fa-chart-line"></i></div>
-            <div class="menu-text">@iT.T(xLan, "1006", "Trial Balance")</div>
+            <div class="menu-icon"><i class="bx bxs-spreadsheet"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1252", "Documents")</div>
             <div class="menu-caret"></div>
         </a>
-
         <div class="menu-submenu">
-
-            <div class="menu-item">
-                <a href="/Accounting/Reports/TrialBalance"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "1237", "Analytical Trial Balance")</div>
+            <div class="menu-item @(currentPath.Contains("/documents/generalledger") && !currentPath.Contains("/list") ? "active" : "")">
+                <a href="/Accounting/Documents/GeneralLedger" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1218", "New Journal Entry")</div>
                 </a>
             </div>
-
-            <div class="menu-item">
-                <a href="/Accounting/Reports/TrialBalanceTree"
-                       class="menu-link"
-                       data-ajax="true"
-                       data-ajax-update="#content">
-                    <div class="menu-text">@iT.T(xLan, "2324", "Tree Trial Balance")</div>
+            <div class="menu-item @(currentPath.Contains("/documents/generalledgerlist") ? "active" : "")">
+                <a href="/Accounting/Documents/GeneralLedgerList" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1221", "Ledger History")</div>
                 </a>
             </div>
-
         </div>
     </div>
 
+    <!-- 3. REPORTS -->
+    <div class="menu-item has-sub @(currentPath.Contains("/reports") && !currentPath.Contains("statement") ? "expand active" : "")">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon"><i class="bx bxs-pie-chart-alt-2"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1005", "Reports")</div>
+            <div class="menu-caret"></div>
+        </a>
+        <div class="menu-submenu">
+            <div class="menu-item @(currentPath == "/accounting/reports/trialbalance" ? "active" : "")">
+                <a href="/Accounting/Reports/TrialBalance" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1237", "Trial Balance")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath == "/accounting/reports/trialbalancetree" ? "active" : "")">
+                <a href="/Accounting/Reports/TrialBalanceTree" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "2324", "Analytical Tree")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/trialbalancetl") ? "active" : "")">
+                <a href="/Accounting/Reports/TrialBalanceTL" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1233", "Transaction Level")</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. FINANCIAL STATEMENTS -->
+    <div class="menu-item has-sub @(currentPath.Contains("statement") && (currentPath.Contains("balance") || currentPath.Contains("income")) ? "expand active" : "")">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon"><i class="bx bxs-bank"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1255", "Financial Statements")</div>
+            <div class="menu-caret"></div>
+        </a>
+        <div class="menu-submenu">
+            <div class="menu-item @(currentPath.Contains("/balancestatement") ? "active" : "")">
+                <a href="/Accounting/Reports/BalanceStatement" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1256", "Balance Sheet")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/incomestatement") ? "active" : "")">
+                <a href="/Accounting/Reports/IncomeStatement" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1257", "Income Statement")</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ACCOUNT STATEMENTS -->
+    <div class="menu-item has-sub @(currentPath.Contains("statement") && (currentPath.Contains("account") || currentPath.Contains("parent") || currentPath.Contains("yearly")) ? "expand active" : "")">
+        <a href="javascript:;" class="menu-link">
+            <div class="menu-icon"><i class="bx bxs-file-find"></i></div>
+            <div class="menu-text">@iT.T(xLan, "1258", "Account Statements")</div>
+            <div class="menu-caret"></div>
+        </a>
+        <div class="menu-submenu">
+            <div class="menu-item @(currentPath == "/accounting/reports/accountstatement" ? "active" : "")">
+                <a href="/Accounting/Reports/AccountStatement" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1223", "Single Account")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/parentstatement") ? "active" : "")">
+                <a href="/Accounting/Reports/ParentStatement" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1259", "Group Statement")</div>
+                </a>
+            </div>
+            <div class="menu-item @(currentPath.Contains("/yearlystatement") ? "active" : "")">
+                <a href="/Accounting/Reports/YearlyStatement" class="menu-link" data-ajax="true" data-ajax-update="#content">
+                    <div class="menu-text">@iT.T(xLan, "1260", "Yearly Analysis")</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- BEGIN minify-button -->
+    <div class="menu-item d-flex mt-auto">
+        <a href="javascript:;" class="app-sidebar-minify-btn ms-auto text-decoration-none p-3" onclick="toggleSidebar()">
+            <i class='bx bx-chevron-left fs-4'></i>
+        </a>
+    </div>
+    <!-- END minify-button -->
 </div>
+
+<script>
+(function() {
+    "use strict";
+    // Capture phase listener on document ensures we catch the click BEFORE Layout.cshtml
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('.modern-sidebar-menu .has-sub > .menu-link');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href || href === '#' || href === 'javascript:;') {
+            e.preventDefault();
+            e.stopImmediatePropagation(); // Kill other listeners
+            
+            const item = link.closest('.has-sub');
+            const sidebar = item.closest('.modern-sidebar-menu');
+            const isExpanded = item.classList.contains('expand');
+
+            // Accordion: Close others
+            sidebar.querySelectorAll('.has-sub.expand').forEach(el => {
+                if (el !== item) el.classList.remove('expand');
+            });
+
+            // Toggle current
+            item.classList.toggle('expand', !isExpanded);
+        }
+    }, true);
+})();
+</script>
