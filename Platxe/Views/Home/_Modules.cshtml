@@ -203,7 +203,7 @@
 
 <div class="dashboard-container">
     <div class="module-grid">
-        @if (User.IsInRole("OMEs-Financial") && User.IsInRole("PL-Financial"))
+  @*       @if (User.IsInRole("OMEs-Financial") && User.IsInRole("PL-Financial"))
         {
             <a href="/Financial" class="module-card mc-financial">
                 <div class="module-icon">
@@ -215,8 +215,8 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1160","Financial")</span>
             </a>
-        }
-        @if (User.IsInRole("OMEs-FixedAssets") && User.IsInRole("PL-FixedAssets"))
+        } *@
+     @*    @if (User.IsInRole("OMEs-FixedAssets") && User.IsInRole("PL-FixedAssets"))
         {
             <a href="/FixedAssets" class="module-card mc-assets">
                 <div class="module-icon">
@@ -228,9 +228,9 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1071","Fixed Assets")</span>
             </a>
-        }
+        } *@
 
-        @if (User.IsInRole("OMEs-Dashboard") && User.IsInRole("PL-Dashboard"))
+    @*     @if (User.IsInRole("OMEs-Dashboard") && User.IsInRole("PL-Dashboard"))
         {
             <a href="/Dashboard" class="module-card mc-dashboard">
                 <div class="module-icon">
@@ -242,8 +242,8 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1143","Dashboard")</span>
             </a>
-        }
-        @if (User.IsInRole("PL-Reports"))
+        } *@
+    @*     @if (User.IsInRole("PL-Reports"))
         {
             <a href="/Reports" class="module-card mc-reports">
                 <div class="module-icon">
@@ -255,7 +255,7 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "2689","Reports")</span>
             </a>
-        }
+        } *@
  
         @if (User.IsInRole("OMEs-Accounting") && User.IsInRole("PL-Accounting"))
         {
@@ -271,7 +271,7 @@
             </a>
         }
 
-        @if (User.IsInRole("OMEs-Inventory") && User.IsInRole("PL-Inventory"))
+    @*     @if (User.IsInRole("OMEs-Inventory") && User.IsInRole("PL-Inventory"))
         {
             <a href="/Inventory" class="module-card mc-inventory">
                 <div class="module-icon">
@@ -283,8 +283,8 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1625","Warehouse")</span>
             </a>
-        }
-        @if (User.IsInRole("OMEs-Purchasing") && User.IsInRole("PL-Purchasing"))
+        } *@
+     @*    @if (User.IsInRole("OMEs-Purchasing") && User.IsInRole("PL-Purchasing"))
         {
             <a href="/Purchasing" class="module-card mc-purchasing">
                 <div class="module-icon">
@@ -296,9 +296,9 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1062","Purchase")</span>
             </a>
-        }
+        } *@
  
-        @if (User.IsInRole("OMEs-Sales") && User.IsInRole("PL-Sales"))
+    @*     @if (User.IsInRole("OMEs-Sales") && User.IsInRole("PL-Sales"))
         {
             <a href="/Sales" class="module-card mc-sales">
                 <div class="module-icon">
@@ -310,9 +310,9 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1061","Sales")</span>
             </a>
-        }
+        } *@
 
-        @if (User.IsInRole("OMEs-HR") && User.IsInRole("PL-HR"))
+     @*    @if (User.IsInRole("OMEs-HR") && User.IsInRole("PL-HR"))
         {
             <a href="/HR" class="module-card mc-hr">
                 <div class="module-icon">
@@ -324,8 +324,8 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1933","HR")</span>
             </a>
-        }
-        @if (User.IsInRole("OMEs-Payroll") && User.IsInRole("PL-Payroll"))
+        } *@
+  @*       @if (User.IsInRole("OMEs-Payroll") && User.IsInRole("PL-Payroll"))
         {
             <a href="/Payroll" class="module-card mc-payroll">
                 <div class="module-icon">
@@ -337,7 +337,7 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1935","Payroll")</span>
             </a>
-        }
+        } *@
 
         @if (User.IsInRole("PL-Admin"))
         {
@@ -351,7 +351,7 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1913","Manager")</span>
             </a>
-        }
+        } 
         @if (User.IsInRole("PL-Settings"))
         {
             <a href="/Settings" class="module-card mc-settings">
@@ -365,7 +365,7 @@
                 <span class="module-badge">@iT.T(xLan, "1920","Settings")</span>
             </a>
         }
-        @if (User.IsInRole("OMEs-Auditing") && User.IsInRole("PL-Auditing"))
+    @*     @if (User.IsInRole("OMEs-Auditing") && User.IsInRole("PL-Auditing"))
         {
             <a href="/Auditing" class="module-card mc-auditing">
                 <div class="module-icon">
@@ -377,6 +377,6 @@
                 </div>
                 <span class="module-badge">@iT.T(xLan, "1910","Auditing")</span>
             </a>
-        }
+        } *@
     </div>
 </div>

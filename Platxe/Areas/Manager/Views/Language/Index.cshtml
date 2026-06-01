@@ -1,0 +1,97 @@
+﻿@{
+    string xLan = User.FindFirstValue("aiwLan");
+    string DB = User.FindFirstValue("aiwDB");
+    Guid Subscribe = Guid.Parse(User.FindFirstValue("aiwSubscribe"));
+    bool devRtl;
+    DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
+    if (User.FindFirstValue("aiwLan") == "en")
+    {
+        devRtl = false;
+        devFixd = HorizontalEdge.Left;
+    }
+    else
+    {
+        devRtl = true;
+        devFixd = HorizontalEdge.Right;
+    }
+}
+<h1 class="page-header">@iT.T(xLan, "1673", "Users")</h1>
+<div class="panel panel-inverse">
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-12">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                @(Html.DevExtreme().DataGrid<CLiCore.clsLanguage>().ID("GridLanguagess")
+                .ShowBorders(true).Width("100%")
+                .DataSource(d => d.WebApi()
+                           .Controller("icore").Area("Manager")
+                           .Key("LanID")
+                           .LoadAction("GetLanguage")
+                           .InsertAction("CreateLanguage")
+                           .UpdateAction("UpdateLanguage")
+                           .DeleteAction("DeleteLanguage"))
+                           .Editing(ed =>
+                           {
+                               ed.AllowAdding(true);
+                               ed.AllowUpdating(true);
+                               ed.AllowDeleting(false);
+                               ed.Mode(GridEditMode.Form);
+                               ed.UseIcons(true);
+
+                           })
+                 .GroupPanel(groupPanel => groupPanel.Visible(false).EmptyPanelText(@iT.T(xLan, "1969", "dragacolumnheaderheretogroupbythatcolumn")))
+                .Columns(columns =>
+                {
+                    columns.AddFor(m => m.LanKey).Caption(@iT.T(xLan, "2707", "Arabic")).AllowEditing(false);
+                    columns.AddFor(m => m.LanArabic).Caption(@iT.T(xLan, "1971", "Arabic")).FormItem(fi => fi.IsRequired(true));
+                    columns.AddFor(m => m.LanEnglish).Caption(@iT.T(xLan, "1970", "English")).FormItem(fi => fi.IsRequired(true));
+                               columns.AddFor(m => m.LanTurkish).Caption(@iT.T(xLan, "1969", "Turkish")).Visible(false);
+                    columns.AddFor(m => m.LanIndian).Caption(@iT.T(xLan, "1969", "Indian")).Visible(false);
+                    columns.AddFor(m => m.LanFrench).Caption(@iT.T(xLan, "1969", "French")).Visible(false);
+                    columns.AddFor(m => m.LanRussian).Caption(@iT.T(xLan, "1969", "Russian")).Visible(false);
+                               columns.Add().Type(GridCommandColumnType.Buttons).Caption(@iT.T(xLan, "1969", "Edit")).Buttons(b => { b.Add().Name(GridColumnButtonName.Edit); b.Add().Name(GridColumnButtonName.Delete); });
+
+                })
+                .Pager(pg =>
+                {
+                    pg.AllowedPageSizes(new List<int> { 50, 100, 200 });
+                    pg.ShowNavigationButtons(true);
+                    pg.ShowPageSizeSelector(true);
+                    pg.ShowInfo(true);
+                    pg.InfoText("{0} of {1} | {2} Rows");
+                })
+                .Paging(p => { p.PageSize(50); })
+                .FilterRow(f => f.Visible(true))
+                .HeaderFilter(f => f.Visible(true))
+                .SearchPanel(sp =>
+                {
+                    sp.Width(250);
+                    sp.Visible(true);
+                    sp.Placeholder(@iT.T(xLan, "1969", "Search"));
+                })
+                .RowAlternationEnabled(true)
+                .RtlEnabled(devRtl)
+                )
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mod-User" class="modal"><div class="modal-dialog" id="con-User"></div></div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+    });
+
+    function RefreshGridLanguage() {
+
+        $('#GridLanguagess').dxDataGrid("instance").refresh();
+    }
+</script>
