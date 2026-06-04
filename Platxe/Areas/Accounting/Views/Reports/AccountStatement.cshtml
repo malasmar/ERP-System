@@ -5,7 +5,7 @@
     bool showMonthlyNo = xConfig.ShowMonthlyNo(DB);
     bool devRtl;
     DevExtreme.AspNet.Mvc.HorizontalEdge devFixd;
-    if (User.FindFirstValue("aiwLan") == "en")
+    if (xLan == "en")
     {
         devRtl = false;
         devFixd = HorizontalEdge.Left;
@@ -59,20 +59,21 @@
                             <label class="form-label small text-muted">@iT.T(xLan, "1222","Year")</label>
                             @Html.DevExtreme().NumberBox().ID("edYear").ShowSpinButtons(true).Width("100%").Value(Year).OnValueChanged("ChangeYear")
                         </div>
+
                         <div class="col-md-4">
                             <label class="form-label small text-muted">@iT.T(xLan, "1224","First Date")</label>
-                            @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1))
+                            @Html.DevExtreme().DateBox().ID("edFirstDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,1,1)).OnValueChanged("RefreshGrid")
                         </div>
                         <div class="col-md-4">
                             <label class="form-label small text-muted">@iT.T(xLan, "1225","Last Date")</label>
-                            @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31))
+                            @Html.DevExtreme().DateBox().ID("edLastDate").Width("100%").DisplayFormat("dd.MM.yyyy").Value(new DateTime(Year,12,31)).OnValueChanged("RefreshGrid")
                         </div>
                         <div class="col-md-12 mt-3">
                             <label class="form-label small text-muted">@iT.T(xLan, "1219","Account Selection")</label>
-                            @Html.DevExtreme().Lookup().ID("edKey").Width("100%").DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("ChangeAccount").Placeholder("Select an account to view statement...")
+                            @Html.DevExtreme().Lookup().ID("edKey").Width("100%").DataSourceOptions(o=>o.Paginate(true).PageSize(50)).DataSource(CLiAccounting.Selections.AccountTransactionLevel.GetList(DB,xLan)).ValueExpr("Key").DisplayExpr("Display").OnValueChanged("ChangeAccount").Placeholder(iT.T(xLan, "SelectAccountPlaceholder", "Select an account to view statement..."))
                         </div>
                         <div class="col-md-12 mt-2">
-                             @Html.DevExtreme().CheckBox().ID("edOpening").Text(iT.T(xLan, "1226","Exclude Opening Balance")).Value(false)
+                             @Html.DevExtreme().CheckBox().ID("edOpening").Text(iT.T(xLan, "1226","Exclude Opening Balance")).Value(false).OnValueChanged("RefreshGrid")
                         </div>
                     </div>
                 </div>
@@ -82,8 +83,18 @@
             <div class="card-modern h-100 bg-primary-modern text-white">
                 <div class="card-body-modern d-flex flex-column justify-content-between p-4">
                     <div>
-                        <p class="text-white-50 small mb-1">@iT.T(xLan, "1227","Current Balance")</p>
-                        <h2 class="mb-4 display-6 fw-bold" id="txt-Balance">0.00</h2>
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <p class="text-white-50 small mb-1">@iT.T(xLan, "1227","Current Balance")</p>
+                                <h2 class="mb-2 display-6 fw-bold" id="txt-Balance">0.00</h2>
+                            </div>
+                            <span class="badge bg-white bg-opacity-20 text-white fs-6 px-3 py-2 fw-semibold" id="txt-Code">--</span>
+                        </div>
+                        <div class="text-white-80 small mb-3">
+                            <span id="txt-AccountName" class="fw-medium">--</span>
+                            <span id="txt-Arabic" style="display:none;"></span>
+                            <span id="txt-English" style="display:none;"></span>
+                        </div>
                     </div>
                     <div class="mt-auto pt-3 border-top border-white-10">
                         <div class="d-flex justify-content-between mb-2">
@@ -135,8 +146,8 @@
                 {
                     tot.TotalItems(item =>
                     {
-                        item.AddFor(m => m.Debit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
-                        item.AddFor(m => m.Credit).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
+                        item.AddFor(m => m.Debit).Name("Debit").SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
+                        item.AddFor(m => m.Credit).Name("Credit").SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
                     });
                 })
                 .Grouping(g => g.AutoExpandAll(false).AllowCollapsing(true))
@@ -166,80 +177,137 @@
     </div>
 </div>
 <script class="append-on-ajax-script">
+    var isBatchUpdating = false;
+
     function ct4Action(container, options) {
+        if (!options || !options.data) return;
         var actionDiv = $('<div class="d-flex justify-content-center align-items-center gap-2"></div>');
         
-        var openBtn = $('<button type="button" class="grid-action-btn" title="Open Transaction"><i class="bx bx-link-external"></i></button>');
-        openBtn.on('click', function() { OpenTransaction(options.data.DocumentKind, options.data.OperationKey); });
+        var operationKey = options.data.OperationKey;
+        var docKind = options.data.DocumentKind;
+        
+        // Only show buttons if there is an actual transaction document key
+        if (operationKey) {
+            var openBtn = $('<button type="button" class="grid-action-btn" title="@iT.T(xLan, "OpenTransaction", "Open Transaction")"><i class="bx bx-link-external"></i></button>');
+            openBtn.on('click', function() { OpenTransaction(docKind, operationKey); });
 
-        var viewBtn = $('<button type="button" class="grid-action-btn view" title="Quick View"><i class="bx bx-show"></i></button>');
-        viewBtn.on('click', function() { ShowTransaction(options.data.DocumentKind, options.data.OperationKey); });
+            var viewBtn = $('<button type="button" class="grid-action-btn view" title="@iT.T(xLan, "QuickView", "Quick View")"><i class="bx bx-show"></i></button>');
+            viewBtn.on('click', function() { ShowTransaction(docKind, operationKey); });
 
-        actionDiv.append(openBtn).append(viewBtn);
+            actionDiv.append(openBtn).append(viewBtn);
+        }
         container.append(actionDiv);
     }
+
     function RefreshGrid ()
     {
-        $('#grd-CurrentAccount').dxDataGrid("instance").refresh().done(function ()
+        if (isBatchUpdating) return;
+        
+        var grid = $('#grd-CurrentAccount').dxDataGrid("instance");
+        if (!grid) return;
+
+        grid.refresh().done(function ()
         {
-            var debit = 0;
-            var credit = 0;
-            var balance = 0;
-            var dataGridInstance = $('#grd-CurrentAccount').dxDataGrid("instance");
-            debit = dataGridInstance.getTotalSummaryValue('Debit');
-            credit = dataGridInstance.getTotalSummaryValue('Credit');
-            balance = debit - credit;
+            var debit = grid.getTotalSummaryValue('Debit') || 0;
+            var credit = grid.getTotalSummaryValue('Credit') || 0;
+            var balance = debit - credit;
             $('#txt-Debit').text(comma(debit));
             $('#txt-Credit').text(comma(credit));
             $('#txt-Balance').text(comma(balance));
         });
     }
+
     function getKey ()
     {
-        return $('#edKey').dxLookup('option', 'value')
+        return $('#edKey').dxLookup('option', 'value');
     }
+
     function getFirst ()
     {
-        var fd = new Date($('#edFirstDate').dxDateBox('option', 'value'));
-        return fd.toLocaleDateString();
+        var value = $('#edFirstDate').dxDateBox('option', 'value');
+        if (!value) return "";
+        var fd = new Date(value);
+        var year = fd.getFullYear();
+        var month = ('0' + (fd.getMonth() + 1)).slice(-2);
+        var day = ('0' + fd.getDate()).slice(-2);
+        return year + '-' + month + '-' + day;
     }
+
     function getLast ()
     {
-        var ld = new Date($('#edLastDate').dxDateBox('option', 'value'));
-        return ld.toLocaleDateString();
+        var value = $('#edLastDate').dxDateBox('option', 'value');
+        if (!value) return "";
+        var ld = new Date(value);
+        var year = ld.getFullYear();
+        var month = ('0' + (ld.getMonth() + 1)).slice(-2);
+        var day = ('0' + ld.getDate()).slice(-2);
+        return year + '-' + month + '-' + day;
     }
+
     function getOpening ()
     {
-        return $('#edOpening').dxCheckBox('option', 'value')
+        return $('#edOpening').dxCheckBox('option', 'value');
     }
+
     function ChangeYear ()
     {
-        $('#edFirstDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 0, 1));
-        $('#edLastDate').dxDateBox('option', 'value', new Date($('#edYear').dxNumberBox('option', 'value'), 11, 31));
+        isBatchUpdating = true;
+        try {
+            var year = $('#edYear').dxNumberBox('option', 'value');
+            $('#edFirstDate').dxDateBox('option', 'value', new Date(year, 0, 1));
+            $('#edLastDate').dxDateBox('option', 'value', new Date(year, 11, 31));
+        } finally {
+            isBatchUpdating = false;
+            RefreshGrid();
+        }
     }
+
     function ct4Description (container, options)
     {
-        var str = '';
-        str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + options.value + '</p>';
-        $(str).appendTo(container)
+        var str = '<p class="m-0 p-0 f-s-10" style="white-space:normal;">' + (options.value || '') + '</p>';
+        $(str).appendTo(container);
     }
+
     function ChangeAccount ()
     {
-        var AccountSelection = $("#edKey").dxLookup('instance').option('selectedItem');
-        $('#txt-Code').text(AccountSelection.Code);
-        $('#txt-Arabic').text(AccountSelection.Name1);
-        $('#txt-English').text(AccountSelection.Name2);
+        var lookup = $("#edKey").dxLookup('instance');
+        var AccountSelection = lookup ? lookup.option('selectedItem') : null;
+        if (AccountSelection) {
+            $('#txt-Code').text(AccountSelection.Code || '--');
+            var name = '@xLan' === 'en' ? (AccountSelection.Name2 || AccountSelection.Name1) : (AccountSelection.Name1 || AccountSelection.Name2);
+            $('#txt-AccountName').text(name || '--');
+            $('#txt-Arabic').text(AccountSelection.Name1 || '');
+            $('#txt-English').text(AccountSelection.Name2 || '');
+        } else {
+            $('#txt-Code').text('--');
+            $('#txt-AccountName').text('--');
+            $('#txt-Arabic').text('');
+            $('#txt-English').text('');
+        }
         $('#txt-Debit').text('0.00');
         $('#txt-Credit').text('0.00');
         $('#txt-Balance').text('0.00');
         RefreshGrid();
     }
+
     function PrintReport ()
     {
-        window.open('/Print/Financial/ChartAccountStatment?Key=' + getKey() + '&FirstDate=' + getFirst() + '&LastDate=' + getLast() + '&Opening=' + getOpening());
+        var key = getKey();
+        if (!key) {
+            DevExpress.ui.notify({
+                message: '@iT.T(xLan, "SelectAccountFirst", "Please select an account first")',
+                type: "warning",
+                displayTime: 3000,
+                position: { at: "top right", my: "top right" }
+            });
+            return;
+        }
+        window.open('/Print/Financial/ChartAccountStatment?Key=' + key + '&FirstDate=' + getFirst() + '&LastDate=' + getLast() + '&Opening=' + getOpening());
     }
+
     function OpenTransaction (Kind, Key)
     {
+        if (!Key) return;
         switch (Kind)
         {
             case 3:
@@ -274,13 +342,13 @@
                 window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
                 break;
             default:
-
                 break;
         }
     }
 
     function ShowTransaction (Kind, Key)
     {
+        if (!Key) return;
         switch (Kind)
         {
             case 3:
@@ -291,21 +359,18 @@
             case 8:
             case 121:
             case 122:
-                ViewFinancialTransaction(Key);
+                if (typeof ViewFinancialTransaction === "function") ViewFinancialTransaction(Key);
                 break;
             case 9:
-                ViewJournalVoucher(Key);
+                if (typeof ViewJournalVoucher === "function") ViewJournalVoucher(Key);
                 break;
             case 80:
             case 83:
-                ViewSalesInvoices(Key);
+                if (typeof ViewSalesInvoices === "function") ViewSalesInvoices(Key);
                 break;
             case 71:
             case 75:
-                ViewPurchaseInvoice(Key);
-                break;
-
-                window.open('/Purchasing/Documents/ReturnInvoice?Key=' + Key);
+                if (typeof ViewPurchaseInvoice === "function") ViewPurchaseInvoice(Key);
                 break;
             case 77:
                 window.open('/Inventory/Documents/Consumption?Key=' + Key);
@@ -314,7 +379,6 @@
                 window.open('/Inventory/Documents/ConsumptionReturn?Key=' + Key);
                 break;
             default:
-
                 break;
         }
     }

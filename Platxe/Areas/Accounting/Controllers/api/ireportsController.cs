@@ -1,4 +1,4 @@
-﻿using DevExtreme.AspNet.Data;
+using DevExtreme.AspNet.Data;
 using DevExtreme.AspNet.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -74,16 +74,16 @@ namespace Platxe.Areas.Accounting.Controllers.api
             return DataSourceLoader.Load(new CLiAccounting.Reports.AccountStatment().GetList(DB, Key, FirstDate, LastDate, Opening), loadOptions);
         }
         [HttpGet]
-        public object ParentStatement(string Key, DateTime FirstDate, DateTime LastDate, DataSourceLoadOptions loadOptions)
+        public object ParentStatement(string Key, DateTime FirstDate, DateTime LastDate, bool Opening = false, DataSourceLoadOptions loadOptions = null)
         {
-            return DataSourceLoader.Load(new CLiAccounting.Reports.ParentStatment().GetList(DB, Key, FirstDate, LastDate), loadOptions);
+            return DataSourceLoader.Load(new CLiAccounting.Reports.ParentStatment().GetList(DB, Key, FirstDate, LastDate, Opening), loadOptions);
         }
         [HttpGet]
-        public object YearlyStatement(int Year, DataSourceLoadOptions loadOptions)
+        public object YearlyStatement(int Year, bool Opening = false, DataSourceLoadOptions loadOptions = null)
         {
-            DateTime FirstDate=new DateTime(Year,1,1);
-            DateTime LastDate=new DateTime(Year,12,31);   
-            return DataSourceLoader.Load(new CLiAccounting.Reports.ParentStatment().YearlyStatment(DB,FirstDate, LastDate), loadOptions);
+            DateTime FirstDate = new DateTime(Year, 1, 1);
+            DateTime LastDate = new DateTime(Year, 12, 31);   
+            return DataSourceLoader.Load(new CLiAccounting.Reports.ParentStatment().YearlyStatment(DB, FirstDate, LastDate, Opening), loadOptions);
         }
         [HttpGet]
         public object ParentBalance(string Account,DateTime First, DateTime Last, int Level, bool ExpKind, DataSourceLoadOptions loadOptions)

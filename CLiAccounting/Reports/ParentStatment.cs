@@ -1,8 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using CLiCore;
@@ -11,6 +8,8 @@ namespace CLiAccounting.Reports
 {
     public class ParentStatment
     {
+        private static readonly DateTime SqlMinDate = new DateTime(1753, 1, 1);
+
         public Guid? Key { get; set; }
         public Guid? OperationKey { get; set; }
         public Guid? AccountKey { get; set; }
@@ -26,108 +25,94 @@ namespace CLiAccounting.Reports
         public decimal CreditBalance { get; set; }
         public int DocumentKind { get; set; }
         public int VoucherNo { get; set; }
-        public List<ParentStatment> GetList(string DB, string Key, DateTime FirstDate, DateTime LastDate)
-        {
-            decimal Balance = 0;
-            List<ParentStatment> items = new List<ParentStatment>();
-            if (Key == "" || Key==null)
-                return items;
+        public int RowType { get; set; }
 
-            string selQuery = "select top 100 percent * from dbo.fnaccReport_ParentStatment(@Key,@FirstDate,@LastDate) order by [Date],[No],[DocumentKind],[VoucherNo] ";
-            using (SqlConnection con = new SqlConnection(iCore.GetCon(DB)))
-            {
-                con.Open();
-                SqlCommand com = new SqlCommand();
-                com.CommandText = selQuery;
-                com.CommandType = CommandType.Text;
-                com.Connection = con;
-                com.Parameters.Add("@Key", SqlDbType.NVarChar,50).Value = Key;
-                com.Parameters.Add("@FirstDate", SqlDbType.Date).Value = FirstDate;
-                com.Parameters.Add("@LastDate", SqlDbType.Date).Value = LastDate;
-                SqlDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    ParentStatment item = new ParentStatment();
-                    item.Key = iCore.IsDbNullRtNull(reader["Key"]);
-                    item.OperationKey = iCore.IsDbNullRtNull(reader["OperationKey"]);
-                    item.AccountKey = iCore.IsDbNullRtNull(reader["AccountKey"]);
-                    item.Code = Convert.ToString(reader["Code"]);
-                    item.Name1 = Convert.ToString(reader["Name1"]);
-                    item.Name2 = Convert.ToString(reader["Name2"]);
-                    item.Date = iCore.IsDbNullRtNullDate(reader["Date"]);
-                    item.No = Convert.ToInt32(reader["No"]);
-                    item.Description = Convert.ToString(reader["Description"]);
-                    item.Debit = Convert.ToDecimal(reader["Debit"]);
-                    item.Credit = Convert.ToDecimal(reader["Credit"]);
-                    item.DebitBalance = Convert.ToDecimal(reader["DebitBalance"]);
-                    item.CreditBalance = Convert.ToDecimal(reader["CreditBalance"]);
-                    item.DocumentKind = Convert.ToInt32(reader["DocumentKind"]);
-                    item.VoucherNo = Convert.ToInt32(reader["VoucherNo"]);
-                    Balance += item.Debit - item.Credit;
-                    if (Balance > 0)
-                    {
-                        item.DebitBalance = Balance;
-                    }
-                    else
-                    {
-                        item.CreditBalance = Math.Abs(Balance);
-                    }
-                    items.Add(item);
-                }
-                reader.Close();
-            }
-            return items;
-        }
-        public List<ParentStatment> YearlyStatment(string DB,DateTime FirstDate, DateTime LastDate)
+        // =========================
+        // CORE QUERY METHOD
+        // =========================
+        private List<ParentStatment> Load(string db, string key, DateTime firstDate, DateTime lastDate, bool opening)
         {
-            decimal Balance = 0;
-            List<ParentStatment> items = new List<ParentStatment>();
-          
-            string selQuery = "select top 100 percent * from dbo.fnaccReport_ParentStatment(@Key,@FirstDate,@LastDate) order by [Date],[No],[DocumentKind],[VoucherNo] ";
-            using (SqlConnection con = new SqlConnection(iCore.GetCon(DB)))
+            var items = new List<ParentStatment>();
+
+            if (firstDate < SqlMinDate) firstDate = SqlMinDate;
+            if (lastDate < SqlMinDate) lastDate = SqlMinDate;
+
+            const string sql = @"
+SELECT *
+FROM dbo.fnaccReport_ParentStatment(@Key, @FirstDate, @LastDate, @Opening)
+ORDER BY RowType, [Date], [No], DocumentKind, VoucherNo;
+";
+
+            using var con = new SqlConnection(iCore.GetCon(db));
+            using var cmd = new SqlCommand(sql, con);
+
+            cmd.Parameters.Add("@Key", SqlDbType.NVarChar, 50).Value = (object)key ?? DBNull.Value;
+            cmd.Parameters.Add("@FirstDate", SqlDbType.Date).Value = firstDate;
+            cmd.Parameters.Add("@LastDate", SqlDbType.Date).Value = lastDate;
+            cmd.Parameters.Add("@Opening", SqlDbType.Bit).Value = opening;
+
+            con.Open();
+
+            using var reader = cmd.ExecuteReader();
+            
+            // Optimization: Fetch ordinals outside the loop to improve performance
+            int colKey = reader.GetOrdinal("Key");
+            int colOperationKey = reader.GetOrdinal("OperationKey");
+            int colAccountKey = reader.GetOrdinal("AccountKey");
+            int colCode = reader.GetOrdinal("Code");
+            int colName1 = reader.GetOrdinal("Name1");
+            int colName2 = reader.GetOrdinal("Name2");
+            int colDate = reader.GetOrdinal("Date");
+            int colNo = reader.GetOrdinal("No");
+            int colDescription = reader.GetOrdinal("Description");
+            int colDebit = reader.GetOrdinal("Debit");
+            int colCredit = reader.GetOrdinal("Credit");
+            int colDebitBalance = reader.GetOrdinal("DebitBalance");
+            int colCreditBalance = reader.GetOrdinal("CreditBalance");
+            int colDocumentKind = reader.GetOrdinal("DocumentKind");
+            int colVoucherNo = reader.GetOrdinal("VoucherNo");
+            int colRowType = reader.GetOrdinal("RowType");
+
+            while (reader.Read())
             {
-                con.Open();
-                SqlCommand com = new SqlCommand();
-                com.CommandText = selQuery;
-                com.CommandType = CommandType.Text;
-                com.Connection = con;
-                com.Parameters.Add("@Key", SqlDbType.NVarChar, 50).Value = "";
-                com.Parameters.Add("@FirstDate", SqlDbType.Date).Value = FirstDate;
-                com.Parameters.Add("@LastDate", SqlDbType.Date).Value = LastDate;
-                SqlDataReader reader = com.ExecuteReader();
-                while (reader.Read())
+                items.Add(new ParentStatment
                 {
-                    ParentStatment item = new ParentStatment();
-                    item.Key = iCore.IsDbNullRtNull(reader["Key"]);
-                    item.OperationKey = iCore.IsDbNullRtNull(reader["OperationKey"]);
-                    item.AccountKey = iCore.IsDbNullRtNull(reader["AccountKey"]);
-                    item.Code = Convert.ToString(reader["Code"]);
-                    item.Name1 = Convert.ToString(reader["Name1"]);
-                    item.Name2 = Convert.ToString(reader["Name2"]);
-                    item.Date = iCore.IsDbNullRtNullDate(reader["Date"]);
-                    item.No = Convert.ToInt32(reader["No"]);
-                    item.Description = Convert.ToString(reader["Description"]);
-                    item.Debit = Convert.ToDecimal(reader["Debit"]);
-                    item.Credit = Convert.ToDecimal(reader["Credit"]);
-                    item.DebitBalance = Convert.ToDecimal(reader["DebitBalance"]);
-                    item.CreditBalance = Convert.ToDecimal(reader["CreditBalance"]);
-                    item.DocumentKind = Convert.ToInt32(reader["DocumentKind"]);
-                    item.VoucherNo = Convert.ToInt32(reader["VoucherNo"]);
-                    Balance += item.Debit - item.Credit;
-                    if (Balance > 0)
-                    {
-                        item.DebitBalance = Balance;
-                    }
-                    else
-                    {
-                        item.CreditBalance = Math.Abs(Balance);
-                    }
-                    items.Add(item);
-                }
-                reader.Close();
+                    Key = reader.IsDBNull(colKey) ? (Guid?)null : (Guid)reader.GetValue(colKey),
+                    OperationKey = reader.IsDBNull(colOperationKey) ? (Guid?)null : (Guid)reader.GetValue(colOperationKey),
+                    AccountKey = reader.IsDBNull(colAccountKey) ? (Guid?)null : (Guid)reader.GetValue(colAccountKey),
+                    Code = reader.IsDBNull(colCode) ? null : Convert.ToString(reader.GetValue(colCode)),
+                    Name1 = reader.IsDBNull(colName1) ? null : Convert.ToString(reader.GetValue(colName1)),
+                    Name2 = reader.IsDBNull(colName2) ? null : Convert.ToString(reader.GetValue(colName2)),
+                    Date = reader.IsDBNull(colDate) ? (DateTime?)null : Convert.ToDateTime(reader.GetValue(colDate)),
+                    No = reader.IsDBNull(colNo) ? 0 : Convert.ToInt32(reader.GetValue(colNo)),
+                    Description = reader.IsDBNull(colDescription) ? null : Convert.ToString(reader.GetValue(colDescription)),
+                    Debit = reader.IsDBNull(colDebit) ? 0m : Convert.ToDecimal(reader.GetValue(colDebit)),
+                    Credit = reader.IsDBNull(colCredit) ? 0m : Convert.ToDecimal(reader.GetValue(colCredit)),
+                    DebitBalance = reader.IsDBNull(colDebitBalance) ? 0m : Convert.ToDecimal(reader.GetValue(colDebitBalance)),
+                    CreditBalance = reader.IsDBNull(colCreditBalance) ? 0m : Convert.ToDecimal(reader.GetValue(colCreditBalance)),
+                    DocumentKind = reader.IsDBNull(colDocumentKind) ? 0 : Convert.ToInt32(reader.GetValue(colDocumentKind)),
+                    VoucherNo = reader.IsDBNull(colVoucherNo) ? 0 : Convert.ToInt32(reader.GetValue(colVoucherNo)),
+                    RowType = reader.IsDBNull(colRowType) ? 1 : Convert.ToInt32(reader.GetValue(colRowType))
+                });
             }
+
             return items;
         }
 
+        // =========================
+        // PUBLIC METHODS
+        // =========================
+        public List<ParentStatment> GetList(string db, string key, DateTime firstDate, DateTime lastDate, bool opening = false)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+                return new List<ParentStatment>();
+
+            return Load(db, key, firstDate, lastDate, opening);
+        }
+
+        public List<ParentStatment> YearlyStatment(string db, DateTime firstDate, DateTime lastDate, bool opening = false)
+        {
+            return Load(db, string.Empty, firstDate, lastDate, opening);
+        }
     }
 }

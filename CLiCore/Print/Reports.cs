@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data;
@@ -49,7 +49,7 @@ namespace CLiCore.Print
         public static DataTable ChartAccountStatment(string DB, Guid? Key, DateTime? FirstDate, DateTime? LastDate, bool Opening)
         {
             DataTable Res = new DataTable();
-            string selQuery = "select top 100 percent * from dbo.fnaccReport_AccountStatment(@Key,@FirstDate,@LastDate,@Opening) order by [Date],[No],[DocumentKind],[VoucherNo] ";
+            string selQuery = "select * from dbo.fnaccReport_AccountStatment(@Key,@FirstDate,@LastDate,@Opening) order by [RowType],[Date],[No],[DocumentKind],[VoucherNo]";
             using (SqlConnection con = new SqlConnection(iCore.GetCon(DB)))
             {
                 con.Open();
@@ -64,26 +64,13 @@ namespace CLiCore.Print
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = com;
                 adapter.Fill(Res);
-                decimal Balance = 0;
-                foreach (DataRow item in Res.Rows)
-                {
-                    Balance += Convert.ToDecimal(item["Debit"]) - Convert.ToDecimal(item["Credit"]);
-                    if (Balance > 0)
-                    {
-                        item["DebitBalance"] = Balance;
-                    }
-                    else
-                    {
-                        item["CreditBalance"] = Math.Abs(Balance); ;
-                    }
-                }
                 return Res;
             }
         }
         public static DataTable AccountStatment(string DB, Guid? Key, DateTime? FirstDate, DateTime? LastDate, bool Opening)
         {
             DataTable Res = new DataTable();
-            string selQuery = "select top 100 percent * from dbo.ReportFin_AccountStatment(@Key,@FirstDate,@LastDate,@Opening) order by [VoucherDate],[DocumentKind],[VoucherNo]";
+            string selQuery = "select *, [Date] as [VoucherDate] from dbo.fnaccReport_AccountStatment(@Key,@FirstDate,@LastDate,@Opening) order by [RowType],[Date],[No],[DocumentKind],[VoucherNo]";
             using (SqlConnection con = new SqlConnection(iCore.GetCon(DB)))
             {
                 con.Open();
@@ -98,26 +85,13 @@ namespace CLiCore.Print
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = com;
                 adapter.Fill(Res);
-                decimal Balance = 0;
-                foreach (DataRow item in Res.Rows)
-                {
-                    Balance += Convert.ToDecimal(item["Debit"]) - Convert.ToDecimal(item["Credit"]);
-                    if (Balance > 0)
-                    {
-                        item["DebitBalance"] = Balance;
-                    }
-                    else
-                    {
-                        item["CreditBalance"] = Math.Abs(Balance); ;
-                    }
-                }
                 return Res;
             }
         }
         public static DataTable SummaryAccountStatment(string DB, Guid? Key, DateTime? FirstDate, DateTime? LastDate, bool Opening)
         {
             DataTable Res = new DataTable();
-            string selQuery = "select top 100 percent * from dbo.ReportFin_AccountStatmentSummary(@Key,@FirstDate,@LastDate,@Opening) order by [VoucherDate],[DocumentKind],[VoucherNo]";
+            string selQuery = "select * from dbo.ReportFin_AccountStatmentSummary(@Key,@FirstDate,@LastDate,@Opening) order by [T],[VoucherDate],[VoucherNo],[DocumentKind]";
             using (SqlConnection con = new SqlConnection(iCore.GetCon(DB)))
             {
                 con.Open();
@@ -132,19 +106,6 @@ namespace CLiCore.Print
                 SqlDataAdapter adapter = new SqlDataAdapter();
                 adapter.SelectCommand = com;
                 adapter.Fill(Res);
-                decimal Balance = 0;
-                foreach (DataRow item in Res.Rows)
-                {
-                    Balance += Convert.ToDecimal(item["Debit"]) - Convert.ToDecimal(item["Credit"]);
-                    if (Balance > 0)
-                    {
-                        item["DebitBalance"] = Balance;
-                    }
-                    else
-                    {
-                        item["CreditBalance"] = Math.Abs(Balance); ;
-                    }
-                }
                 return Res;
             }
         }

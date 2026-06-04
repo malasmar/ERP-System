@@ -94,6 +94,10 @@
 
     <div class="card-modern">
         <div class="card-body-modern p-0 modern-grid">
+            <!-- 
+                NOTE: All financial totals are calculated in SQL layer or NetIncome API.
+                Grid is display-only to prevent double counting of Parent and Child rows.
+            -->
             @(Html.DevExtreme().DataGrid<CLiAccounting.Reports.IncomeStatment>().ID("grd-IncomeStatment")
                 .ShowBorders(false)
                 .Width("100%")
@@ -119,13 +123,6 @@
                     columns.AddFor(m => m.Code).Caption(iT.T(xLan,"1228","Code")).Width(120).CssClass("fw-bold text-dark");
                     columns.AddFor(m => m.Name1).Caption(iT.T(xLan,"1165","Account Name")).CssClass("fw-medium");
                     columns.AddFor(m => m.Amount).Caption(iT.T(xLan,"1077","Amount")).Width(130).Format("#,##0.##").CssClass("fw-bold text-primary");
-                })
-                .Summary(tot =>
-                {
-                    tot.TotalItems(item =>
-                    {
-                        item.AddFor(m => m.Amount).SummaryType(SummaryType.Sum).ValueFormat("#,##0.##").DisplayFormat("{0}");
-                    });
                 })
                 .Pager(pg =>
                 {
